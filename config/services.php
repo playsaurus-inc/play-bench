@@ -35,4 +35,23 @@ return [
         ],
     ],
 
+    'openai' => [
+        'key' => env('OPENAI_KEY'),
+    ],
+
+    'anthropic' => [
+        'key' => env('ANTHROPIC_KEY'),
+    ],
+
+    'groq' => [
+        'key' => env('GROQ_KEY'),
+    ],
+
+    'redpill' => [
+        'key' => env('REDPILL_KEY'),
+    ],
+
+    'gemini' => [
+        'key' => env('GEMINI_KEY'),
+    ],
 ];

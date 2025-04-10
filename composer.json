@@ -11,7 +11,8 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1"
+        "laravel/tinker": "^2.10.1",
+        "openai-php/client": "^0.10.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -49,6 +50,9 @@
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
+        ],
+        "pint": [
+            "./vendor/bin/pint"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
