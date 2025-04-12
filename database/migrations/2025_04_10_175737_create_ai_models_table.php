@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('ai_models', function (Blueprint $table) {
             $table->id();
+            // Unique name inside our system. Does not need to match the name used in the API.
+            // For example the AI Model name (e.g. 'o3-mini') with different configuration parameters
+            // can be mapped to different entries in the `ai_models` table.
+            // E.g. 'o3-mini-low' an 'o3-mini-high' can both map to 'o3-mini' in the API one with
+            // `reasoning_effort` set to `low` and the other to `high`.
             $table->string('name')->unique();
-            $table->string('provider')->nullable(); // OpenAI, Anthropic, etc.
-            $table->string('family')->nullable(); // GPT, Claude, etc.
-            $table->integer('chess_elo_rating')->default(1600);
-            $table->integer('rps_elo_rating')->default(1600);
-            $table->integer('svg_elo_rating')->default(1600);
+
             $table->timestamps();
         });
     }

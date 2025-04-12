@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,93 +18,107 @@ class AiModel extends Model
      */
     protected $fillable = [
         'name',
-        'provider',
-        'family',
-        'chess_elo_rating',
-        'rps_elo_rating',
-        'svg_elo_rating',
     ];
 
     /**
-     * Get the RPS matches where this model is player 1.
+     * Get all RPS matches where this AI model is player 1
      */
     public function rpsMatchesAsPlayer1(): HasMany
     {
-        return $this->hasMany(RpsMatch::class, 'player1_ai_model_id');
+        return $this->hasMany(RpsMatch::class, 'player1_id');
     }
 
     /**
-     * Get the RPS matches where this model is player 2.
+     * Get all RPS matches where this AI model is player 2
      */
     public function rpsMatchesAsPlayer2(): HasMany
     {
-        return $this->hasMany(RpsMatch::class, 'player2_ai_model_id');
+        return $this->hasMany(RpsMatch::class, 'player2_id');
     }
 
     /**
-     * Get the SVG matches where this model is player 1.
+     * Get all RPS matches won by this AI model
+     */
+    public function rpsMatchesWon(): HasMany
+    {
+        return $this->hasMany(RpsMatch::class, 'winner_id');
+    }
+
+    /**
+     * Get all SVG matches where this AI model is player 1
      */
     public function svgMatchesAsPlayer1(): HasMany
     {
-        return $this->hasMany(SvgMatch::class, 'player1_ai_model_id');
+        return $this->hasMany(SvgMatch::class, 'player1_id');
     }
 
     /**
-     * Get the SVG matches where this model is player 2.
+     * Get all SVG matches where this AI model is player 2
      */
     public function svgMatchesAsPlayer2(): HasMany
     {
-        return $this->hasMany(SvgMatch::class, 'player2_ai_model_id');
+        return $this->hasMany(SvgMatch::class, 'player2_id');
     }
 
     /**
-     * Get the chess matches where this model plays white.
+     * Get all SVG matches won by this AI model
+     */
+    public function svgMatchesWon(): HasMany
+    {
+        return $this->hasMany(SvgMatch::class, 'winner_id');
+    }
+
+    /**
+     * Get all chess matches where this AI model plays as white
      */
     public function chessMatchesAsWhite(): HasMany
     {
-        return $this->hasMany(ChessMatch::class, 'white_ai_model_id');
+        return $this->hasMany(ChessMatch::class, 'white_id');
     }
 
     /**
-     * Get the chess matches where this model plays black.
+     * Get all chess matches where this AI model plays as black
      */
     public function chessMatchesAsBlack(): HasMany
     {
-        return $this->hasMany(ChessMatch::class, 'black_ai_model_id');
+        return $this->hasMany(ChessMatch::class, 'black_id');
     }
 
     /**
-     * Get the chess matches won by this model.
+     * Get all chess matches won by this AI model
      */
-    public function chessWins(): HasMany
+    public function chessMatchesWon(): HasMany
     {
-        return $this->hasMany(ChessMatch::class, 'winner_ai_model_id');
+        return $this->hasMany(ChessMatch::class, 'winner_id');
     }
 
     /**
-     * Get all RPS matches for this model.
+     * Get all RPS matches this AI model participated in
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function allRpsMatches(): Builder
+    public function allRpsMatches()
     {
-        return RpsMatch::where('player1_ai_model_id', $this->id)
-            ->orWhere('player2_ai_model_id', $this->id);
+        return $this->rpsMatchesAsPlayer1->merge($this->rpsMatchesAsPlayer2);
     }
 
     /**
-     * Get all SVG matches for this model.
+     * Get all SVG matches this AI model participated in
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function allSvgMatches(): Builder
+    public function allSvgMatches()
     {
-        return SvgMatch::where('player1_ai_model_id', $this->id)
-            ->orWhere('player2_ai_model_id', $this->id);
+        return $this->svgMatchesAsPlayer1->merge($this->svgMatchesAsPlayer2);
     }
 
     /**
-     * Get all chess matches for this model.
+     * Get all chess matches this AI model participated in
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function allChessMatches(): Builder
+    public function allChessMatches()
     {
-        return ChessMatch::where('white_ai_model_id', $this->id)
-            ->orWhere('black_ai_model_id', $this->id);
+        return $this->chessMatchesAsWhite->merge($this->chessMatchesAsBlack);
     }
 }

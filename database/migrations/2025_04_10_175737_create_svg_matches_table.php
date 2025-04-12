@@ -13,14 +13,18 @@ return new class extends Migration
     {
         Schema::create('svg_matches', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('player1_ai_model_id')->constrained('ai_models');
-            $table->foreignId('player2_ai_model_id')->constrained('ai_models');
-            $table->enum('winner', ['player1', 'player2', 'tie']);
+            $table->foreignId('player1_id')->index()->constrained('ai_models');
+            $table->foreignId('player2_id')->index()->constrained('ai_models');
+            $table->foreignId('winner_id')->index()->nullable()->constrained('ai_models'); // null should not happen if everything works ok
             $table->text('prompt'); // The image prompt given
             $table->string('player1_svg_path'); // Path to the SVG file from player 1
             $table->string('player2_svg_path'); // Path to the SVG file from player 2
-            $table->text('judge_reasoning'); // Explanation of the winner
-            $table->timestamps();
+            $table->text('judge_reasoning'); // Explanation of the winner, according to the judge AI
+
+            $table->integer('started_at')->nullable(); // When the match started
+            $table->integer('ended_at')->nullable(); // When the match ended
+            $table->boolean('is_forced_completion')->default(false); // Whether the match was forced due to technical issues
+            $table->timestamps(); // When the record was stored + updated
         });
     }
 

@@ -12,53 +12,155 @@ class ChessMatch extends Model
     use HasFactory;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'white_ai_model_id',
-        'black_ai_model_id',
-        'moves_count',
-        'winner_color',
-        'winner_ai_model_id',
-        'pgn',
-        'final_fen',
-        'illegal_moves_white',
-        'illegal_moves_black',
-        'is_forced_completion',
-    ];
-
-    /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
      */
     protected $casts = [
+        'started_at' => 'datetime',
+        'ended_at' => 'datetime',
         'is_forced_completion' => 'boolean',
+        'illegal_moves_white' => 'integer',
+        'illegal_moves_black' => 'integer',
+        'ply_count' => 'integer',
     ];
 
     /**
-     * Get the model playing white.
+     * Perform any actions required before the model boots.
      */
-    public function whiteModel(): BelongsTo
+    protected static function booting()
     {
-        return $this->belongsTo(AiModel::class, 'white_ai_model_id');
+        static::updating(function (self $model) {
+            if (! $model->winner_id) {
+                $model->winner_id = static::determineWinner(
+                    $model->white,
+                    $model->black,
+                    $model->result
+                )?->id;
+            }
+        });
     }
 
     /**
-     * Get the model playing black.
+     * Determine the winner of the match based on the result.
      */
-    public function blackModel(): BelongsTo
-    {
-        return $this->belongsTo(AiModel::class, 'black_ai_model_id');
+    public static function determineWinner(
+        AiModel $white,
+        AiModel $black,
+        string $result
+    ): ?AiModel {
+        if ($result === 'white') {
+            return $white;
+        } elseif ($result === 'black') {
+            return $black;
+        }
+
+        return null; // Draw or no winner
     }
 
     /**
-     * Get the winner model.
+     * Get the AI model that played as white
      */
-    public function winnerModel(): BelongsTo
+    public function white(): BelongsTo
     {
-        return $this->belongsTo(AiModel::class, 'winner_ai_model_id');
+        return $this->belongsTo(AiModel::class, 'white_id');
+    }
+
+    /**
+     * Get the AI model that played as black
+     */
+    public function black(): BelongsTo
+    {
+        return $this->belongsTo(AiModel::class, 'black_id');
+    }
+
+    /**
+     * Get the AI model that won the match
+     */
+    public function winner(): BelongsTo
+    {
+        return $this->belongsTo(AiModel::class, 'winner_id');
+    }
+
+    /**
+     * Check if the match ended in a draw
+     */
+    public function isDraw(): bool
+    {
+        return $this->result === 'draw';
+    }
+
+    /**
+     * Check if white won the match
+     */
+    public function isWhiteWinner(): bool
+    {
+        return $this->result === 'white';
+    }
+
+    /**
+     * Check if black won the match
+     */
+    public function isBlackWinner(): bool
+    {
+        return $this->result === 'black';
+    }
+
+    /**
+     * Get the total number of illegal moves made in the game
+     */
+    public function getTotalIllegalMoves(): int
+    {
+        return $this->illegal_moves_white + $this->illegal_moves_black;
+    }
+
+    /**
+     * Get the duration of the match in seconds
+     */
+    public function getDuration(): ?int
+    {
+        if (! $this->started_at || ! $this->ended_at) {
+            return null;
+        }
+
+        return $this->ended_at->diffInSeconds($this->started_at);
+    }
+
+    /**
+     * Get the number of moves made (a move consists of both white and black making a move)
+     *
+     * This is calculated as ply_count divided by 2, rounded up for partial moves
+     */
+    public function getMoveCount(): int
+    {
+        return (int) ceil($this->ply_count / 2);
+    }
+
+    /**
+     * Parse the PGN and extract all moves as a collection
+     *
+     * @return array<string>
+     */
+    public function extractMovesFromPgn(): array
+    {
+        $pgn = $this->pgn;
+
+        // Remove comments
+        $pgn = preg_replace('/\{[^}]*\}/', '', $pgn);
+
+        // Remove header information
+        $pgn = preg_replace('/\[[^\]]*\]\s*/', '', $pgn);
+
+        // Remove move numbers
+        $pgn = preg_replace('/\d+\.+\s*/', '', $pgn);
+
+        // Remove final result
+        $pgn = preg_replace('/\s*(1-0|0-1|1\/2-1\/2|\*)$/', '', $pgn);
+
+        // Split into moves and trim whitespace
+        $moves = array_map('trim', preg_split('/\s+/', trim($pgn)));
+
+        // Filter out empty values
+        return array_filter($moves);
     }
 }
