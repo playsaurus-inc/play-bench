@@ -15,44 +15,31 @@ class RpsMatchController extends Controller
      */
     public function index(Request $request): View
     {
-        $matches = RpsMatch::query()
+        $latestMatch = RpsMatch::query()
             ->with(['player1', 'player2', 'winner'])
             ->latest()
-            ->paginate(12)
-            ->withQueryString();
+            ->first();
 
         // Close matches (small difference in score)
-        $closeMatches = RpsMatch::with(['player1', 'player2', 'winner'])
+        $closeMatch = RpsMatch::with(['player1', 'player2', 'winner'])
             ->whereRaw('ABS(player1_score - player2_score) <= 3')
             ->where('rounds_played', '>=', 20)
             ->orderByRaw('ABS(player1_score - player2_score)')
             ->orderBy('rounds_played', 'desc')
-            ->limit(3)
-            ->get();
+            ->first();
 
         // Matches with the most rounds
-        $mostRoundsMatches = RpsMatch::with(['player1', 'player2', 'winner'])
+        $mostRoundsMatch = RpsMatch::with(['player1', 'player2', 'winner'])
             ->orderBy('rounds_played', 'desc')
-            ->limit(3)
-            ->get();
-
-        // Get available models for filtering
-        $models = AiModel::orderBy('name')->get(['id', 'name', 'slug']);
-
-        // Get stats for the RPS benchmark
-        $stats = [
-            'total_matches' => RpsMatch::count(),
-            'total_rounds' => RpsMatch::sum('rounds_played'),
-            'avg_rounds_per_match' => RpsMatch::count() > 0 ? round(RpsMatch::sum('rounds_played') / RpsMatch::count()) : 0,
-            'tie_rate' => $this->calculateTieRate(),
-        ];
+            ->first();
 
         return view('rps.index', [
-            'matches' => $matches,
-            'models' => $models,
-            'stats' => $stats,
-            'closeMatches' => $closeMatches,
-            'mostRoundsMatches' => $mostRoundsMatches,
+            'totalMatchesCount' => RpsMatch::count(),
+            'totalRoundsCount' => RpsMatch::sum('rounds_played'),
+            'modelsCount' => AiModel::count(),
+            'latestMatch' => $latestMatch,
+            'closeMatch' => $closeMatch,
+            'mostRoundsMatch' => $mostRoundsMatch,
         ]);
     }
 
@@ -84,20 +71,6 @@ class RpsMatchController extends Controller
         $streakData = $this->calculateStreakData($rounds);
 
         return view('rps.show', compact('rpsMatch', 'similarMatches', 'streakData'));
-    }
-
-    /**
-     * Calculate what percentage of matches end in a tie.
-     */
-    protected function calculateTieRate(): float
-    {
-        $totalMatches = RpsMatch::count();
-        if ($totalMatches === 0) {
-            return 0;
-        }
-
-        $tieMatches = RpsMatch::whereNull('winner_id')->count();
-        return round(($tieMatches / $totalMatches) * 100, 1);
     }
 
     /**

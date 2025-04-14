@@ -138,7 +138,7 @@
                                                  style="transition: clip-path 1s ease-out;"></div>
                                             <!-- Icon -->
                                             <div class="absolute inset-0 flex items-center justify-center">
-                                                <x-fas-hand-rock />
+                                                <x-fas-hand-rock class="size-8"  />
                                             </div>
                                         </div>
                                         <div class="text-xl font-bold">{{ $moveBreakdown['rock'] }}</div>
@@ -159,7 +159,7 @@
                                                  style="transition: clip-path 1s ease-out;"></div>
                                             <!-- Icon -->
                                             <div class="absolute inset-0 flex items-center justify-center">
-                                                <x-fas-hand-paper />
+                                                <x-fas-hand-paper class="size-8" />
                                             </div>
                                         </div>
                                         <div class="text-xl font-bold">{{ $moveBreakdown['paper'] }}</div>
@@ -180,7 +180,7 @@
                                                  style="transition: clip-path 1s ease-out;"></div>
                                             <!-- Icon -->
                                             <div class="absolute inset-0 flex items-center justify-center">
-                                                <x-fas-hand-scissors />
+                                                <x-fas-hand-scissors class="size-8" />
                                             </div>
                                         </div>
                                         <div class="text-xl font-bold">{{ $moveBreakdown['scissors'] }}</div>

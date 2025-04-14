@@ -24,24 +24,25 @@
 
                     <div class="mt-6 flex flex-wrap gap-3">
                         <div
-                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
-                            x-data="animatedCounter({{ $stats['total_matches'] }})"
+                            class="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-amber-100 text-amber-800"
+                            x-data="animatedCounter({{ $totalMatchesCount }})"
                         >
-                            <x-phosphor-robot-fill class="size-4 mr-2" />
-                            <span x-text="current + ' matches'"></span>
+                            <x-phosphor-trophy-fill class="size-6 mr-2" />
+                            <span x-text="formattedCurrent + ' matches'"></span>
                         </div>
                         <div
-                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
-                            x-data="animatedCounter({{ $stats['total_rounds'] }})"
+                            class="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-amber-100 text-amber-800"
+                            x-data="animatedCounter({{ $totalRoundsCount }})"
                         >
-                            <x-phosphor-circle-notch-fill class="size-4 mr-2" />
-                            <span x-text="current + ' rounds'"></span>
+                            <x-phosphor-circle-notch-fill class="size-6 mr-2" />
+                            <span x-text="formattedCurrent + ' rounds'"></span>
                         </div>
                         <span
-                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
+                            class="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-amber-100 text-amber-800"
+                            x-data="animatedCounter({{ $modelsCount }})"
                         >
-                            <x-phosphor-chart-pie-fill class="size-4 mr-2" />
-                            {{ $stats['tie_rate'] }}% Ties
+                            <x-phosphor-robot-fill class="size-6 mr-2" />
+                            <span x-text="formattedCurrent + ' AI models competing'"></span>
                         </span>
                     </div>
 
@@ -54,7 +55,7 @@
 
                 <!-- RPS Icon Display -->
                 <div class="md:w-1/3 flex justify-center">
-                    <div class="relative" x-data="{ currentMove: 0 }" x-init="setInterval(() => currentMove = (currentMove + 1) % 3, 2000)">
+                    <div class="relative" x-data="{ currentMove: 0 }" x-init="setInterval(() => currentMove = (currentMove + 1) % 3, 1500)">
                         <!-- Rock -->
                         <div
                             class="size-24 md:size-32 rounded-full bg-red-100 border-4 border-white shadow-lg flex items-center justify-center absolute -left-22 md:-left-28 top-0 md:top-0"
@@ -87,146 +88,63 @@
         </div>
 
         <!-- Featured Matches -->
-        <section id="featured-matches" class="mb-16 scroll-mt-20">
+        <section id="featured-matches" class="mb-8 scroll-mt-20">
             <h2 class="text-2xl font-bold mb-6 text-gray-900 flex items-center">
                 <x-phosphor-star-fill class="w-6 h-6 mr-2 text-amber-500" />
                 Featured Matches
             </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @if($closeMatch)
+                    <div class="h-full">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-medium text-gray-800 inline-flex items-center">
+                                <x-phosphor-arrows-in-fill class="w-5 h-5 mr-2 text-amber-500" />
+                                Closest Match
+                            </h3>
 
-            @if($closeMatches->count() > 0)
-                <div class="mb-8">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-medium text-gray-800 inline-flex items-center">
-                            <x-phosphor-arrows-in-fill class="w-5 h-5 mr-2 text-amber-500" />
-                            Closest Matches
-                        </h3>
-
-                        <div class="text-sm text-gray-500">
-                            Matches decided by a single point
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        @foreach($closeMatches as $match)
-                            <div class="hover-scale">
-                                <x-ui.match-card :match="$match" />
+                            <div class="text-sm text-gray-500">
+                                Decided by a single point
                             </div>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
-
-            @if($mostRoundsMatches->count() > 0)
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-medium text-gray-800 inline-flex items-center">
-                            <x-phosphor-timer-fill class="w-5 h-5 mr-2 text-amber-500" />
-                            Longest Matches
-                        </h3>
-
-                        <div class="text-sm text-gray-500">
-                            Matches with the most rounds played
                         </div>
+                        <x-ui.match-card :match="$closeMatch" class="hover-scale" />
                     </div>
+                @endif
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        @foreach($mostRoundsMatches as $match)
-                            <div class="hover-scale">
-                                <x-ui.match-card :match="$match" />
+                @if($mostRoundsMatch)
+                    <div class="h-full">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-medium text-gray-800 inline-flex items-center">
+                                <x-phosphor-timer-fill class="w-5 h-5 mr-2 text-amber-500" />
+                                Longest Match
+                            </h3>
+
+                            <div class="text-sm text-gray-500">
+                                Most rounds played
                             </div>
-                        @endforeach
+                        </div>
+                        <x-ui.match-card :match="$mostRoundsMatch" class="hover-scale"/>
                     </div>
-                </div>
-            @endif
-        </section>
+                @endif
 
-        <!-- Recent Matches -->
-        <section>
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-gray-900 flex items-center">
-                    <x-phosphor-clock-clockwise-fill class="w-6 h-6 mr-2 text-amber-500" />
-                    Recent Matches
-                </h2>
-
-                @if($matches->count() > 0)
-                    <div class="text-sm text-gray-500">
-                        Showing {{ $matches->firstItem() ?? 0 }} to {{ $matches->lastItem() ?? 0 }} of {{ $matches->total() }} matches
+                @if($latestMatch)
+                    <div class="h-full">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-medium text-gray-800 inline-flex items-center">
+                                <x-phosphor-clock-fill class="w-5 h-5 mr-2 text-amber-500" />
+                                Latest Match
+                            </h3>
+                            <div class="text-sm text-gray-500">
+                                Most recent played
+                            </div>
+                        </div>
+                        <x-ui.match-card :match="$latestMatch" class="hover-scale"/>
                     </div>
                 @endif
             </div>
-
-            @if($matches->count() > 0)
-                <div
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
-                    x-data="{
-                        visibleMatches: 0,
-                        totalMatches: {{ $matches->count() }},
-                        showMore() {
-                            let increment = 3;
-                            this.visibleMatches = Math.min(this.visibleMatches + increment, this.totalMatches);
-                        },
-                        init() {
-                            visibleMatches = Math.min(6, totalMatches);
-                            $nextTick(() => {
-                                const observer = new IntersectionObserver((entries) => {
-                                    entries.forEach(entry => {
-                                        if (entry.isIntersecting) {
-                                            entry.target.classList.add('animate-fade-in');
-                                            observer.unobserve(entry.target);
-                                        }
-                                    });
-                                }, { threshold: 0.3 });
-
-                                document.querySelectorAll('.match-card').forEach(card => {
-                                    observer.observe(card);
-                                });
-                            })
-                        },
-                    }"
-                >
-                    @foreach($matches as $index => $match)
-                        <div class="match-card hover-scale opacity-0" x-show="{{$index}} < visibleMatches" x-transition>
-                            <x-ui.match-card :match="$match" />
-                        </div>
-                    @endforeach
-
-                    <template x-if="visibleMatches < totalMatches">
-                        <div class="col-span-full flex justify-center my-6">
-                            <x-ui.button @click="showMore()" variant="secondary">
-                                <x-phosphor-arrow-down class="size-4 mr-4" />
-                                Load More
-                            </x-ui.button>
-                        </div>
-                    </template>
-                </div>
-
-                <div class="mt-10 flex justify-center">
-                    {{ $matches->links() }}
-                </div>
-            @else
-                <div class="bg-amber-50 border border-amber-200 rounded-xl p-10 text-center">
-                    <div class="flex justify-center mb-6">
-                        <div class="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center">
-                            <x-phosphor-warning-fill class="w-8 h-8 text-amber-500" />
-                        </div>
-                    </div>
-                    <h3 class="text-xl font-medium text-amber-900 mb-3">No matches found</h3>
-                    <p class="text-amber-700 max-w-lg mx-auto mb-6">
-                        There are no matches that match your filter criteria. Try adjusting your filters or check back later.
-                    </p>
-
-                    @if(request()->anyFilled(['player1', 'player2', 'min_rounds']))
-                        <a href="{{ route('rps.index') }}" class="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white rounded-md shadow-sm hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors">
-                            <x-phosphor-x class="w-4 h-4 mr-2" />
-                            Clear All Filters
-                        </a>
-                    @endif
-                </div>
-            @endif
         </section>
 
         <!-- How it works -->
-        <section class="mt-20 bg-gradient-to-br from-gray-50 to-amber-50/20 rounded-2xl p-8 border border-gray-100 shadow-sm">
+        <section class="mt-8 bg-gradient-to-br from-gray-50 to-amber-50/20 rounded-2xl p-8 border border-gray-100 shadow-sm">
             <h2 class="text-2xl font-bold mb-6 text-gray-900 flex items-center">
                 <x-phosphor-question-fill class="w-6 h-6 mr-2 text-amber-500" />
                 How the Rock Paper Scissors Benchmark Works
@@ -307,12 +225,20 @@
 
     <!-- Alpine.js animation script -->
     <script>
+        const formatter = new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+
         document.addEventListener('alpine:init', () => {
             Alpine.data('animatedCounter', (target) => ({
                 current: 0,
                 target: target,
                 init() {
                     this.animate();
+                },
+                get formattedCurrent() {
+                    return formatter.format(this.current);
                 },
                 animate() {
                     const duration = 1500;
