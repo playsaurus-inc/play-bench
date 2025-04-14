@@ -15,27 +15,26 @@ class RpsMatchController extends Controller
      */
     public function index(Request $request): View
     {
-        // Handle filtering
-        $query = RpsMatch::query()
-            ->with(['player1', 'player2', 'winner']);
+        $matches = RpsMatch::query()
+            ->with(['player1', 'player2', 'winner'])
+            ->latest()
+            ->paginate(12)
+            ->withQueryString();
 
-        if ($request->filled('player1')) {
-            $query->where('player1_id', $request->player1);
-        }
+        // Close matches (small difference in score)
+        $closeMatches = RpsMatch::with(['player1', 'player2', 'winner'])
+            ->whereRaw('ABS(player1_score - player2_score) <= 3')
+            ->where('rounds_played', '>=', 20)
+            ->orderByRaw('ABS(player1_score - player2_score)')
+            ->orderBy('rounds_played', 'desc')
+            ->limit(3)
+            ->get();
 
-        if ($request->filled('player2')) {
-            $query->where('player2_id', $request->player2);
-        }
-
-        if ($request->has('min_rounds') && is_numeric($request->min_rounds)) {
-            $query->where('rounds_played', '>=', $request->min_rounds);
-        }
-
-        // Get standard matches (paginated)
-        $matches = $query->latest()->paginate(12)->withQueryString();
-
-        // Get featured matches (closest matches and most rounds)
-        $featuredMatches = $this->getFeaturedMatches();
+        // Matches with the most rounds
+        $mostRoundsMatches = RpsMatch::with(['player1', 'player2', 'winner'])
+            ->orderBy('rounds_played', 'desc')
+            ->limit(3)
+            ->get();
 
         // Get available models for filtering
         $models = AiModel::orderBy('name')->get(['id', 'name', 'slug']);
@@ -48,7 +47,13 @@ class RpsMatchController extends Controller
             'tie_rate' => $this->calculateTieRate(),
         ];
 
-        return view('rps.index', compact('matches', 'featuredMatches', 'models', 'stats'));
+        return view('rps.index', [
+            'matches' => $matches,
+            'models' => $models,
+            'stats' => $stats,
+            'closeMatches' => $closeMatches,
+            'mostRoundsMatches' => $mostRoundsMatches,
+        ]);
     }
 
     /**
@@ -79,34 +84,6 @@ class RpsMatchController extends Controller
         $streakData = $this->calculateStreakData($rounds);
 
         return view('rps.show', compact('rpsMatch', 'similarMatches', 'streakData'));
-    }
-
-    /**
-     * Get the most interesting matches to feature.
-     *
-     * @return array An array containing close matches and matches with many rounds
-     */
-    protected function getFeaturedMatches(): array
-    {
-        // Close matches (small difference in score)
-        $closeMatches = RpsMatch::with(['player1', 'player2', 'winner'])
-            ->whereRaw('ABS(player1_score - player2_score) <= 3')
-            ->where('rounds_played', '>=', 20)
-            ->orderByRaw('ABS(player1_score - player2_score)')
-            ->orderBy('rounds_played', 'desc')
-            ->limit(3)
-            ->get();
-
-        // Matches with the most rounds
-        $mostRoundsMatches = RpsMatch::with(['player1', 'player2', 'winner'])
-            ->orderBy('rounds_played', 'desc')
-            ->limit(3)
-            ->get();
-
-        return [
-            'close_matches' => $closeMatches,
-            'most_rounds_matches' => $mostRoundsMatches,
-        ];
     }
 
     /**

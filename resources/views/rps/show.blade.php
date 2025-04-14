@@ -44,9 +44,9 @@
 
                         <!-- Move distribution -->
                         <div class="flex items-center space-x-2 mt-2">
-                            <x-ui.rps-icon move="rock" size="sm" />
-                            <x-ui.rps-icon move="paper" size="sm" />
-                            <x-ui.rps-icon move="scissors" size="sm" />
+                            <x-fas-hand-rock class="size-6" />
+                            <x-fas-hand-paper class="size-6" />
+                            <x-fas-hand-scissors class="size-6" />
                         </div>
                     </div>
 
@@ -115,9 +115,9 @@
 
                         <!-- Move distribution -->
                         <div class="flex items-center space-x-2 mt-2">
-                            <x-ui.rps-icon move="rock" size="sm" />
-                            <x-ui.rps-icon move="paper" size="sm" />
-                            <x-ui.rps-icon move="scissors" size="sm" />
+                            <x-fas-hand-rock class="size-6" />
+                            <x-fas-hand-paper class="size-6" />
+                            <x-fas-hand-scissors class="size-6" />
                         </div>
                     </div>
                 </div>
@@ -209,7 +209,7 @@
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="flex items-center">
-                                        <x-ui.rps-icon move="rock" class="mr-2" />
+                                        <x-fas-hand-rock class="mr-2" />
                                         <span class="text-sm font-medium">Rock</span>
                                     </div>
                                     <span class="text-sm font-bold">{{ $moveBreakdown['player1']['rock'] }}</span>
@@ -224,7 +224,7 @@
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="flex items-center">
-                                        <x-ui.rps-icon move="paper" class="mr-2" />
+                                        <x-fas-hand-paper class="mr-2" />
                                         <span class="text-sm font-medium">Paper</span>
                                     </div>
                                     <span class="text-sm font-bold">{{ $moveBreakdown['player1']['paper'] }}</span>
@@ -239,7 +239,7 @@
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="flex items-center">
-                                        <x-ui.rps-icon move="scissors" class="mr-2" />
+                                        <x-fas-hand-scissors class="mr-2" />
                                         <span class="text-sm font-medium">Scissors</span>
                                     </div>
                                     <span class="text-sm font-bold">{{ $moveBreakdown['player1']['scissors'] }}</span>
@@ -264,7 +264,7 @@
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="flex items-center">
-                                        <x-ui.rps-icon move="rock" class="mr-2" />
+                                        <x-fas-hand-rock class="mr-2" />
                                         <span class="text-sm font-medium">Rock</span>
                                     </div>
                                     <span class="text-sm font-bold">{{ $moveBreakdown['player2']['rock'] }}</span>
@@ -279,7 +279,7 @@
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="flex items-center">
-                                        <x-ui.rps-icon move="paper" class="mr-2" />
+                                        <x-fas-hand-paper class="mr-2" />
                                         <span class="text-sm font-medium">Paper</span>
                                     </div>
                                     <span class="text-sm font-bold">{{ $moveBreakdown['player2']['paper'] }}</span>
@@ -294,7 +294,7 @@
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="flex items-center">
-                                        <x-ui.rps-icon move="scissors" class="mr-2" />
+                                        <x-fas-hand-scissors class="mr-2" />
                                         <span class="text-sm font-medium">Scissors</span>
                                     </div>
                                     <span class="text-sm font-bold">{{ $moveBreakdown['player2']['scissors'] }}</span>
@@ -430,17 +430,35 @@
                                             {{ $round['round_number'] }}
                                         </td>
                                         <td class="px-4 py-3 whitespace-nowrap">
+                                            @php
+                                                $win = $round['result'] === 'player1_win';
+                                            @endphp
                                             <div class="flex items-center">
-                                                <x-ui.rps-icon :move="$round['player1_move']" :winner="$round['result'] === 'player1_win'" size="sm" class="mr-2" />
-                                                <span class="text-sm capitalize {{ $round['result'] === 'player1_win' ? 'font-medium text-green-700' : '' }}">
+                                                @if ($round['player1_move'] === 'rock')
+                                                    <x-fas-hand-rock @class(['size-6 mr-2', 'text-green-500' => $win, 'text-gray-500' => !$win]) />
+                                                @elseif ($round['player1_move'] === 'paper')
+                                                    <x-fas-hand-paper @class(['size-6 mr-2', 'text-green-500' => $win, 'text-gray-500' => !$win]) />
+                                                @elseif ($round['player1_move'] === 'scissors')
+                                                    <x-fas-hand-scissors @class(['size-6 mr-2', 'text-green-500' => $win, 'text-gray-500' => !$win]) />
+                                                @endif
+                                                <span @class(['text-sm capitalize', 'font-medium text-green-700' => $win])>
                                                     {{ $round['player1_move'] }}
                                                 </span>
                                             </div>
                                         </td>
                                         <td class="px-4 py-3 whitespace-nowrap">
+                                            @php
+                                                $win = $round['result'] === 'player2_win';
+                                            @endphp
                                             <div class="flex items-center">
-                                                <x-ui.rps-icon :move="$round['player2_move']" :winner="$round['result'] === 'player2_win'" size="sm" class="mr-2" />
-                                                <span class="text-sm capitalize {{ $round['result'] === 'player2_win' ? 'font-medium text-green-700' : '' }}">
+                                                @if ($round['player2_move'] === 'rock')
+                                                    <x-fas-hand-rock @class(['size-6 mr-2', 'text-green-500' => $win, 'text-gray-500' => !$win]) />
+                                                @elseif ($round['player2_move'] === 'paper')
+                                                    <x-fas-hand-paper @class(['size-6 mr-2', 'text-green-500' => $win, 'text-gray-500' => !$win]) />
+                                                @elseif ($round['player2_move'] === 'scissors')
+                                                    <x-fas-hand-scissors @class(['size-6 mr-2', 'text-green-500' => $win, 'text-gray-500' => !$win]) />
+                                                @endif
+                                                <span @class(['text-sm capitalize', 'font-medium text-green-700' => $win])>
                                                     {{ $round['player2_move'] }}
                                                 </span>
                                             </div>

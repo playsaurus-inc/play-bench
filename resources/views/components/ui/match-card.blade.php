@@ -1,10 +1,12 @@
 @props(['match', 'compact' => false])
 
-<a href="{{ route('rps.show', $match) }}"
-   class="block bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 rounded-xl"
-   x-data="{ hover: false }"
-   @mouseenter="hover = true"
-   @mouseleave="hover = false">
+<a
+    href="{{ route('rps.show', $match) }}"
+    class="block bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 rounded-xl"
+    x-data="{ hover: false }"
+    @mouseenter="hover = true"
+    @mouseleave="hover = false"
+>
     <div class="p-6">
         @if(!$compact)
             <div class="flex items-center justify-between mb-4">
