@@ -30,12 +30,10 @@ class ChessMatch extends Model
      */
     protected static function booting()
     {
-        static::updating(function (self $model) {
+        static::saving(function (self $model) {
             if (! $model->winner_id) {
                 $model->winner_id = static::determineWinner(
-                    $model->white,
-                    $model->black,
-                    $model->result
+                    $model->white, $model->black, $model->result
                 )?->id;
             }
         });
@@ -45,10 +43,10 @@ class ChessMatch extends Model
      * Determine the winner of the match based on the result.
      */
     public static function determineWinner(
-        AiModel $white,
-        AiModel $black,
+        AiModel|int $white,
+        AiModel|int $black,
         string $result
-    ): ?AiModel {
+    ): AiModel|int|null {
         if ($result === 'white') {
             return $white;
         } elseif ($result === 'black') {

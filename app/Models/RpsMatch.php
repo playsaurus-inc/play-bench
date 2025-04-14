@@ -30,7 +30,7 @@ class RpsMatch extends Model
      */
     protected static function booting()
     {
-        static::updating(function (self $model) {
+        static::saving(function (self $model) {
             if (! $model->winner_id) {
                 $model->winner_id = static::determineWinner(
                     $model->player1, $model->player1_score,
@@ -44,11 +44,11 @@ class RpsMatch extends Model
      * Determine the winner of the match based on scores.
      */
     public static function determineWinner(
-        AiModel $player1,
+        AiModel|int $player1,
         int $player1Score,
-        AiModel $player2,
+        AiModel|int $player2,
         int $player2Score
-    ): ?AiModel {
+    ): AiModel|int|null {
         if ($player1Score > $player2Score) {
             return $player1;
         } elseif ($player2Score > $player1Score) {
@@ -65,7 +65,7 @@ class RpsMatch extends Model
      * @param  string  $p2Move  Player 2's move (r, p, or s)
      * @return string Result code (1, 2, or t)
      */
-    public static function determineResult(string $p1Move, string $p2Move): string
+    public static function determineRoundResult(string $p1Move, string $p2Move): string
     {
         if ($p1Move === $p2Move) {
             return 't';

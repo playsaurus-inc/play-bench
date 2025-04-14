@@ -23,7 +23,6 @@ return new class extends Migration
 
             $table->integer('started_at')->nullable(); // When the match started
             $table->integer('ended_at')->nullable(); // When the match ended
-            $table->boolean('is_forced_completion')->default(false); // Whether the match was forced due to technical issues
             $table->timestamps(); // When the record was stored + updated
         });
     }

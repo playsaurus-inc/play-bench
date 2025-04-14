@@ -53,7 +53,6 @@ class SvgMatchFactory extends Factory
             'judge_reasoning' => $this->faker->paragraph,
             'started_at' => $this->faker->dateTimeBetween('-1 month', '-1 day'),
             'ended_at' => $this->faker->dateTimeBetween('-1 day', 'now'),
-            'is_forced_completion' => $this->faker->boolean(10),
         ];
     }
 

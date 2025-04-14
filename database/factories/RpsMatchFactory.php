@@ -49,7 +49,7 @@ class RpsMatchFactory extends Factory
 
         return Collection::times($rounds)
             ->map(fn () => [$moves->random(), $moves->random()])
-            ->map(fn ($move) => $move[0].$move[1].RpsMatch::determineResult($move[0], $move[1]))
+            ->map(fn ($move) => $move[0].$move[1].RpsMatch::determineRoundResult($move[0], $move[1]))
             ->implode(' ');
     }
 

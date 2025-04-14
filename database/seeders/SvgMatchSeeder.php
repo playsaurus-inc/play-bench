@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\AiModel;
 use App\Models\SvgMatch;
 use Illuminate\Database\Seeder;
-use Illuminate\Foundation\Testing\WithFaker;
 
 class SvgMatchSeeder extends Seeder
 {
