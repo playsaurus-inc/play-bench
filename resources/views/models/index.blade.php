@@ -1,67 +1,189 @@
 <x-layouts::app :title="'AI Models'">
-    <h1 class="text-3xl font-bold mb-6">AI Models Performance</h1>
+    <div class="pb-20">
+        <!-- Hero section -->
+        <div class="relative mb-12 bg-gradient-to-br from-amber-50 to-white rounded-3xl shadow-sm border border-amber-100 overflow-hidden">
+            <div class="absolute right-0 top-0 w-64 h-64 bg-amber-100 rounded-full -translate-y-1/2 translate-x-1/4 opacity-70"></div>
+            <div class="absolute left-0 bottom-0 w-32 h-32 bg-amber-50 rounded-full translate-y-1/2 -translate-x-1/4 opacity-80"></div>
 
-    <div class="mb-6">
-        <p class="text-gray-600">
-            This page displays all AI models and their performance in the Rock Paper Scissors benchmark.
-            Models are ranked by win rate across all matches.
-        </p>
-    </div>
+            <div class="relative px-8 py-10 md:py-12">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                    <div class="flex items-center justify-center w-12 h-12 bg-amber-500 rounded-full shadow-md">
+                        <x-phosphor-robot-fill class="h-6 w-6 text-white" />
+                    </div>
+                    AI Models Performance
+                </h1>
 
-    <x-ui.card title="Models Ranking">
-        @if($models->count() > 0)
-            <x-ui.table :headers="['Rank', 'Model', 'RPS Matches', 'RPS Wins', 'Win Rate', '']">
-                @foreach($models as $index => $model)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            {{ $index + 1 }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap font-medium">
-                            <a href="{{ route('models.show', $model) }}" class="text-gray-900 hover:text-indigo-600">
-                                {{ $model->name }}
-                            </a>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            {{ $model->total_rps_matches }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            {{ $model->rps_matches_won_count }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            @if($model->total_rps_matches > 0)
-                                <div class="flex items-center">
-                                    <span class="mr-2">{{ number_format($model->win_rate * 100, 1) }}%</span>
-                                    <div class="relative w-24 h-2 bg-gray-200 rounded-full">
-                                        <div class="absolute top-0 left-0 h-2 bg-indigo-500 rounded-full" style="width: {{ $model->win_rate * 100 }}%"></div>
-                                    </div>
-                                </div>
-                            @else
-                                N/A
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <x-ui.button :href="route('models.show', $model)" variant="secondary" class="text-xs px-3 py-1">
-                                Details
-                            </x-ui.button>
-                        </td>
-                    </tr>
-                @endforeach
-            </x-ui.table>
-        @else
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm text-yellow-700">
-                            No AI models have been registered yet.
-                        </p>
-                    </div>
+                <p class="text-lg text-gray-600 max-w-2xl mb-4">
+                    Explore the performance and strategies of different AI models in the Rock Paper Scissors benchmark.
+                    Models are ranked by their win rate across all matches.
+                </p>
+
+                <div class="mt-6 flex flex-wrap gap-3">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                        <x-phosphor-brain-fill class="w-3.5 h-3.5 mr-1" />
+                        {{ $benchmarkStats['total_models'] }} AI Models
+                    </span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                        <x-phosphor-chart-bar-fill class="w-3.5 h-3.5 mr-1" />
+                        {{ $benchmarkStats['total_matches'] }} Total Matches
+                    </span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                        <x-phosphor-percent-fill class="w-3.5 h-3.5 mr-1" />
+                        {{ number_format($benchmarkStats['avg_win_rate'], 1) }}% Avg Win Rate
+                    </span>
                 </div>
             </div>
+        </div>
+
+        <!-- Top performers -->
+        @if($topModels->count() > 0)
+            <section class="mb-16">
+                <h2 class="text-xl font-bold mb-6 text-gray-900 flex items-center">
+                    <x-phosphor-trophy-fill class="w-5 h-5 mr-2 text-amber-500" />
+                    Top Performing Models
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    @foreach($topModels as $index => $model)
+                        <x-ui.model-card :model="$model" :rank="$index + 1" />
+                    @endforeach
+                </div>
+            </section>
         @endif
-    </x-ui.card>
+
+        <!-- All models -->
+        <section>
+            <h2 class="text-xl font-bold mb-6 text-gray-900 flex items-center">
+                <x-phosphor-list-fill class="w-5 h-5 mr-2 text-amber-500" />
+                All AI Models
+            </h2>
+
+            @if($models->count() > 0)
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100">
+                    <div class="px-4 py-5 sm:px-6 border-b border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">Models Ranking</h3>
+                            <span class="text-sm text-gray-500">{{ $models->count() }} models</span>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Rank
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Model
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        RPS Matches
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        RPS Wins
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Win Rate
+                                    </th>
+                                    <th scope="col" class="relative px-6 py-3">
+                                        <span class="sr-only">Actions</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach($models as $index => $model)
+                                    <tr class="hover:bg-gray-50 transition-colors duration-150" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="w-8 h-8 rounded-full {{ $index < 3 ? 'bg-amber-100' : 'bg-gray-100' }} flex items-center justify-center {{ $index < 3 ? 'border-2 border-amber-200' : 'border border-gray-200' }}">
+                                                    <span class="{{ $index < 3 ? 'text-amber-800' : 'text-gray-600' }} text-sm font-bold">{{ $index + 1 }}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <a href="{{ route('models.show', $model) }}" class="group">
+                                                <div class="flex items-center">
+                                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-amber-50 transition-colors">
+                                                        <x-phosphor-robot-fill class="h-5 w-5 text-gray-500 group-hover:text-amber-600 transition-colors" />
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900 group-hover:text-amber-600 transition-colors">{{ $model->name }}</div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">{{ $model->total_rps_matches }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">{{ $model->rps_matches_won_count }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            @if($model->total_rps_matches > 0)
+                                                <div class="flex items-center">
+                                                    <span class="mr-2 text-sm font-medium {{ $model->win_rate > 0.5 ? 'text-green-600' : ($model->win_rate == 0.5 ? 'text-amber-600' : 'text-red-600') }}">
+                                                        {{ number_format($model->win_rate * 100, 1) }}%
+                                                    </span>
+                                                    <div class="relative w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                                        <div class="absolute top-0 left-0 h-2 rounded-full {{ $model->win_rate > 0.5 ? 'bg-green-500' : ($model->win_rate == 0.5 ? 'bg-amber-500' : 'bg-red-500') }}" style="width: {{ $model->win_rate * 100 }}%"></div>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <span class="text-sm text-gray-500">N/A</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <x-ui.button :href="route('models.show', $model)" variant="secondary" size="sm" class="transition-all duration-200" x-bind:class="{'opacity-0': !hover, 'opacity-100': hover}">
+                                                View Details
+                                            </x-ui.button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            @else
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 text-center">
+                    <div class="flex justify-center mb-4">
+                        <x-phosphor-robot-fill class="w-12 h-12 text-amber-500" />
+                    </div>
+                    <h3 class="text-lg font-medium text-amber-900 mb-2">No AI Models Found</h3>
+                    <p class="text-amber-700">
+                        There are no AI models registered in the system yet.
+                    </p>
+                </div>
+            @endif
+        </section>
+
+        <!-- Understanding AI models -->
+        <section class="mt-16 bg-gray-50 rounded-2xl p-6 border border-gray-100">
+            <h2 class="text-xl font-bold mb-4 text-gray-900 flex items-center">
+                <x-phosphor-lightbulb-fill class="w-5 h-5 mr-2 text-amber-500" />
+                Understanding AI Model Performance
+            </h2>
+
+            <div class="prose prose-amber max-w-none">
+                <p>
+                    The AI models listed above are evaluated based on their performance in the Rock Paper Scissors benchmark.
+                    Each model employs different strategies and learning methods to try and outperform their opponents.
+                </p>
+
+                <h3>What Makes a Model Successful?</h3>
+                <p>
+                    A successful model in this benchmark demonstrates:
+                </p>
+                <ul>
+                    <li><strong>Pattern Recognition</strong> - The ability to detect and exploit patterns in opponent moves</li>
+                    <li><strong>Strategic Adaptation</strong> - Changing strategy when the opponent's patterns shift</li>
+                    <li><strong>Unpredictability</strong> - Making moves that are difficult for opponents to predict</li>
+                </ul>
+
+                <p>
+                    Models with a win rate significantly above 50% are showing evidence of successful strategic thinking,
+                    while those closer to 50% may be using more random strategies or facing equally skilled opponents.
+                </p>
+            </div>
+        </section>
+    </div>
 </x-layouts::app>

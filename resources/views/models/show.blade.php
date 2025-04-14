@@ -1,227 +1,480 @@
 <x-layouts::app :title="$aiModel->name">
-    <div class="mb-4">
-        <x-ui.button :href="route('models.index')" variant="secondary" class="text-sm">
-            &larr; Back to All Models
-        </x-ui.button>
-    </div>
+    <div class="pb-20">
+        <!-- Header section -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <x-ui.button :href="route('models.index')" variant="secondary" class="text-sm">
+                    <x-phosphor-arrow-left class="w-4 h-4 mr-4" />
+                    Back to All Models
+                </x-ui.button>
 
-    <h1 class="text-3xl font-bold mb-6">{{ $aiModel->name }}</h1>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <x-ui.card title="Rock Paper Scissors Performance">
-            <div class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <div class="text-sm text-gray-500">Total Matches</div>
-                        <div class="text-2xl font-bold">{{ $totalRpsMatches }}</div>
-                    </div>
-                    <div>
-                        <div class="text-sm text-gray-500">Matches Won</div>
-                        <div class="text-2xl font-bold">{{ $totalRpsWins }}</div>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="text-sm text-gray-500 mb-1">Win Rate</div>
-                    <div class="flex items-center">
-                        <span class="text-2xl font-bold mr-3">{{ number_format($winRate * 100, 1) }}%</span>
-                        <div class="relative flex-grow h-3 bg-gray-200 rounded-full overflow-hidden">
-                            <div class="absolute top-0 left-0 h-full bg-indigo-600" style="width: {{ $winRate * 100 }}%"></div>
-                        </div>
-                    </div>
+                <div class="flex items-center">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $rankPosition <= 3 ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-800' }}">
+                        <x-phosphor-trophy-fill class="w-3.5 h-3.5 mr-1 {{ $rankPosition <= 3 ? 'text-amber-600' : 'text-gray-500' }}" />
+                        Rank #{{ $rankPosition }}
+                    </span>
                 </div>
             </div>
-        </x-ui.card>
+        </div>
 
-        <x-ui.card title="Move Tendencies" class="col-span-2">
-            @php
-                $moveBreakdown = [
-                    'rock' => 0,
-                    'paper' => 0,
-                    'scissors' => 0,
-                ];
-                $totalMoves = 0;
+        <!-- Model overview -->
+        <div class="relative bg-white rounded-3xl shadow-md border border-gray-100 mb-10 overflow-hidden">
+            <!-- Background decorations -->
+            <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-amber-50 to-white opacity-50"></div>
 
-                foreach ($rpsMatches as $match) {
-                    $rounds = $match->getRounds();
-                    foreach ($rounds as $round) {
-                        if ($match->player1_id === $aiModel->id) {
-                            $moveBreakdown[$round['player1_move']]++;
-                        } else {
-                            $moveBreakdown[$round['player2_move']]++;
-                        }
-                        $totalMoves++;
-                    }
-                }
-            @endphp
-
-            @if($totalMoves > 0)
-                <div class="grid grid-cols-3 gap-6">
-                    <div class="text-center">
-                        <div class="text-3xl font-bold mb-1">{{ $moveBreakdown['rock'] }}</div>
-                        <div class="text-sm text-gray-500 mb-2">Rock</div>
-                        <div class="relative w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                            <div class="absolute top-0 left-0 h-full bg-red-500" style="width: {{ ($moveBreakdown['rock'] / $totalMoves) * 100 }}%"></div>
-                        </div>
-                        <div class="text-xs text-gray-500 mt-1">
-                            {{ number_format(($moveBreakdown['rock'] / $totalMoves) * 100, 1) }}%
+            <!-- Content -->
+            <div class="relative px-6 py-8 md:px-8">
+                <div class="flex flex-col md:flex-row items-start gap-8">
+                    <!-- Model avatar and info -->
+                    <div class="md:w-1/3">
+                        <div class="flex flex-col items-center md:items-start">
+                            <div class="w-24 h-24 md:w-32 md:h-32 rounded-xl bg-amber-100 border-4 border-white shadow-lg flex items-center justify-center mb-4">
+                                <x-phosphor-robot-fill class="w-12 h-12 md:w-16 md:h-16 text-amber-500" />
+                            </div>
+                            <h1 class="text-2xl md:text-4xl font-bold text-gray-900 text-center md:text-left">{{ $aiModel->name }}</h1>
+                            <p class="text-lg text-gray-600 mt-2 text-center md:text-left">{{ $aiModel->description ?? 'AI Model' }}</p>
                         </div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-3xl font-bold mb-1">{{ $moveBreakdown['paper'] }}</div>
-                        <div class="text-sm text-gray-500 mb-2">Paper</div>
-                        <div class="relative w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                            <div class="absolute top-0 left-0 h-full bg-blue-500" style="width: {{ ($moveBreakdown['paper'] / $totalMoves) * 100 }}%"></div>
-                        </div>
-                        <div class="text-xs text-gray-500 mt-1">
-                            {{ number_format(($moveBreakdown['paper'] / $totalMoves) * 100, 1) }}%
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-3xl font-bold mb-1">{{ $moveBreakdown['scissors'] }}</div>
-                        <div class="text-sm text-gray-500 mb-2">Scissors</div>
-                        <div class="relative w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                            <div class="absolute top-0 left-0 h-full bg-green-500" style="width: {{ ($moveBreakdown['scissors'] / $totalMoves) * 100 }}%"></div>
-                        </div>
-                        <div class="text-xs text-gray-500 mt-1">
-                            {{ number_format(($moveBreakdown['scissors'] / $totalMoves) * 100, 1) }}%
-                        </div>
-                    </div>
-                </div>
 
-                <div class="mt-4 text-sm text-gray-600">
-                    <p>
-                        @php
-                            $highestMove = array_search(max($moveBreakdown), $moveBreakdown);
-                            $perfectDistribution = abs(($moveBreakdown['rock'] - $totalMoves/3) / $totalMoves) < 0.1 &&
-                                                  abs(($moveBreakdown['paper'] - $totalMoves/3) / $totalMoves) < 0.1 &&
-                                                  abs(($moveBreakdown['scissors'] - $totalMoves/3) / $totalMoves) < 0.1;
-                        @endphp
-
-                        @if($perfectDistribution)
-                            This model uses a balanced strategy, playing rock, paper, and scissors with nearly equal frequency.
-                        @else
-                            This model favors {{ $highestMove }} more frequently than other moves, which might make its strategy more predictable.
-                        @endif
-                    </p>
-                </div>
-            @else
-                <div class="text-sm text-gray-600">
-                    No RPS match data available for this model.
-                </div>
-            @endif
-        </x-ui.card>
-    </div>
-
-    @if($opponents->count() > 0)
-        <x-ui.card title="Performance Against Other Models" class="mb-6">
-            <x-ui.table :headers="['Model', 'Matches', 'Win Rate', '']">
-                @foreach($opponents->sortByDesc('win_rate_against') as $opponent)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 whitespace-nowrap font-medium">
-                            <a href="{{ route('models.show', $opponent) }}" class="text-gray-900 hover:text-indigo-600">
-                                {{ $opponent->name }}
-                            </a>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            @php
-                                $matchesCount = \App\Models\RpsMatch::where(function ($query) use ($aiModel, $opponent) {
-                                    $query->where('player1_id', $aiModel->id)->where('player2_id', $opponent->id)
-                                        ->orWhere('player1_id', $opponent->id)->where('player2_id', $aiModel->id);
-                                })->count();
-                            @endphp
-                            {{ $matchesCount }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <span class="mr-2">{{ number_format($opponent->win_rate_against * 100, 1) }}%</span>
-                                <div class="relative w-24 h-2 bg-gray-200 rounded-full">
-                                    <div class="absolute top-0 left-0 h-2 {{ $opponent->win_rate_against > 0.5 ? 'bg-green-500' : ($opponent->win_rate_against === 0.5 ? 'bg-yellow-500' : 'bg-red-500') }} rounded-full" style="width: {{ $opponent->win_rate_against * 100 }}%"></div>
+                    <!-- Performance stats -->
+                    <div class="md:w-2/3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Win Rate -->
+                        <div class="bg-gray-50 rounded-lg p-5 relative group transition-all duration-300 hover:bg-white hover:shadow-md hover:-translate-y-1">
+                            <div class="absolute top-0 right-0 w-16 h-16 border-l border-b border-gray-100 rounded-bl-3xl opacity-40"></div>
+                            <div class="relative">
+                                <h3 class="text-sm font-medium text-gray-500 mb-2 flex items-center">
+                                    <x-phosphor-chart-line-up-fill class="w-4 h-4 mr-1.5 text-amber-500" />
+                                    Win Rate
+                                </h3>
+                                <div class="flex items-end">
+                                    <span class="text-3xl font-bold {{ $winRate > 0.5 ? 'text-green-600' : ($winRate == 0.5 ? 'text-amber-600' : 'text-red-600') }}">
+                                        {{ number_format($winRate * 100, 1) }}%
+                                    </span>
+                                </div>
+                                <div class="mt-3 w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-2 rounded-full {{ $winRate > 0.5 ? 'bg-green-500' : ($winRate == 0.5 ? 'bg-amber-500' : 'bg-red-500') }}"
+                                        style="width: {{ $winRate * 100 }}%"
+                                        x-data="{width: 0}"
+                                        x-init="setTimeout(() => width = {{ $winRate * 100 }}, 100)"
+                                        :style="`width: ${width}%`"
+                                        class="transition-all duration-1000 ease-out"></div>
                                 </div>
                             </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            @php
-                                $url = route('rps.index') . '?player1=' . $aiModel->id . '&player2=' . $opponent->id;
-                            @endphp
-                            <x-ui.button :href="$url" variant="secondary" class="text-xs px-3 py-1">
-                                View Matches
-                            </x-ui.button>
-                        </td>
-                    </tr>
-                @endforeach
-            </x-ui.table>
-        </x-ui.card>
-    @endif
+                        </div>
 
-    <x-ui.card title="Recent Rock Paper Scissors Matches">
-        @if($rpsMatches->count() > 0)
-            <x-ui.table :headers="['ID', 'Opponent', 'Score', 'Result', 'Rounds', 'Date']">
-                @foreach($rpsMatches as $match)
-                    @php
-                        $isPlayer1 = $match->player1_id === $aiModel->id;
-                        $opponent = $isPlayer1 ? $match->player2 : $match->player1;
-                        $aiModelScore = $isPlayer1 ? $match->player1_score : $match->player2_score;
-                        $opponentScore = $isPlayer1 ? $match->player2_score : $match->player1_score;
-                        $result = $match->isTie() ? 'tie' : ($match->winner_id === $aiModel->id ? 'win' : 'loss');
-                    @endphp
-                    <tr class="hover:bg-gray-50 {{ $result === 'win' ? 'bg-green-50' : ($result === 'loss' ? 'bg-red-50' : '') }}">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <a href="{{ route('rps.show', $match) }}" class="text-indigo-600 hover:text-indigo-900">
-                                {{ $match->id }}
-                            </a>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <a href="{{ route('models.show', $opponent) }}" class="text-gray-900 hover:text-indigo-600">
-                                {{ $opponent->name }}
-                            </a>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            {{ $aiModelScore }} - {{ $opponentScore }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            @if($result === 'win')
-                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                    Win
-                                </span>
-                            @elseif($result === 'loss')
-                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                    Loss
-                                </span>
-                            @else
-                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                    Tie
-                                </span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            {{ $match->rounds_played }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $match->created_at->format('Y-m-d H:i') }}
-                        </td>
-                    </tr>
-                @endforeach
-            </x-ui.table>
+                        <!-- Total Matches -->
+                        <div class="bg-gray-50 rounded-lg p-5 relative group transition-all duration-300 hover:bg-white hover:shadow-md hover:-translate-y-1">
+                            <div class="absolute top-0 right-0 w-16 h-16 border-l border-b border-gray-100 rounded-bl-3xl opacity-40"></div>
+                            <div class="relative">
+                                <h3 class="text-sm font-medium text-gray-500 mb-2 flex items-center">
+                                    <x-phosphor-hash-fill class="w-4 h-4 mr-1.5 text-amber-500" />
+                                    Total Matches
+                                </h3>
+                                <div class="flex items-baseline">
+                                    <span class="text-3xl font-bold text-gray-900">{{ $totalRpsMatches }}</span>
+                                    <span class="ml-2 text-sm text-gray-500">matches</span>
+                                </div>
+                                <div class="mt-2 flex items-center text-xs text-gray-500">
+                                    <span>{{ $totalRpsWins }} wins ({{ $totalRpsMatches > 0 ? number_format(($totalRpsWins / $totalRpsMatches) * 100, 1) : '0' }}%)</span>
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="mt-4">
-                {{ $rpsMatches->links() }}
-            </div>
-        @else
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm text-yellow-700">
-                            No RPS matches found for this model.
-                        </p>
+                        <!-- Predictability -->
+                        <div class="bg-gray-50 rounded-lg p-5 relative group transition-all duration-300 hover:bg-white hover:shadow-md hover:-translate-y-1">
+                            <div class="absolute top-0 right-0 w-16 h-16 border-l border-b border-gray-100 rounded-bl-3xl opacity-40"></div>
+                            <div class="relative">
+                                <h3 class="text-sm font-medium text-gray-500 mb-2 flex items-center">
+                                    <x-phosphor-lightbulb-fill class="w-4 h-4 mr-1.5 text-amber-500" />
+                                    Predictability
+                                </h3>
+                                <div class="flex items-baseline">
+                                    <span class="text-3xl font-bold {{ $predictabilityScore < 30 ? 'text-green-600' : ($predictabilityScore < 70 ? 'text-amber-600' : 'text-red-600') }}">
+                                        {{ $predictabilityScore }}%
+                                    </span>
+                                </div>
+                                <div class="mt-2 text-xs text-gray-500">
+                                    {{ $predictabilityScore < 30 ? 'Very unpredictable' : ($predictabilityScore < 70 ? 'Somewhat predictable' : 'Highly predictable') }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        @endif
-    </x-ui.card>
+        </div>
+
+        <!-- Main content -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Left sidebar: Strategy and move patterns -->
+            <div class="space-y-8">
+                <!-- Move tendencies chart -->
+                <x-ui.card title="Move Tendencies" subtitle="Frequency analysis of move choices">
+                    <div class="space-y-6">
+                        @if($totalMoves > 0)
+                            <div x-data="{
+                                moveData: [
+                                    {{ $moveBreakdown['rock'] }},
+                                    {{ $moveBreakdown['paper'] }},
+                                    {{ $moveBreakdown['scissors'] }}
+                                ],
+                                get total() { return this.moveData.reduce((a, b) => a + b, 0) },
+                                get percentages() {
+                                    return this.moveData.map(value => (value / this.total) * 100)
+                                },
+                                animate: false
+                                init() {
+                                    this.setTimeout(() => animate = true, 100);
+                                },
+                            }">
+                                <div class="grid grid-cols-3 gap-4">
+                                    <!-- Rock -->
+                                    <div class="text-center" x-cloak>
+                                        <div class="relative aspect-square w-full max-w-[100px] mx-auto mb-3">
+                                            <!-- Background circle -->
+                                            <div class="absolute inset-0 rounded-full bg-gray-100"></div>
+                                            <!-- Progress circle -->
+                                            <div class="absolute inset-0 rounded-full bg-red-100"
+                                                 :style="{ clipPath: `circle(${animate ? percentages[0]/2 : 0}% at 50% 50%)` }"
+                                                 style="transition: clip-path 1s ease-out;"></div>
+                                            <!-- Icon -->
+                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                <x-ui.rps-icon move="rock" />
+                                            </div>
+                                        </div>
+                                        <div class="text-xl font-bold">{{ $moveBreakdown['rock'] }}</div>
+                                        <div class="text-sm text-gray-500">Rock</div>
+                                        <div class="text-xs text-gray-400 mt-0.5">
+                                            {{ $totalMoves > 0 ? number_format(($moveBreakdown['rock'] / $totalMoves) * 100, 1) : '0' }}%
+                                        </div>
+                                    </div>
+
+                                    <!-- Paper -->
+                                    <div class="text-center" x-cloak>
+                                        <div class="relative aspect-square w-full max-w-[100px] mx-auto mb-3">
+                                            <!-- Background circle -->
+                                            <div class="absolute inset-0 rounded-full bg-gray-100"></div>
+                                            <!-- Progress circle -->
+                                            <div class="absolute inset-0 rounded-full bg-blue-100"
+                                                 :style="{ clipPath: `circle(${animate ? percentages[1]/2 : 0}% at 50% 50%)` }"
+                                                 style="transition: clip-path 1s ease-out;"></div>
+                                            <!-- Icon -->
+                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                <x-ui.rps-icon move="paper" />
+                                            </div>
+                                        </div>
+                                        <div class="text-xl font-bold">{{ $moveBreakdown['paper'] }}</div>
+                                        <div class="text-sm text-gray-500">Paper</div>
+                                        <div class="text-xs text-gray-400 mt-0.5">
+                                            {{ $totalMoves > 0 ? number_format(($moveBreakdown['paper'] / $totalMoves) * 100, 1) : '0' }}%
+                                        </div>
+                                    </div>
+
+                                    <!-- Scissors -->
+                                    <div class="text-center" x-cloak>
+                                        <div class="relative aspect-square w-full max-w-[100px] mx-auto mb-3">
+                                            <!-- Background circle -->
+                                            <div class="absolute inset-0 rounded-full bg-gray-100"></div>
+                                            <!-- Progress circle -->
+                                            <div class="absolute inset-0 rounded-full bg-green-100"
+                                                 :style="{ clipPath: `circle(${animate ? percentages[2]/2 : 0}% at 50% 50%)` }"
+                                                 style="transition: clip-path 1s ease-out;"></div>
+                                            <!-- Icon -->
+                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                <x-ui.rps-icon move="scissors" />
+                                            </div>
+                                        </div>
+                                        <div class="text-xl font-bold">{{ $moveBreakdown['scissors'] }}</div>
+                                        <div class="text-sm text-gray-500">Scissors</div>
+                                        <div class="text-xs text-gray-400 mt-0.5">
+                                            {{ $totalMoves > 0 ? number_format(($moveBreakdown['scissors'] / $totalMoves) * 100, 1) : '0' }}%
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6">
+                                <h3 class="text-sm font-medium text-gray-700 mb-2">Strategy Analysis</h3>
+                                <div class="prose prose-sm prose-amber max-w-none text-gray-600">
+                                    @php
+                                        $highestMove = array_search(max($moveBreakdown), $moveBreakdown);
+                                        $perfectDistribution = abs(($moveBreakdown['rock'] - $totalMoves/3) / $totalMoves) < 0.1 &&
+                                                            abs(($moveBreakdown['paper'] - $totalMoves/3) / $totalMoves) < 0.1 &&
+                                                            abs(($moveBreakdown['scissors'] - $totalMoves/3) / $totalMoves) < 0.1;
+                                    @endphp
+
+                                    @if($perfectDistribution)
+                                        <p>
+                                            {{ $aiModel->name }} uses a highly balanced strategy, playing rock, paper, and scissors with nearly equal frequency.
+                                            This makes its moves very difficult to predict, as there is no clear pattern to exploit.
+                                        </p>
+                                    @else
+                                        <p>
+                                            {{ $aiModel->name }} shows a preference for <strong>{{ $highestMove }}</strong>, using it more frequently than other moves.
+                                            This tendency could potentially be exploited by opponents who can detect and adapt to this pattern.
+                                        </p>
+                                    @endif
+
+                                    @if($totalConsecutiveMoves > 0)
+                                        @php
+                                            // Find most common transition
+                                            $maxTransition = array_search(max($consecutiveMoves), $consecutiveMoves);
+                                            $parts = explode('_to_', $maxTransition);
+                                            $transitionPercentage = ($consecutiveMoves[$maxTransition] / $totalConsecutiveMoves) * 100;
+                                        @endphp
+
+                                        @if($transitionPercentage > 40)
+                                            <p>
+                                                There's a notable pattern in its move transitions: after playing <strong>{{ $parts[0] }}</strong>,
+                                                it follows with <strong>{{ $parts[1] }}</strong> {{ number_format($transitionPercentage, 1) }}% of the time.
+                                            </p>
+                                        @endif
+                                    @endif
+                                </div>
+                            </div>
+                        @else
+                            <div class="text-center py-6">
+                                <x-phosphor-chart-pie-fill class="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                                <p class="text-gray-500">No move data available for this model yet.</p>
+                            </div>
+                        @endif
+                    </div>
+                </x-ui.card>
+
+                <!-- Most impressive victory -->
+                @if($mostImpressiveVictory)
+                    <x-ui.card title="Most Impressive Victory" subtitle="Highest point difference win">
+                        <a href="{{ route('rps.show', $mostImpressiveVictory) }}" class="block bg-gradient-to-r from-amber-50 to-white p-4 rounded-lg border border-amber-100 transition-all hover:shadow-md">
+                            <div class="flex justify-between items-center mb-3">
+                                <div class="flex items-center">
+                                    <x-phosphor-trophy-fill class="w-5 h-5 text-amber-500 mr-2" />
+                                    <span class="text-sm font-medium text-amber-700">Match #{{ $mostImpressiveVictory->id }}</span>
+                                </div>
+                                <span class="text-xs text-gray-500">{{ $mostImpressiveVictory->created_at->format('M d, Y') }}</span>
+                            </div>
+
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-sm font-medium">
+                                    @if($mostImpressiveVictory->player1_id === $aiModel->id)
+                                        <div class="text-lg font-bold text-gray-900">{{ $aiModel->name }}</div>
+                                        <div class="text-xs text-gray-500">vs {{ $mostImpressiveVictory->player2->name }}</div>
+                                    @else
+                                        <div class="text-lg font-bold text-gray-900">{{ $aiModel->name }}</div>
+                                        <div class="text-xs text-gray-500">vs {{ $mostImpressiveVictory->player1->name }}</div>
+                                    @endif
+                                </div>
+
+                                <div class="text-right">
+                                    @if($mostImpressiveVictory->player1_id === $aiModel->id)
+                                        <div class="text-xl font-bold text-green-600">{{ $mostImpressiveVictory->player1_score }} - {{ $mostImpressiveVictory->player2_score }}</div>
+                                    @else
+                                        <div class="text-xl font-bold text-green-600">{{ $mostImpressiveVictory->player2_score }} - {{ $mostImpressiveVictory->player1_score }}</div>
+                                    @endif
+                                    <div class="text-xs text-gray-500">{{ $mostImpressiveVictory->rounds_played }} rounds</div>
+                                </div>
+                            </div>
+
+                            <div class="text-xs text-amber-600 flex items-center justify-end group">
+                                View match details
+                                <x-phosphor-arrow-right class="w-3.5 h-3.5 ml-1 transition-transform group-hover:translate-x-0.5" />
+                            </div>
+                        </a>
+                    </x-ui.card>
+                @endif
+            </div>
+
+            <!-- Main content: Performance against other models and match history -->
+            <div class="md:col-span-2 space-y-8">
+                <!-- Performance against other models -->
+                @if($opponents->count() > 0)
+                    <x-ui.card title="Performance Against Other Models" subtitle="Head-to-head statistics">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                            Model
+                                        </th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                            Matches
+                                        </th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                            Win Rate
+                                        </th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                            Status
+                                        </th>
+                                        <th scope="col" class="relative px-4 py-3">
+                                            <span class="sr-only">Actions</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200" x-data="{ hoverRow: null }">
+                                    @foreach($opponents->sortByDesc('win_rate_against') as $opponent)
+                                        <tr @mouseenter="hoverRow = {{ $opponent->id }}"
+                                            @mouseleave="hoverRow = null"
+                                            class="hover:bg-gray-50 transition-colors">
+                                            <td class="px-4 py-3 whitespace-nowrap">
+                                                <a href="{{ route('models.show', $opponent) }}" class="group">
+                                                    <div class="flex items-center">
+                                                        <div class="flex-shrink-0 w-8 h-8 rounded-md bg-gray-100 flex items-center justify-center overflow-hidden group-hover:bg-amber-50 transition-colors">
+                                                            <x-phosphor-robot-fill class="w-4 h-4 text-gray-500 group-hover:text-amber-600" />
+                                                        </div>
+                                                        <div class="ml-3">
+                                                            <div class="text-sm font-medium text-gray-900 group-hover:text-amber-600 transition-colors">{{ $opponent->name }}</div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap">
+                                                <div class="text-sm text-gray-900">{{ $opponent->total_matches_against }}</div>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap">
+                                                <div class="text-sm font-medium {{ $opponent->win_rate_against > 0.5 ? 'text-green-600' : ($opponent->win_rate_against == 0.5 ? 'text-amber-600' : 'text-red-600') }}">
+                                                    {{ number_format($opponent->win_rate_against * 100, 1) }}%
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap">
+                                                @if($opponent->win_rate_against > 0.7)
+                                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                        Dominates
+                                                    </span>
+                                                @elseif($opponent->win_rate_against > 0.5)
+                                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                        Counters
+                                                    </span>
+                                                @elseif($opponent->win_rate_against == 0.5)
+                                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                        Evenly matched
+                                                    </span>
+                                                @elseif($opponent->win_rate_against < 0.3)
+                                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                        Weak against
+                                                    </span>
+                                                @else
+                                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800">
+                                                        Struggles
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                                                @php
+                                                    $url = route('rps.index') . '?player1=' . $aiModel->id . '&player2=' . $opponent->id;
+                                                @endphp
+                                                <a href="{{ $url }}" class="text-amber-600 hover:text-amber-900 opacity-0 transition-opacity duration-150" :class="{'opacity-100': hoverRow === {{ $opponent->id }}}">
+                                                    View Matches
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </x-ui.card>
+                @endif
+
+                <!-- Recent matches -->
+                <x-ui.card title="Recent Rock Paper Scissors Matches" subtitle="Latest performance data">
+                    @if($rpsMatches->count() > 0)
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            @foreach($rpsMatches as $match)
+                                @php
+                                    $isPlayer1 = $match->player1_id === $aiModel->id;
+                                    $opponent = $isPlayer1 ? $match->player2 : $match->player1;
+                                    $aiModelScore = $isPlayer1 ? $match->player1_score : $match->player2_score;
+                                    $opponentScore = $isPlayer1 ? $match->player2_score : $match->player1_score;
+                                    $result = $match->isTie() ? 'tie' : ($match->winner_id === $aiModel->id ? 'win' : 'loss');
+                                    $resultColor = $result === 'win' ? 'green' : ($result === 'loss' ? 'red' : 'gray');
+                                @endphp
+                                <a href="{{ route('rps.show', $match) }}" class="block bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all">
+                                    <div class="p-4">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="flex items-center">
+                                                <span class="font-medium text-gray-900">#{{ $match->id }}</span>
+                                                <span class="mx-2 text-gray-400">•</span>
+                                                <span class="text-sm text-gray-500">{{ $match->created_at->format('M d') }}</span>
+                                            </div>
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $resultColor }}-100 text-{{ $resultColor }}-800">
+                                                {{ ucfirst($result) }}
+                                            </span>
+                                        </div>
+
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center">
+                                                <div class="bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center mr-2">
+                                                    <x-phosphor-robot-fill class="w-4 h-4 text-gray-500" />
+                                                </div>
+                                                <div class="truncate max-w-[120px]">
+                                                    <div class="text-sm font-medium text-gray-900">{{ $opponent->name }}</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex items-center">
+                                                <div class="text-lg font-bold {{ $result === 'win' ? 'text-green-600' : ($result === 'loss' ? 'text-red-600' : 'text-gray-600') }}">
+                                                    {{ $aiModelScore }} - {{ $opponentScore }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-2 text-xs text-gray-500 flex justify-between items-center">
+                                            <span>{{ $match->rounds_played }} rounds</span>
+                                            <span class="text-amber-600 flex items-center">
+                                                Details
+                                                <x-phosphor-arrow-right class="w-3 h-3 ml-1" />
+                                            </span>
+                                        </div>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+
+                        <div class="flex items-center justify-center">
+                            {{ $rpsMatches->links() }}
+                        </div>
+                    @else
+                        <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 text-center">
+                            <div class="flex justify-center mb-4">
+                                <x-phosphor-game-controller-fill class="w-12 h-12 text-amber-400" />
+                            </div>
+                            <h3 class="text-lg font-medium text-amber-900 mb-2">No matches found</h3>
+                            <p class="text-amber-700 mb-4">
+                                This AI model hasn't played any Rock Paper Scissors matches yet.
+                            </p>
+                        </div>
+                    @endif
+                </x-ui.card>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Alpine.js animation features -->
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('animatedCounter', (target) => ({
+                current: 0,
+                target: target,
+                init() {
+                    this.animate();
+                },
+                animate() {
+                    const duration = 1500;
+                    const startTime = Date.now();
+
+                    const updateCounter = () => {
+                        const currentTime = Date.now();
+                        const progress = Math.min((currentTime - startTime) / duration, 1);
+
+                        this.current = Math.floor(progress * this.target);
+
+                        if (progress < 1) {
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            this.current = this.target;
+                        }
+                    };
+
+                    updateCounter();
+                }
+            }));
+        });
+    </script>
 </x-layouts::app>

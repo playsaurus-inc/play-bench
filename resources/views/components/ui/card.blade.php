@@ -1,14 +1,21 @@
-@props([
-    'title' => null,
-])
+@props(['title' => null, 'subtitle' => null])
 
-<div {{ $attributes->merge(['class' => 'bg-white overflow-hidden shadow-sm sm:rounded-lg']) }}>
-    @if ($title)
-        <div class="border-b border-gray-200 bg-white px-6 py-4">
-            <h3 class="text-lg font-medium text-gray-900">{{ $title }}</h3>
+<div {{ $attributes->merge(['class' => 'bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden']) }}>
+    @if($title)
+        <div class="px-6 py-5 border-b border-gray-100">
+            <div class="flex flex-col">
+                <h3 class="text-lg font-semibold text-gray-900">
+                    {{ $title }}
+                </h3>
+                @if($subtitle)
+                    <p class="mt-1 text-sm text-gray-500">
+                        {{ $subtitle }}
+                    </p>
+                @endif
+            </div>
         </div>
     @endif
-    <div class="bg-white p-6">
+    <div class="px-6 py-5">
         {{ $slot }}
     </div>
 </div>
