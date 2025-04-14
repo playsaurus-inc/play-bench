@@ -20,6 +20,8 @@ return new class extends Migration
             // `reasoning_effort` set to `low` and the other to `high`.
             $table->string('name')->unique();
 
+            $table->string('slug')->unique(); // Only used for URLs
+
             $table->timestamps();
         });
     }

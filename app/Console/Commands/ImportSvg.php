@@ -60,34 +60,15 @@ class ImportSvg extends AbstractImport
     {
         $this->info('Importing SVG matches...');
 
-        // Fetch all AI models to map the names
-        $aiModels = AiModel::all()->keyBy('name');
-
-        // Check if we have the required AI models
-        if ($aiModels->isEmpty()) {
-            $this->error('No AI models found. Please run the AiModelSeeder first.');
-
-            return 0;
-        }
-
         // Create storage directory if it doesn't exist
         $this->disk()->makeDirectory('svg-matches');
 
         $sourceMatches = $this->getSourceQuery('svg_results')->get();
         $importCount = 0;
 
-        $this->withProgressBar($sourceMatches, function ($sourceMatch) use ($aiModels, &$importCount) {
-            // Find the AI models
-            $player1 = $aiModels->get($sourceMatch->player1);
-            $player2 = $aiModels->get($sourceMatch->player2);
-
-            // Skip if the models don't exist
-            if (! $player1 || ! $player2) {
-                $this->newLine();
-                $this->warn("Skipping match #{$sourceMatch->id}: models not found");
-
-                return;
-            }
+        $this->withProgressBar($sourceMatches, function ($sourceMatch) use (&$importCount) {
+            $player1 = $this->aiModel($sourceMatch->player1);
+            $player2 = $this->aiModel($sourceMatch->player2);
 
             // Determine the winner
             $winner = null;

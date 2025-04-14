@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Concerns\ImportsAiModels;
 use App\Models\AiModel;
 use App\Models\ChessMatch;
 use Illuminate\Support\Carbon;
@@ -45,40 +46,18 @@ class ImportChess extends AbstractImport
     {
         $this->info('Importing chess matches...');
 
-        // Fetch all AI models to map the names
-        $aiModels = AiModel::all()->keyBy('name');
-
-        // Check if we have the required AI models
-        if ($aiModels->isEmpty()) {
-            $this->error('No AI models found. Please run the AiModelSeeder first.');
-
-            return 0;
-        }
-
         $sourceMatches = $this->getSourceQuery('results')->get();
         $importCount = 0;
 
-        $this->withProgressBar($sourceMatches, function ($sourceMatch) use ($aiModels, &$importCount) {
+        $this->withProgressBar($sourceMatches, function ($sourceMatch) use (&$importCount) {
             // Find the AI models
-            $white = $aiModels->get($sourceMatch->white);
-            $black = $aiModels->get($sourceMatch->black);
+            $white = $this->aiModel($sourceMatch->white);
+            $black = $this->aiModel($sourceMatch->black);
             $winner = null;
-
-            // Skip if the models don't exist
-            if (! $white || ! $black) {
-                $this->newLine();
-                $this->warn("Skipping match #{$sourceMatch->id}: models not found");
-
-                return;
-            }
 
             // Set the winner if not a draw
             if ($sourceMatch->winnerModel !== 'draw') {
-                $winner = $aiModels->get($sourceMatch->winnerModel);
-                if (! $winner) {
-                    $this->newLine();
-                    $this->warn("Winner model not found for match #{$sourceMatch->id}, treating as draw");
-                }
+                $winner = $this->aiModel($sourceMatch->winnerModel);
             }
 
             // Determine the result

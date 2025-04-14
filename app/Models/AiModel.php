@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class AiModel extends Model
 {
@@ -12,13 +13,26 @@ class AiModel extends Model
     use HasFactory;
 
     /**
-     * The attributes that are mass assignable.
+     * Perform any actions required before the model boots.
      *
-     * @var array<int, string>
+     * @return void
      */
-    protected $fillable = [
-        'name',
-    ];
+    protected static function booting()
+    {
+        static::saving(function (self $model) {
+            if (! $model->slug) {
+                $model->slug = Str::slug($model->name);
+            }
+        });
+    }
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     /**
      * Get all RPS matches where this AI model is player 1

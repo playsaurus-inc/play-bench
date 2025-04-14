@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use App\Models\AiModel;
 
 abstract class AbstractImport extends Command
 {
@@ -63,5 +64,13 @@ abstract class AbstractImport extends Command
     protected function getSourceQuery(string $table): \Illuminate\Database\Query\Builder
     {
         return DB::connection('benchmark_source')->table($table);
+    }
+
+    /**
+     * Find or create an AI model by name.
+     */
+    protected function aiModel(string $name): AiModel
+    {
+        return AiModel::firstOrCreate(['name' => $name]);
     }
 }
