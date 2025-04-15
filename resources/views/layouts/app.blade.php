@@ -45,11 +45,9 @@
 
                     <!-- Right side menu -->
                     <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
-                        <a href="#" class="text-gray-500 hover:text-amber-600 transition-colors">
+                        <a href="#" class="text-gray-500 hover:text-amber-600 transition-colors flex items-center gap-2">
+                            About
                             <x-phosphor-question-fill class="w-5 h-5" />
-                        </a>
-                        <a href="#" class="text-gray-500 hover:text-amber-600 transition-colors">
-                            <x-phosphor-gear-six-fill class="w-5 h-5" />
                         </a>
                     </div>
 
@@ -92,20 +90,38 @@
         <footer class="bg-white border-t border-gray-100 shadow-inner mt-auto">
             <div class="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
                 <div class="flex flex-col md:flex-row items-center justify-between">
-                    <div class="flex items-center mb-4 md:mb-0">
-                        <div class="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-amber-500 to-amber-600 rounded-md shadow-sm mr-2">
-                            <x-phosphor-game-controller-fill class="w-4 h-4 text-white" />
+                    <div class="text- text-gray-500">
+                        <div class="flex space-x-4 mb-2 justify-center md:justify-start">
+                            <a
+                                href="#"
+                                class="text-amber-600 hover:underline hover:text-amber-700 transition-colors"
+                            >
+                                About
+                            </a>
+                            <a
+                                href="{{ config('playbench.github_repo_url') }}"
+                                class="text-amber-600 hover:underline hover:text-amber-700 transition-colors"
+                            >
+                                GitHub
+                            </a>
                         </div>
-                        <span class="font-semibold text-amber-600">{{ config('app.name') }}</span>
+                        <div class="text-center md:text-right">&copy; {{ date('Y') }} Playsaurus - {{ config('app.name') }} AI Benchmark Platform</div>
                     </div>
-                    <div class="text-sm text-gray-500">
-                        <div class="flex space-x-4 mb-2 justify-center md:justify-end">
-                            <a href="#" class="text-gray-400 hover:text-amber-600 transition-colors">About</a>
-                            <a href="#" class="text-gray-400 hover:text-amber-600 transition-colors">Documentation</a>
-                            <a href="#" class="text-gray-400 hover:text-amber-600 transition-colors">GitHub</a>
-                        </div>
-                        <div class="text-center md:text-right">&copy; {{ date('Y') }} {{ config('app.name') }} - AI Benchmark Platform</div>
+                    <div class="flex flex-row items-center justify-start md:justify-start gap-4">
+                        <span class="text-sm text-gray-500">
+                            A project made with
+                            <x-phosphor-heart-fill class="inline-block w-4 h-4 text-red-500" />
+                            by
+                        </span>
+                        <a href="https://playsaurus.com" target="_blank" class="flex items-center">
+                            <img
+                                src="{{ asset('images/playsaurus-logo.svg') }}"
+                                alt="Playsaurus"
+                                class="w-auto h-18 ml-2"
+                            >
+                        </a>
                     </div>
+
                 </div>
             </div>
         </footer>
