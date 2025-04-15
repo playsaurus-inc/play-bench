@@ -161,29 +161,6 @@ class AiModelController extends Controller
             }
         }
 
-        // Calculate predictability score (higher means more predictable/less random)
-        $predictabilityScore = 0;
-        if ($totalConsecutiveMoves > 0) {
-            $expectedProb = 1/3; // Equal distribution would be 1/3 for each move
-
-            // Calculate how much the model deviates from a perfect uniform distribution
-            $moveDeviation = 0;
-            foreach ($moveBreakdown as $move => $count) {
-                $moveProb = $totalMoves > 0 ? $count / $totalMoves : 0;
-                $moveDeviation += abs($moveProb - $expectedProb);
-            }
-
-            // Calculate how much the transitions deviate from random
-            $transitionDeviation = 0;
-            foreach ($consecutiveMoves as $transition => $count) {
-                $transProb = $totalConsecutiveMoves > 0 ? $count / $totalConsecutiveMoves : 0;
-                $transitionDeviation += abs($transProb - $expectedProb);
-            }
-
-            // Combine these metrics into a predictability score
-            $predictabilityScore = min(100, round(($moveDeviation + $transitionDeviation) * 100));
-        }
-
         // Get most impressive victory (highest point difference)
         $mostImpressiveVictory = RpsMatch::where('winner_id', $aiModel->id)
             ->where(function (Builder $query) use ($aiModel) {
@@ -225,7 +202,6 @@ class AiModelController extends Controller
             'totalMoves',
             'consecutiveMoves',
             'totalConsecutiveMoves',
-            'predictabilityScore',
             'mostImpressiveVictory',
             'rankPosition'
         ));

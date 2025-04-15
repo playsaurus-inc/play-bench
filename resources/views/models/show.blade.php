@@ -26,7 +26,7 @@
             <div class="relative px-6 py-8 md:px-8">
                 <div class="flex flex-col md:flex-row items-start gap-8">
                     <!-- Model avatar and info -->
-                    <div class="md:w-1/3">
+                    <div class="md:w-1/2">
                         <div class="flex flex-col items-center md:items-start">
                             <div class="w-24 h-24 md:w-32 md:h-32 rounded-xl bg-amber-100 border-4 border-white shadow-lg flex items-center justify-center mb-4">
                                 <x-phosphor-robot-fill class="w-12 h-12 md:w-16 md:h-16 text-amber-500" />
@@ -37,7 +37,7 @@
                     </div>
 
                     <!-- Performance stats -->
-                    <div class="md:w-2/3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="md:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <!-- Win Rate -->
                         <div class="bg-gray-50 rounded-lg p-5 relative group transition-all duration-300 hover:bg-white hover:shadow-md hover:-translate-y-1">
                             <div class="absolute top-0 right-0 w-16 h-16 border-l border-b border-gray-100 rounded-bl-3xl opacity-40"></div>
@@ -76,25 +76,6 @@
                                 </div>
                                 <div class="mt-2 flex items-center text-xs text-gray-500">
                                     <span>{{ $totalRpsWins }} wins ({{ $totalRpsMatches > 0 ? number_format(($totalRpsWins / $totalRpsMatches) * 100, 1) : '0' }}%)</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Predictability -->
-                        <div class="bg-gray-50 rounded-lg p-5 relative group transition-all duration-300 hover:bg-white hover:shadow-md hover:-translate-y-1">
-                            <div class="absolute top-0 right-0 w-16 h-16 border-l border-b border-gray-100 rounded-bl-3xl opacity-40"></div>
-                            <div class="relative">
-                                <h3 class="text-sm font-medium text-gray-500 mb-2 flex items-center">
-                                    <x-phosphor-lightbulb-fill class="w-4 h-4 mr-1.5 text-amber-500" />
-                                    Predictability
-                                </h3>
-                                <div class="flex items-baseline">
-                                    <span class="text-3xl font-bold {{ $predictabilityScore < 30 ? 'text-green-600' : ($predictabilityScore < 70 ? 'text-amber-600' : 'text-red-600') }}">
-                                        {{ $predictabilityScore }}%
-                                    </span>
-                                </div>
-                                <div class="mt-2 text-xs text-gray-500">
-                                    {{ $predictabilityScore < 30 ? 'Very unpredictable' : ($predictabilityScore < 70 ? 'Somewhat predictable' : 'Highly predictable') }}
                                 </div>
                             </div>
                         </div>
