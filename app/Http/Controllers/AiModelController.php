@@ -62,7 +62,8 @@ class AiModelController extends Controller
             })
             ->with(['player1', 'player2', 'winner'])
             ->latest()
-            ->paginate(6);
+            ->take(6)
+            ->get();
 
         // Calculate performance statistics
         $totalRpsMatches = $aiModel->rpsMatchesAsPlayer1()->count() + $aiModel->rpsMatchesAsPlayer2()->count();

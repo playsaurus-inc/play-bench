@@ -354,9 +354,9 @@
                 @endif
 
                 <!-- Recent matches -->
-                <x-ui.card title="Recent Rock Paper Scissors Matches" subtitle="Latest performance data">
-                    @if($rpsMatches->count() > 0)
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                @if($rpsMatches->count() > 0)
+                    <x-ui.card title="Recent Rock Paper Scissors Matches" subtitle="Latest performance data">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             @foreach($rpsMatches as $match)
                                 @php
                                     $isPlayer1 = $match->player1_id === $aiModel->id;
@@ -407,22 +407,8 @@
                                 </a>
                             @endforeach
                         </div>
-
-                        <div class="flex items-center justify-center">
-                            {{ $rpsMatches->links() }}
-                        </div>
-                    @else
-                        <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 text-center">
-                            <div class="flex justify-center mb-4">
-                                <x-phosphor-game-controller-fill class="w-12 h-12 text-amber-400" />
-                            </div>
-                            <h3 class="text-lg font-medium text-amber-900 mb-2">No matches found</h3>
-                            <p class="text-amber-700 mb-4">
-                                This AI model hasn't played any Rock Paper Scissors matches yet.
-                            </p>
-                        </div>
-                    @endif
-                </x-ui.card>
+                    </x-ui.card>
+                @endif
             </div>
         </div>
     </div>
