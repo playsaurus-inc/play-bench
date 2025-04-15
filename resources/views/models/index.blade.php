@@ -131,7 +131,7 @@
                                             @if($model->total_rps_matches > 0)
                                                 <div class="flex items-center">
                                                     <span class="mr-2 text-sm font-medium {{ $model->win_rate > 0.5 ? 'text-green-600' : ($model->win_rate == 0.5 ? 'text-amber-600' : 'text-red-600') }}">
-                                                        {{ number_format($model->win_rate * 100, 1) }}%
+                                                        {{ Number::percentage($model->win_rate * 100, precision: 1) }}
                                                     </span>
                                                     <div class="relative w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
                                                         <div class="absolute top-0 left-0 h-2 rounded-full {{ $model->win_rate > 0.5 ? 'bg-green-500' : ($model->win_rate == 0.5 ? 'bg-amber-500' : 'bg-red-500') }}" style="width: {{ $model->win_rate * 100 }}%"></div>

@@ -74,19 +74,19 @@
                             <div>
                                 <div class="text-sm text-gray-500">Player 1 Wins</div>
                                 <div class="font-medium text-sm {{ $rpsMatch->getPlayer1WinRate() > 0.5 ? 'text-red-600' : 'text-gray-800' }}">
-                                    {{ number_format($rpsMatch->getPlayer1WinRate() * 100, 1) }}%
+                                    {{ Number::percentage($rpsMatch->getPlayer1WinRate() * 100, precision: 1) }}
                                 </div>
                             </div>
                             <div>
                                 <div class="text-sm text-gray-500">Ties</div>
                                 <div class="font-medium text-sm text-gray-800">
-                                    {{ number_format($rpsMatch->getTieRate() * 100, 1) }}%
+                                    {{ Number::percentage($rpsMatch->getTieRate() * 100, precision: 1) }}
                                 </div>
                             </div>
                             <div>
                                 <div class="text-sm text-gray-500">Player 2 Wins</div>
                                 <div class="font-medium text-sm {{ $rpsMatch->getPlayer2WinRate() > 0.5 ? 'text-blue-600' : 'text-gray-800' }}">
-                                    {{ number_format($rpsMatch->getPlayer2WinRate() * 100, 1) }}%
+                                    {{ Number::percentage($rpsMatch->getPlayer2WinRate() * 100, precision: 1) }}
                                 </div>
                             </div>
                         </div>
@@ -171,7 +171,7 @@
                                 <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                                     <div class="h-2 bg-red-500 rounded-full" style="width: {{ $player1Percentages['rock'] }}%"></div>
                                 </div>
-                                <div class="mt-1 text-xs text-gray-500 text-right">{{ number_format($player1Percentages['rock'], 1) }}%</div>
+                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player1Percentages['rock'], 1) }}</div>
                             </div>
 
                             <!-- Paper -->
@@ -186,7 +186,7 @@
                                 <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                                     <div class="h-2 bg-red-500 rounded-full" style="width: {{ $player1Percentages['paper'] }}%"></div>
                                 </div>
-                                <div class="mt-1 text-xs text-gray-500 text-right">{{ number_format($player1Percentages['paper'], 1) }}%</div>
+                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player1Percentages['paper'], 1) }}</div>
                             </div>
 
                             <!-- Scissors -->
