@@ -1,7 +1,7 @@
 @props(['match', 'compact' => false])
 
 <a
-    href="{{ route('rps.show', $match) }}"
+    href="{{ route('rps.matches.show', $match) }}"
     class="block bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 rounded-xl"
     x-data="{ hover: false }"
     @mouseenter="hover = true"

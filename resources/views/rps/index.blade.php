@@ -215,7 +215,7 @@
             </div>
 
             <div class="mt-6 flex justify-center">
-                <x-ui.button href="{{ route('models.index') }}" variant="outline">
+                <x-ui.button href="{{ route('rps.models.index') }}" variant="outline">
                     <x-phosphor-robot-fill class="w-4 h-4" />
                     Browse AI Models
                 </x-ui.button>

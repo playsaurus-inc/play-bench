@@ -43,7 +43,11 @@ class AiModelController extends Controller
             'avg_win_rate' => $models->where('total_rps_matches', '>', 0)->avg('win_rate') * 100,
         ];
 
-        return view('models.index', compact('models', 'topModels', 'benchmarkStats'));
+        return view('models.index', [
+            'models' => $models,
+            'topModels' => $topModels,
+            'benchmarkStats' => $benchmarkStats,
+        ]);
     }
 
     /**

@@ -20,7 +20,7 @@ class RpsMatchController extends Controller
             ->latest()
             ->first();
 
-        // Close matches (small difference in score)
+        // Close match (small difference in score)
         $closeMatch = RpsMatch::with(['player1', 'player2', 'winner'])
             ->whereRaw('ABS(player1_score - player2_score) <= 3')
             ->where('rounds_played', '>=', 20)

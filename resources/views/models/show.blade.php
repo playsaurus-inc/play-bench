@@ -3,7 +3,7 @@
         <!-- Header section -->
         <div class="mb-8">
             <div class="flex items-center justify-between">
-                <x-ui.button :href="route('models.index')" variant="secondary" class="text-sm">
+                <x-ui.button :href="route('rps.models.index')" variant="secondary" class="text-sm">
                     <x-phosphor-arrow-left class="w-4 h-4 mr-4" />
                     Back to All Models
                 </x-ui.button>
@@ -243,7 +243,7 @@
                 <!-- Most impressive victory -->
                 @if($mostImpressiveVictory)
                     <x-ui.card title="Most Impressive Victory" subtitle="Highest point difference win">
-                        <a href="{{ route('rps.show', $mostImpressiveVictory) }}" class="block bg-gradient-to-r from-amber-50 to-white p-4 rounded-lg border border-amber-100 transition-all hover:shadow-md">
+                        <a href="{{ route('rps.matches.show', $mostImpressiveVictory) }}" class="block bg-gradient-to-r from-amber-50 to-white p-4 rounded-lg border border-amber-100 transition-all hover:shadow-md">
                             <div class="flex justify-between items-center mb-3">
                                 <div class="flex items-center">
                                     <x-phosphor-trophy-fill class="w-5 h-5 text-amber-500 mr-2" />
@@ -314,7 +314,7 @@
                                             @mouseleave="hoverRow = null"
                                             class="hover:bg-gray-50 transition-colors">
                                             <td class="px-4 py-3 whitespace-nowrap">
-                                                <a href="{{ route('models.show', $opponent) }}" class="group">
+                                                <a href="{{ route('rps.models.show', $opponent) }}" class="group">
                                                     <div class="flex items-center">
                                                         <div class="flex-shrink-0 w-8 h-8 rounded-md bg-gray-100 flex items-center justify-center overflow-hidden group-hover:bg-amber-50 transition-colors">
                                                             <x-phosphor-robot-fill class="w-4 h-4 text-gray-500 group-hover:text-amber-600" />
@@ -385,7 +385,7 @@
                                     $result = $match->isTie() ? 'tie' : ($match->winner_id === $aiModel->id ? 'win' : 'loss');
                                     $resultColor = $result === 'win' ? 'green' : ($result === 'loss' ? 'red' : 'gray');
                                 @endphp
-                                <a href="{{ route('rps.show', $match) }}" class="block bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all">
+                                <a href="{{ route('rps.matches.show', $match) }}" class="block bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all">
                                     <div class="p-4">
                                         <div class="flex items-center justify-between mb-3">
                                             <div class="flex items-center">

@@ -9,9 +9,7 @@ Route::get('/', function () {
 });
 
 // RPS Match routes
-Route::get('/rps', [RpsMatchController::class, 'index'])->name('rps.index');
-Route::get('/rps/{rpsMatch}', [RpsMatchController::class, 'show'])->name('rps.show');
-
-// AI Model routes
-Route::get('/models', [AiModelController::class, 'index'])->name('models.index');
-Route::get('/models/{aiModel}', [AiModelController::class, 'show'])->name('models.show');
+Route::get('/rock-paper-scissors', [RpsMatchController::class, 'index'])->name('rps.index');
+Route::get('/rock-paper-scissors/matches/{rpsMatch}', [RpsMatchController::class, 'show'])->name('rps.matches.show');
+Route::get('/rock-paper-scissors/models', [AiModelController::class, 'index'])->name('rps.models.index');
+Route::get('/rock-paper-scissors/models/{aiModel}', [AiModelController::class, 'show'])->name('rps.models.show');
