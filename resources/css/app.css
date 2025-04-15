@@ -10,7 +10,6 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
-/* Global styles for the PlayBench app */
 @layer base {
     html {
         scroll-behavior: smooth;
