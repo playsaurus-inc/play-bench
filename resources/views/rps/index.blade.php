@@ -28,21 +28,21 @@
                             x-data="animatedCounter({{ $totalMatchesCount }})"
                         >
                             <x-phosphor-trophy-fill class="size-6 mr-2" />
-                            <span x-text="formattedCurrent + ' matches'"></span>
+                            <span x-text="integerValue + ' matches'"></span>
                         </div>
                         <div
                             class="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-amber-100 text-amber-800"
                             x-data="animatedCounter({{ $totalRoundsCount }})"
                         >
                             <x-phosphor-circle-notch-fill class="size-6 mr-2" />
-                            <span x-text="formattedCurrent + ' rounds'"></span>
+                            <span x-text="integerValue + ' rounds'"></span>
                         </div>
                         <span
                             class="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-amber-100 text-amber-800"
                             x-data="animatedCounter({{ $modelsCount }})"
                         >
                             <x-phosphor-robot-fill class="size-6 mr-2" />
-                            <span x-text="formattedCurrent + ' AI models competing'"></span>
+                            <span x-text="integerValue + ' AI models competing'"></span>
                         </span>
                     </div>
 

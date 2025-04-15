@@ -19,18 +19,27 @@
                 </p>
 
                 <div class="mt-6 flex flex-wrap gap-3">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                        <x-phosphor-brain-fill class="w-3.5 h-3.5 mr-1" />
-                        {{ $benchmarkStats['total_models'] }} AI Models
-                    </span>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                        <x-phosphor-chart-bar-fill class="w-3.5 h-3.5 mr-1" />
-                        {{ $benchmarkStats['total_matches'] }} Total Matches
-                    </span>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                        <x-phosphor-percent-fill class="w-3.5 h-3.5 mr-1" />
-                        {{ number_format($benchmarkStats['avg_win_rate'], 1) }}% Avg Win Rate
-                    </span>
+                    <div
+                        class="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-amber-100 text-amber-800"
+                        x-data="animatedCounter({{ $benchmarkStats['total_models'] }})"
+                    >
+                        <x-phosphor-robot-fill class="w-6 mr-2" />
+                        <span x-text="integerValue + ' AI Models'"></span>
+                    </div>
+                    <div
+                        class="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-amber-100 text-amber-800"
+                        x-data="animatedCounter({{ $benchmarkStats['total_matches'] }})"
+                    >
+                        <x-phosphor-chart-bar-fill class="w-6 mr-2" />
+                        <span x-text="integerValue + ' Total Matches'"></span>
+                    </div>
+                    <div
+                        class="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-amber-100 text-amber-800"
+                        x-data="animatedCounter({{ $benchmarkStats['avg_win_rate'] }})"
+                    >
+                        <x-phosphor-percent-fill class="w-6 mr-2" />
+                        <span x-text="percentageValue + ' Avg Win Rate'"></span>
+                    </div>
                 </div>
             </div>
         </div>
