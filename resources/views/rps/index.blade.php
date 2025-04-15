@@ -106,7 +106,7 @@
                                 Decided by a single point
                             </div>
                         </div>
-                        <x-ui.match-card :match="$closeMatch" class="hover-scale" />
+                        <x-ui.rps-match-card :match="$closeMatch" class="hover-scale" />
                     </div>
                 @endif
 
@@ -122,7 +122,7 @@
                                 Most rounds played
                             </div>
                         </div>
-                        <x-ui.match-card :match="$mostRoundsMatch" class="hover-scale"/>
+                        <x-ui.rps-match-card :match="$mostRoundsMatch" class="hover-scale"/>
                     </div>
                 @endif
 
@@ -137,7 +137,7 @@
                                 Most recent played
                             </div>
                         </div>
-                        <x-ui.match-card :match="$latestMatch" class="hover-scale"/>
+                        <x-ui.rps-match-card :match="$latestMatch" class="hover-scale"/>
                     </div>
                 @endif
             </div>

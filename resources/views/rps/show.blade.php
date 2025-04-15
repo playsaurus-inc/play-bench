@@ -22,12 +22,12 @@
         <!-- Match overview card -->
         <div class="relative bg-white rounded-3xl shadow-md border border-gray-100 mb-10 overflow-hidden">
             <!-- Background decorations -->
-            <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-amber-50 to-white opacity-50"></div>
+            <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-red-100 via-white to-blue-100 opacity-50"></div>
 
             <!-- Content -->
             <div class="relative p-8">
                 <!-- Players and score -->
-                <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between mb-10 gap-8">
+                <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-8">
                     <!-- Player 1 -->
                     <div class="flex flex-col items-center md:items-start">
                         <a href="{{ route('rps.models.show', $rpsMatch->player1) }}" class="group">
@@ -41,13 +41,6 @@
                                 </div>
                             </div>
                         </a>
-
-                        <!-- Move distribution -->
-                        <div class="flex items-center space-x-2 mt-2">
-                            <x-fas-hand-rock class="size-6" />
-                            <x-fas-hand-paper class="size-6" />
-                            <x-fas-hand-scissors class="size-6" />
-                        </div>
                     </div>
 
                     <!-- Score -->
@@ -77,21 +70,21 @@
                         </div>
 
                         <!-- Win rates -->
-                        <div class="mt-4 w-full max-w-xs grid grid-cols-3 gap-2 text-center">
+                        <div class="mt-4 w-full max-w-xs grid grid-cols-3 gap-3 text-center">
                             <div>
-                                <div class="text-xs text-gray-500">Player 1</div>
+                                <div class="text-sm text-gray-500">Player 1 Wins</div>
                                 <div class="font-medium text-sm {{ $rpsMatch->getPlayer1WinRate() > 0.5 ? 'text-red-600' : 'text-gray-800' }}">
                                     {{ number_format($rpsMatch->getPlayer1WinRate() * 100, 1) }}%
                                 </div>
                             </div>
                             <div>
-                                <div class="text-xs text-gray-500">Tie</div>
+                                <div class="text-sm text-gray-500">Ties</div>
                                 <div class="font-medium text-sm text-gray-800">
                                     {{ number_format($rpsMatch->getTieRate() * 100, 1) }}%
                                 </div>
                             </div>
                             <div>
-                                <div class="text-xs text-gray-500">Player 2</div>
+                                <div class="text-sm text-gray-500">Player 2 Wins</div>
                                 <div class="font-medium text-sm {{ $rpsMatch->getPlayer2WinRate() > 0.5 ? 'text-blue-600' : 'text-gray-800' }}">
                                     {{ number_format($rpsMatch->getPlayer2WinRate() * 100, 1) }}%
                                 </div>
@@ -112,45 +105,6 @@
                                 </div>
                             </div>
                         </a>
-
-                        <!-- Move distribution -->
-                        <div class="flex items-center space-x-2 mt-2">
-                            <x-fas-hand-rock class="size-6" />
-                            <x-fas-hand-paper class="size-6" />
-                            <x-fas-hand-scissors class="size-6" />
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Meta information -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 mt-8 border-t border-b border-gray-100 py-6">
-                    <div>
-                        <div class="text-sm text-gray-500">Date</div>
-                        <div class="font-medium text-gray-900">
-                            {{ $rpsMatch->created_at->format('M d, Y') }}
-                        </div>
-                    </div>
-                    <div>
-                        <div class="text-sm text-gray-500">Time</div>
-                        <div class="font-medium text-gray-900">
-                            {{ $rpsMatch->created_at->format('H:i:s') }}
-                        </div>
-                    </div>
-                    <div>
-                        <div class="text-sm text-gray-500">Duration</div>
-                        <div class="font-medium text-gray-900">
-                            @if($rpsMatch->getDuration())
-                                {{ $rpsMatch->getDuration() }} seconds
-                            @else
-                                Unknown
-                            @endif
-                        </div>
-                    </div>
-                    <div>
-                        <div class="text-sm text-gray-500">Match ID</div>
-                        <div class="font-medium text-gray-900">
-                            #{{ $rpsMatch->id }}
-                        </div>
                     </div>
                 </div>
             </div>
@@ -520,7 +474,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     @foreach($similarMatches as $match)
-                        <x-ui.match-card :match="$match" :compact="true" />
+                        <x-ui.rps-match-card :match="$match" :compact="true" />
                     @endforeach
                 </div>
             </section>
