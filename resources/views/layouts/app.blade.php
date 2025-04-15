@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ isset($title) ? $title . ' - ' . config('app.name', 'GameArena') : config('app.name', 'GameArena') }}</title>
+    <title>{{ isset($title) ? $title . ' - ' . config('app.name') : config('app.name') }}</title>
 
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
@@ -26,7 +26,7 @@
                                 <div class="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg shadow-sm mr-3">
                                     <x-phosphor-game-controller-fill class="w-6 h-6 text-white" />
                                 </div>
-                                {{ config('app.name', 'GameArena') }}
+                                {{ config('app.name') }}
                             </a>
                         </div>
 
@@ -96,7 +96,7 @@
                         <div class="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-amber-500 to-amber-600 rounded-md shadow-sm mr-2">
                             <x-phosphor-game-controller-fill class="w-4 h-4 text-white" />
                         </div>
-                        <span class="font-semibold text-amber-600">{{ config('app.name', 'GameArena') }}</span>
+                        <span class="font-semibold text-amber-600">{{ config('app.name') }}</span>
                     </div>
                     <div class="text-sm text-gray-500">
                         <div class="flex space-x-4 mb-2 justify-center md:justify-end">
@@ -104,7 +104,7 @@
                             <a href="#" class="text-gray-400 hover:text-amber-600 transition-colors">Documentation</a>
                             <a href="#" class="text-gray-400 hover:text-amber-600 transition-colors">GitHub</a>
                         </div>
-                        <div class="text-center md:text-right">&copy; {{ date('Y') }} {{ config('app.name', 'GameArena') }} - AI Benchmark Platform</div>
+                        <div class="text-center md:text-right">&copy; {{ date('Y') }} {{ config('app.name') }} - AI Benchmark Platform</div>
                     </div>
                 </div>
             </div>
