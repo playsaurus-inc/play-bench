@@ -16,7 +16,10 @@
 <body class="font-sans antialiased bg-gradient-to-br from-gray-50 to-amber-50/20 min-h-screen">
     <div class="min-h-screen flex flex-col">
         <!-- Navigation -->
-        <nav class="bg-white border-b border-amber-100 shadow-sm sticky top-0 z-10">
+        <nav
+            class="bg-white border-b border-amber-100 shadow-sm sticky top-0 z-10"
+            x-data="{mobileMenuOpen: false}"
+        >
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex">
@@ -53,32 +56,49 @@
 
                     <!-- Mobile menu button -->
                     <div class="flex items-center sm:hidden">
-                        <button type="button"
-                                class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-amber-500"
-                                x-data="{open: false}"
-                                @click="open = !open"
-                                :aria-expanded="open">
+                        <button
+                            type="button"
+                            class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-amber-500"
+                            x-on:click="mobileMenuOpen = !mobileMenuOpen"
+                            :aria-expanded="mobileMenuOpen"
+                        >
                             <span class="sr-only">Open main menu</span>
-                            <x-phosphor-list x-show="!open" class="h-6 w-6" />
-                            <x-phosphor-x x-show="open" class="h-6 w-6" x-cloak />
+                            <x-phosphor-list x-show="!mobileMenuOpen" class="h-6 w-6" />
+                            <x-phosphor-x x-show="mobileMenuOpen" class="h-6 w-6" x-cloak />
                         </button>
                     </div>
                 </div>
             </div>
-
             <!-- Mobile menu -->
-            <div class="sm:hidden" x-data="{open: false}" x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2" x-cloak>
+            <div
+                class="sm:hidden"
+                x-cloak
+                x-show="mobileMenuOpen"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 transform -translate-y-2"
+                x-transition:enter-end="opacity-100 transform translate-y-0"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100 transform translate-y-0"
+                x-transition:leave-end="opacity-0 transform -translate-y-2"
+            >
                 <div class="pt-2 pb-3 space-y-1">
-                    <a href="{{ route('rps.index') }}" class="flex items-center px-3 py-2 {{ request()->routeIs('rps.*') ? 'bg-amber-50 border-l-4 border-amber-500 text-amber-700' : 'border-l-4 border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300' }}">
+                    <a
+                        href="{{ route('rps.index') }}"
+                        class="flex items-center px-3 py-2 {{ request()->routeIs('rps.*') ? 'bg-amber-50 border-l-4 border-amber-500 text-amber-700' : 'border-l-4 border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300' }}"
+                    >
                         <x-phosphor-hand-fill class="w-5 h-5 mr-3 {{ request()->routeIs('rps.*') ? 'text-amber-500' : 'text-gray-400' }}" />
                         Rock Paper Scissors
                     </a>
-                    <a href="{{ route('rps.models.index') }}" class="flex items-center px-3 py-2 {{ request()->routeIs('models.*') ? 'bg-amber-50 border-l-4 border-amber-500 text-amber-700' : 'border-l-4 border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300' }}">
+                    <a
+                        href="{{ route('rps.models.index') }}"
+                        class="flex items-center px-3 py-2 {{ request()->routeIs('models.*') ? 'bg-amber-50 border-l-4 border-amber-500 text-amber-700' : 'border-l-4 border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300' }}"
+                    >
                         <x-phosphor-robot-fill class="w-5 h-5 mr-3 {{ request()->routeIs('models.*') ? 'text-amber-500' : 'text-gray-400' }}" />
                         AI Models
                     </a>
                 </div>
             </div>
+
         </nav>
 
         <!-- Page Content -->
