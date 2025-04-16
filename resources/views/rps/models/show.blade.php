@@ -290,9 +290,11 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200" x-data="{ hoverRow: null }">
                                 @foreach($opponents->sortByDesc('win_rate_against') as $opponent)
-                                    <tr @mouseenter="hoverRow = {{ $opponent->id }}"
-                                        @mouseleave="hoverRow = null"
-                                        class="hover:bg-gray-50 transition-colors">
+                                    <tr
+                                        x-on:mouseenter="hoverRow = {{ $opponent->id }}"
+                                        x-on:mouseleave="hoverRow = null"
+                                        class="hover:bg-gray-50 transition-colors"
+                                    >
                                         <td class="px-4 py-3 whitespace-nowrap">
                                             <a href="{{ route('rps.models.show', $opponent) }}" class="group">
                                                 <div class="flex items-center">
