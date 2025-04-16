@@ -105,13 +105,13 @@
                             return this.moveData.map(value => (value / this.total) * 100)
                         },
                         get rockStyle() {
-                            return {clipPath: `circle(${this.animate ? this.percentages[0]/2 : 0}% at 50% 50%)`};
+                            return {clipPath: `inset(${this.animate ? 100 - this.percentages[0] : 100}% 0 0 0)`};
                         },
                         get paperStyle() {
-                            return {clipPath: `circle(${this.animate ? this.percentages[1]/2 : 0}% at 50% 50%)`};
+                            return {clipPath: `inset(${this.animate ? 100 - this.percentages[1] : 100}% 0 0 0)`};
                         },
                         get scissorsStyle() {
-                            return {clipPath: `circle(${this.animate ? this.percentages[2]/2 : 0}% at 50% 50%)`};
+                            return {clipPath: `inset(${this.animate ? 100 - this.percentages[2] : 100}% 0 0 0)`};
                         },
                         init() {
                             setTimeout(() => this.animate = true, 100);
