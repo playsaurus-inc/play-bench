@@ -134,10 +134,10 @@
                                         <x-fas-hand-rock class="text-red-800/70 size-8"  />
                                     </div>
                                 </div>
-                                <div class="text-xl font-bold">{{ Number::abbreviate($moveBreakdown['rock'], precision: 2) }}</div>
+                                <div class="text-xl font-bold">{{ Number::percentage(($moveBreakdown['rock'] / $totalMoves) * 100, 1) }}</div>
                                 <div class="text-sm text-gray-500">Rock</div>
                                 <div class="text-xs text-gray-400 mt-0.5">
-                                    {{ Number::percentage(($moveBreakdown['rock'] / $totalMoves) * 100, 1) }}
+                                    {{ Number::abbreviate($moveBreakdown['rock'], maxPrecision: 2) }}
                                 </div>
                             </div>
 
@@ -157,10 +157,10 @@
                                         <x-fas-hand-paper class="text-blue-800/70 size-8" />
                                     </div>
                                 </div>
-                                <div class="text-xl font-bold">{{ Number::abbreviate($moveBreakdown['paper'], precision: 2) }}</div>
+                                <div class="text-xl font-bold">{{ Number::percentage(($moveBreakdown['paper'] / $totalMoves) * 100, 1) }}</div>
                                 <div class="text-sm text-gray-500">Paper</div>
                                 <div class="text-xs text-gray-400 mt-0.5">
-                                    {{ Number::percentage(($moveBreakdown['paper'] / $totalMoves) * 100, 1) }}
+                                    {{ Number::abbreviate($moveBreakdown['paper'], maxPrecision: 2) }}
                                 </div>
                             </div>
 
@@ -180,10 +180,10 @@
                                         <x-fas-hand-scissors class="text-green-800/70 size-8" />
                                     </div>
                                 </div>
-                                <div class="text-xl font-bold">{{ Number::abbreviate($moveBreakdown['scissors'], precision: 2) }}</div>
+                                <div class="text-xl font-bold">{{ Number::percentage(($moveBreakdown['scissors'] / $totalMoves) * 100, 1) }}</div>
                                 <div class="text-sm text-gray-500">Scissors</div>
                                 <div class="text-xs text-gray-400 mt-0.5">
-                                    {{ Number::percentage(($moveBreakdown['scissors'] / $totalMoves) * 100, 1) }}
+                                    {{ Number::abbreviate($moveBreakdown['scissors'], maxPrecision: 2) }}
                                 </div>
                             </div>
                         </div>
