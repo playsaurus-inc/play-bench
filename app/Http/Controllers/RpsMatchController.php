@@ -67,7 +67,7 @@ class RpsMatchController extends Controller
             ->limit(3)
             ->get();
 
-        return view('rps.show', [
+        return view('rps.matches.show', [
             'rpsMatch' => $rpsMatch,
             'similarMatches' => $similarMatches,
         ]);
