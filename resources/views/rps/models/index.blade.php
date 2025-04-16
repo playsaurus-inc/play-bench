@@ -52,8 +52,8 @@
             </h2>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                @foreach($topModels as $index => $model)
-                    <x-ui.model-card :model="$model" :rank="$index + 1" />
+                @foreach($topModels as $model)
+                    <x-ui.model-card :model="$model" :rank="$model->rps_rank" />
                 @endforeach
             </div>
         </section>
@@ -102,12 +102,12 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach($models as $index => $model)
+                            @foreach($models as $model)
                                 <tr class="hover:bg-gray-50 transition-colors duration-150" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
                                     <td class="px-6 py-3 whitespace-nowrap">
                                         <div class="flex items-center">
-                                            <div class="w-8 h-8 rounded-full {{ $index < 3 ? 'bg-amber-100' : 'bg-gray-100' }} flex items-center justify-center {{ $index < 3 ? 'border-2 border-amber-200' : 'border border-gray-200' }}">
-                                                <span class="{{ $index < 3 ? 'text-amber-800' : 'text-gray-600' }} text-sm font-bold">{{ $index + 1 }}</span>
+                                            <div class="w-8 h-8 rounded-full {{ $model->rps_rank < 4 ? 'bg-amber-100' : 'bg-gray-100' }} flex items-center justify-center {{ $model->rps_rank < 4 ? 'border-2 border-amber-200' : 'border border-gray-200' }}">
+                                                <span class="{{ $model->rps_rank < 4 ? 'text-amber-800' : 'text-gray-600' }} text-sm font-bold">{{ $model->rps_rank }}</span>
                                             </div>
                                         </div>
                                     </td>

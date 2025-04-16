@@ -8,9 +8,9 @@
             </x-ui.button>
 
             <div class="flex items-center">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $rankPosition <= 3 ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-800' }}">
-                    <x-phosphor-trophy-fill class="w-3.5 h-3.5 mr-1 {{ $rankPosition <= 3 ? 'text-amber-600' : 'text-gray-500' }}" />
-                    Rank #{{ $rankPosition }}
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $aiModel->rps_rank <= 3 ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-800' }}">
+                    <x-phosphor-trophy-fill class="w-3.5 h-3.5 mr-1 {{ $aiModel->rps_rank <= 3 ? 'text-amber-600' : 'text-gray-500' }}" />
+                    Rank #{{ $aiModel->rps_rank }}
                 </span>
             </div>
         </div>
