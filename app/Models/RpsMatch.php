@@ -37,6 +37,18 @@ class RpsMatch extends Model
                     $model->player2, $model->player2_score,
                 )?->id;
             }
+
+            if (! $model->player1_win_streak) {
+                $model->player1_win_streak = static::calculateWinStreak($model->move_history, player: 1);
+            }
+
+            if (! $model->player2_win_streak) {
+                $model->player2_win_streak = static::calculateWinStreak($model->move_history, player: 2);
+            }
+
+            if (! $model->rounds_played) {
+                $model->rounds_played = Str::of($model->move_history)->explode(' ')->count() + 1;
+            }
         });
     }
 
@@ -226,5 +238,31 @@ class RpsMatch extends Model
         $ties = $this->rounds_played - $this->player1_score - $this->player2_score;
 
         return $ties / $this->rounds_played;
+    }
+
+    /**
+     * Calculate the win streak for the given player based on the move history.
+     *
+     * @param  string  $moveHistory  The move history string
+     * @param  int  $player  The player number
+     * @return int  The longest win streak for the given player
+     */
+    public static function calculateWinStreak(string $moveHistory, int $player): int
+    {
+        // Move history is `abc abc abc` where `a` is player 1's move, `b` is player 2's move, and `c` is the result
+        // Results can be: `1` (player 1 wins), `2` (player 2 wins), or `t` (tie)
+        $wins = Str::of($moveHistory)->explode(' ')->map(fn ($s) => $s[2]);
+
+        $streak = 0;
+        $maxStreak = 0;
+        foreach ($wins as $result) {
+            if ($result === (string) $player) {
+                $streak++;
+                $maxStreak = max($maxStreak, $streak);
+            } else {
+                $streak = 0;
+            }
+        }
+        return $maxStreak;
     }
 }

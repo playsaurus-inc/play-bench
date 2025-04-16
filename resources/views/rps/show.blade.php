@@ -274,7 +274,7 @@
                             <div class="bg-red-50 rounded-lg p-4">
                                 <div class="text-sm text-gray-600 mb-1">{{ $rpsMatch->player1->name }}</div>
                                 <div class="flex items-baseline">
-                                    <div class="text-2xl font-bold text-red-600">{{ $streakData['player1_longest_streak'] }}</div>
+                                    <div class="text-2xl font-bold text-red-600">{{ $rpsMatch->player1_win_streak }}</div>
                                     <div class="text-xs text-gray-500 ml-2">consecutive wins</div>
                                 </div>
                             </div>
@@ -282,7 +282,7 @@
                             <div class="bg-blue-50 rounded-lg p-4">
                                 <div class="text-sm text-gray-600 mb-1">{{ $rpsMatch->player2->name }}</div>
                                 <div class="flex items-baseline">
-                                    <div class="text-2xl font-bold text-blue-600">{{ $streakData['player2_longest_streak'] }}</div>
+                                    <div class="text-2xl font-bold text-blue-600">{{ $rpsMatch->player2_win_streak }}</div>
                                     <div class="text-xs text-gray-500 ml-2">consecutive wins</div>
                                 </div>
                             </div>

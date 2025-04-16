@@ -17,10 +17,6 @@ return new class extends Migration
             $table->foreignId('player2_id')->index()->constrained('ai_models');
             $table->foreignId('winner_id')->index()->nullable()->constrained('ai_models'); // null = tie
 
-            $table->integer('rounds_played'); // Must be the number of spaces in move_history + 1.
-            $table->integer('player1_score'); // Number of rounds won by player 1
-            $table->integer('player2_score'); // Number of rounds won by player 2
-
             // String separated by spaces
             // - Each round is represented by 3 characters
             // The first character is the move of player 1.
@@ -35,6 +31,13 @@ return new class extends Migration
             // - Round 3: player 1 played rock, player 2 played scissors, result is player 1 win
             // - The move history is stored as a string to save space
             $table->string('move_history');
+
+            // Automatically calculated fields from the move history
+            $table->integer('rounds_played'); // [Auto] Must be the number of spaces in move_history + 1.
+            $table->integer('player1_score'); // [Auto] Number of rounds won by player 1
+            $table->integer('player2_score'); // [Auto] Number of rounds won by player 2
+            $table->integer('player1_win_streak'); // [Auto] Number of rounds won by player 1 in a row
+            $table->integer('player2_win_streak'); // [Auto] Number of rounds won by player 2 in a row
 
             $table->timestamp('started_at')->nullable(); // When the match started
             $table->timestamp('ended_at')->nullable(); // When the match ended
