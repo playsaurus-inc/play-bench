@@ -33,6 +33,24 @@ class RpsMatchController extends Controller
             ->orderBy('rounds_played', 'desc')
             ->first();
 
+        $models = AiModel::query()
+            ->withCount([
+                'rpsMatchesAsPlayer1',
+                'rpsMatchesAsPlayer2',
+                'rpsMatchesWon',
+            ])
+            ->get()
+            ->map(function ($model) {
+                $model->total_rps_matches = $model->rps_matches_as_player1_count + $model->rps_matches_as_player2_count;
+                $model->win_rate = $model->total_rps_matches > 0
+                    ? $model->rps_matches_won_count / $model->total_rps_matches
+                    : 0;
+
+                return $model;
+            })
+            ->sortByDesc('rps_elo')
+            ->reject(fn ($model) => $model->total_rps_matches < 1);
+
         return view('rps.index', [
             'totalMatchesCount' => RpsMatch::count(),
             'totalRoundsCount' => RpsMatch::sum('rounds_played'),
@@ -40,6 +58,8 @@ class RpsMatchController extends Controller
             'latestMatch' => $latestMatch,
             'closeMatch' => $closeMatch,
             'mostRoundsMatch' => $mostRoundsMatch,
+            'models' => $models->values(),
+            'topModels' => $models->where('total_rps_matches', '>=', 5)->take(3),
         ]);
     }
 

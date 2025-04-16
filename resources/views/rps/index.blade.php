@@ -103,7 +103,7 @@
                             Decided by a single point
                         </div>
                     </div>
-                    <x-ui.rps-match-card :match="$closeMatch" class="hover-scale" />
+                    <x-rps.match-card :match="$closeMatch" class="hover-scale" />
                 </div>
             @endif
 
@@ -119,7 +119,7 @@
                             Most rounds played
                         </div>
                     </div>
-                    <x-ui.rps-match-card :match="$mostRoundsMatch" class="hover-scale"/>
+                    <x-rps.match-card :match="$mostRoundsMatch" class="hover-scale"/>
                 </div>
             @endif
 
@@ -134,9 +134,27 @@
                             Most recent played
                         </div>
                     </div>
-                    <x-ui.rps-match-card :match="$latestMatch" class="hover-scale"/>
+                    <x-rps.match-card :match="$latestMatch" class="hover-scale"/>
                 </div>
             @endif
+        </div>
+    </section>
+
+    <!-- Model Rankings -->
+    <section id="model-rankings" class="mb-10 scroll-mt-20">
+        <h2 class="text-2xl font-bold mb-6 text-gray-900 flex items-center">
+            <x-phosphor-trophy-fill class="w-6 h-6 mr-2 text-amber-500" />
+            Current Model Rankings
+        </h2>
+
+        <!-- Using our new reusable component -->
+        <x-rps.models-ranking-table :models="$models" />
+
+        <div class="mt-4 text-center">
+            <x-ui.button href="{{ route('rps.models.index') }}" variant="outline">
+                <x-phosphor-chart-bar-fill class="w-4 h-4 mr-2" />
+                View Detailed Model Analysis
+            </x-ui.button>
         </div>
     </section>
 
