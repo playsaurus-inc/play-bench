@@ -53,7 +53,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 @foreach($topModels as $model)
-                    <x-ui.rps-model-card :model="$model" :rank="$model->rps_rank" />
+                    <x-rps.model-card :model="$model" :rank="$model->rps_rank" />
                 @endforeach
             </div>
         </section>
