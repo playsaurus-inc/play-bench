@@ -64,7 +64,7 @@ class RpsModelController extends Controller
             ->get();
 
         // Calculate performance statistics
-        $totalRpsMatches = $aiModel->rpsMatchesAsPlayer1()->count() + $aiModel->rpsMatchesAsPlayer2()->count();
+        $totalRpsMatches = $aiModel->rpsMatches()->count();
         $totalRpsWins = $aiModel->rpsMatchesWon()->count();
         $winRate = $totalRpsMatches > 0 ? $totalRpsWins / $totalRpsMatches : 0;
 

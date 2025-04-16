@@ -51,6 +51,15 @@ class AiModel extends Model
     }
 
     /**
+     * Get all RPS matches where this AI model played.
+     */
+    public function rpsMatches(): HasMany
+    {
+        return $this->hasMany(RpsMatch::class, 'player1_id')
+            ->orWhere('player2_id', $this->id);
+    }
+
+    /**
      * Get all RPS matches won by this AI model
      */
     public function rpsMatchesWon(): HasMany
