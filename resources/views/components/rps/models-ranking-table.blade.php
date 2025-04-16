@@ -1,18 +1,10 @@
-@props([
-    'models',
-    'title' => 'Models Ranking for Rock Paper Scissors by ELO',
-    'showCount' => true,
-    'containerClasses' => 'bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100',
-    'compact' => false
-])
+@props(['models'])
 
-<div class="{{ $containerClasses }}">
+<div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100">
     <div class="px-4 py-5 sm:px-6 border-b border-gray-100">
         <div class="flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-gray-900">{{ $title }}</h3>
-            @if($showCount)
-                <span class="text-sm text-gray-500">{{ $models->count() }} models</span>
-            @endif
+            <h3 class="text-lg font-semibold text-gray-900">Models Ranking for Rock Paper Scissors by ELO</h3>
+            <span class="text-sm text-gray-500">{{ $models->count() }} models</span>
         </div>
     </div>
     <div class="overflow-x-auto">
