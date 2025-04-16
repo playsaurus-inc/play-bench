@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Contracts\RankedMatch;
 use App\Services\RpsMatchAnalysisService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
-class RpsMatch extends Model
+class RpsMatch extends Model implements RankedMatch
 {
     /** @use HasFactory<\Database\Factories\RpsMatchFactory> */
     use HasFactory;
@@ -372,5 +373,52 @@ class RpsMatch extends Model
     public function getStrategicInsights(): HtmlString
     {
         return RpsMatchAnalysisService::strategicInsights($this);
+    }
+
+    /**
+     * Gets the player 1 of the match.
+     */
+    public function getPlayer1(): AiModel
+    {
+        return $this->player1;
+    }
+
+    /**
+     * Gets the player 2 of the match.
+     */
+    public function getPlayer2(): AiModel
+    {
+        return $this->player2;
+    }
+
+    /**
+     * Gets the outcome of the match. '1' for player 1 win, '2' for player 2 win, 't' for tie.
+     */
+    public function getOutcome(): string
+    {
+        if ($this->player1_score > $this->player2_score) {
+            return '1';
+        } elseif ($this->player2_score > $this->player1_score) {
+            return '2';
+        } else {
+            return 't';
+        }
+    }
+
+    /**
+     * Updates the ELO ratings of the match.
+     */
+    public function updateEloRatings(
+        float $player1EloBefore,
+        float $player2EloBefore,
+        float $player1EloAfter,
+        float $player2EloAfter
+    ): void {
+        $this->update([
+            'player1_elo_before' => $player1EloBefore,
+            'player2_elo_before' => $player2EloBefore,
+            'player1_elo_after' => $player1EloAfter,
+            'player2_elo_after' => $player2EloAfter,
+        ]);
     }
 }

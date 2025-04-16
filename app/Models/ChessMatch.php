@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Contracts\RankedMatch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ChessMatch extends Model
+class ChessMatch extends Model implements RankedMatch
 {
     /** @use HasFactory<\Database\Factories\ChessMatchFactory> */
     use HasFactory;
@@ -160,5 +161,52 @@ class ChessMatch extends Model
 
         // Filter out empty values
         return array_filter($moves);
+    }
+
+    /**
+     * Gets the player 1 of the match (white player).
+     */
+    public function getPlayer1(): AiModel
+    {
+        return $this->white;
+    }
+
+    /**
+     * Gets the player 2 of the match (black player).
+     */
+    public function getPlayer2(): AiModel
+    {
+        return $this->black;
+    }
+
+    /**
+     * Gets the outcome of the match. '1' for white win, '2' for black win, 't' for tie.
+     */
+    public function getOutcome(): string
+    {
+        if ($this->result === 'white') {
+            return '1';
+        } elseif ($this->result === 'black') {
+            return '2';
+        } else {
+            return 't'; // Draw
+        }
+    }
+
+    /**
+     * Updates the ELO ratings of the match.
+     */
+    public function updateEloRatings(
+        float $player1EloBefore,
+        float $player2EloBefore,
+        float $player1EloAfter,
+        float $player2EloAfter
+    ): void {
+        $this->update([
+            'white_elo_before' => $player1EloBefore,
+            'black_elo_before' => $player2EloBefore,
+            'white_elo_after' => $player1EloAfter,
+            'black_elo_after' => $player2EloAfter,
+        ]);
     }
 }

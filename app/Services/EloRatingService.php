@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\AiModel;
 use App\Models\ChessMatch;
+use App\Models\Contracts\RankedMatch;
 use App\Models\RpsMatch;
 use App\Models\SvgMatch;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,36 @@ class EloRatingService
     protected const DEFAULT_ELO = 1000;
 
     /**
+     * Update ELO ratings for all RPS matches.
+     *
+     * @return int Number of matches processed
+     */
+    public function updateRpsEloRatings(): int
+    {
+        return $this->updateEloRatings('rps');
+    }
+
+    /**
+     * Update ELO ratings for all SVG matches.
+     *
+     * @return int Number of matches processed
+     */
+    public function updateSvgEloRatings(): int
+    {
+        return $this->updateEloRatings('svg');
+    }
+
+    /**
+     * Update ELO ratings for all Chess matches.
+     *
+     * @return int Number of matches processed
+     */
+    public function updateChessEloRatings(): int
+    {
+        return $this->updateEloRatings('chess');
+    }
+
+    /**
      * Calculate new ELO ratings for players based on match outcome.
      *
      * @param float $player1Elo Current ELO rating of player 1
@@ -29,7 +60,7 @@ class EloRatingService
      * @param string $outcome '1' for player 1 win, '2' for player 2 win, 't' for tie
      * @return array{player1_new_elo: float, player2_new_elo: float} New ELO ratings
      */
-    public function calculateElo(float $player1Elo, float $player2Elo, string $outcome): array
+    protected function calculateElo(float $player1Elo, float $player2Elo, string $outcome): array
     {
         // Calculate expected scores
         $expected1 = $this->calculateExpectedScore($player1Elo, $player2Elo);
@@ -66,50 +97,44 @@ class EloRatingService
     }
 
     /**
-     * Update ELO ratings for all RPS matches.
+     * Update ELO ratings for all matches of a specific type.
      *
+     * @param string $gameType The game type ('rps', 'svg', or 'chess')
      * @return int Number of matches processed
      */
-    public function updateRpsEloRatings(): int
+    protected function updateEloRatings(string $gameType): int
     {
         $count = 0;
 
-        // Start a database transaction
-        DB::transaction(function () use (&$count) {
-            AiModel::query()->update(['rps_elo' => static::DEFAULT_ELO]);
+        DB::transaction(function () use ($gameType, &$count) {
 
-            // Get all RPS matches sorted by creation date
-            $matches = RpsMatch::with(['player1', 'player2'])
-                ->orderBy('created_at')
-                ->get();
+            $this->resetEloRatings($gameType);
+
+            $matches = $this->getMatchesByType($gameType);
 
             foreach ($matches as $match) {
-                // Skip matches without proper player information
-                if (!$match->player1 || !$match->player2) {
+                $player1 = $match->getPlayer1();
+                $player2 = $match->getPlayer2();
+
+                if (!$player1 || !$player2) {
                     continue;
                 }
 
-                // Determine outcome
-                $outcome = $this->getMatchOutcome($match);
+                $player1Elo = $player1->getAttribute($this->getEloColumnName($gameType));
+                $player2Elo = $player2->getAttribute($this->getEloColumnName($gameType));
 
-                // Calculate new ELO ratings
-                $ratings = $this->calculateElo(
-                    $match->player1->rps_elo,
-                    $match->player2->rps_elo,
-                    $outcome
+                $outcome = $match->getOutcome();
+                $ratings = $this->calculateElo($player1Elo, $player2Elo, $outcome);
+
+                $match->updateEloRatings(
+                    $player1Elo,
+                    $player2Elo,
+                    $ratings['player1_new_elo'],
+                    $ratings['player2_new_elo']
                 );
 
-                // Store original ELO ratings in the match
-                $match->update([
-                    'player1_elo_before' => $match->player1->rps_elo,
-                    'player2_elo_before' => $match->player2->rps_elo,
-                    'player1_elo_after' => $ratings['player1_new_elo'],
-                    'player2_elo_after' => $ratings['player2_new_elo'],
-                ]);
-
-                // Update player ELO ratings
-                $match->player1->update(['rps_elo' => $ratings['player1_new_elo']]);
-                $match->player2->update(['rps_elo' => $ratings['player2_new_elo']]);
+                $player1->update([$this->getEloColumnName($gameType) => $ratings['player1_new_elo']]);
+                $player2->update([$this->getEloColumnName($gameType) => $ratings['player2_new_elo']]);
 
                 $count++;
             }
@@ -119,159 +144,47 @@ class EloRatingService
     }
 
     /**
-     * Update ELO ratings for all SVG matches.
+     * Reset ELO ratings for all AI models for the specified game type.
      *
-     * @return int Number of matches processed
+     * @param string $gameType The game type ('rps', 'svg', or 'chess')
+     * @return void
      */
-    public function updateSvgEloRatings(): int
+    protected function resetEloRatings(string $gameType): void
     {
-        $count = 0;
-
-        // Start a database transaction
-        DB::transaction(function () use (&$count) {
-            AiModel::query()->update(['svg_elo' => static::DEFAULT_ELO]);
-
-            // Get all SVG matches sorted by creation date
-            $matches = SvgMatch::with(['player1', 'player2', 'winner'])
-                ->orderBy('created_at')
-                ->get();
-
-            foreach ($matches as $match) {
-                // Skip matches without proper player information
-                if (!$match->player1 || !$match->player2) {
-                    continue;
-                }
-
-                // Determine outcome
-                $outcome = $this->getSvgMatchOutcome($match);
-
-                // Calculate new ELO ratings
-                $ratings = $this->calculateElo(
-                    $match->player1->svg_elo,
-                    $match->player2->svg_elo,
-                    $outcome
-                );
-
-                // Store original ELO ratings in the match
-                $match->update([
-                    'player1_elo_before' => $match->player1->svg_elo,
-                    'player2_elo_before' => $match->player2->svg_elo,
-                    'player1_elo_after' => $ratings['player1_new_elo'],
-                    'player2_elo_after' => $ratings['player2_new_elo'],
-                ]);
-
-                // Update player ELO ratings
-                $match->player1->update(['svg_elo' => $ratings['player1_new_elo']]);
-                $match->player2->update(['svg_elo' => $ratings['player2_new_elo']]);
-
-                $count++;
-            }
-        });
-
-        return $count;
+        AiModel::query()->update([
+            $this->getEloColumnName($gameType) => static::DEFAULT_ELO
+        ]);
     }
 
     /**
-     * Update ELO ratings for all Chess matches.
+     * Get the name of the ELO column in the AI models table for the specified game type.
      *
-     * @return int Number of matches processed
+     * @param string $gameType The game type ('rps', 'svg', or 'chess')
+     * @return string The ELO column name
      */
-    public function updateChessEloRatings(): int
+    protected function getEloColumnName(string $gameType): string
     {
-        $count = 0;
-
-        // Start a database transaction
-        DB::transaction(function () use (&$count) {
-            AiModel::query()->update(['chess_elo' => static::DEFAULT_ELO]);
-
-            // Get all chess matches sorted by creation date
-            $matches = ChessMatch::with(['white', 'black'])
-                ->orderBy('created_at')
-                ->get();
-
-            foreach ($matches as $match) {
-                // Skip matches without proper player information
-                if (!$match->white || !$match->black) {
-                    continue;
-                }
-
-                // Determine outcome
-                $outcome = $this->getChessMatchOutcome($match);
-
-                // Calculate new ELO ratings
-                $ratings = $this->calculateElo(
-                    $match->white->chess_elo,
-                    $match->black->chess_elo,
-                    $outcome
-                );
-
-                // Store original ELO ratings in the match
-                $match->update([
-                    'white_elo_before' => $match->white->chess_elo,
-                    'black_elo_before' => $match->black->chess_elo,
-                    'white_elo_after' => $ratings['player1_new_elo'],
-                    'black_elo_after' => $ratings['player2_new_elo'],
-                ]);
-
-                // Update player ELO ratings
-                $match->white->update(['chess_elo' => $ratings['player1_new_elo']]);
-                $match->black->update(['chess_elo' => $ratings['player2_new_elo']]);
-
-                $count++;
-            }
-        });
-
-        return $count;
+        return match ($gameType) {
+            'rps' => 'rps_elo',
+            'svg' => 'svg_elo',
+            'chess' => 'chess_elo',
+            default => throw new \InvalidArgumentException("Unknown game type: {$gameType}")
+        };
     }
 
     /**
-     * Determine the outcome of an RPS match for ELO calculation.
+     * Get all matches of a specific type sorted by creation date.
      *
-     * @param RpsMatch $match
-     * @return string '1' for player1 win, '2' for player2 win, 't' for tie
+     * @param string $gameType The game type ('rps', 'svg', or 'chess')
+     * @return \Illuminate\Database\Eloquent\Collection<RankedMatch> Collection of matches
      */
-    protected function getMatchOutcome(RpsMatch $match): string
+    protected function getMatchesByType(string $gameType): \Illuminate\Database\Eloquent\Collection
     {
-        if ($match->player1_score > $match->player2_score) {
-            return '1';
-        } elseif ($match->player2_score > $match->player1_score) {
-            return '2';
-        } else {
-            return 't';
-        }
-    }
-
-    /**
-     * Determine the outcome of an SVG match for ELO calculation.
-     *
-     * @param SvgMatch $match
-     * @return string '1' for player1 win, '2' for player2 win, 't' for tie
-     */
-    protected function getSvgMatchOutcome(SvgMatch $match): string
-    {
-        if ($match->winner_id === $match->player1_id) {
-            return '1';
-        } elseif ($match->winner_id === $match->player2_id) {
-            return '2';
-        } else {
-            return 't'; // Though SVG matches typically don't have ties
-        }
-    }
-
-    /**
-     * Determine the outcome of a Chess match for ELO calculation.
-     *
-     * @param ChessMatch $match
-     * @return string '1' for white win, '2' for black win, 't' for tie
-     */
-    protected function getChessMatchOutcome(ChessMatch $match): string
-    {
-        if ($match->result === 'white') {
-            return '1';
-        } elseif ($match->result === 'black') {
-            return '2';
-        } else {
-            return 't'; // Draw
-        }
+        return match ($gameType) {
+            'rps' => RpsMatch::with(['player1', 'player2'])->orderBy('created_at')->get(),
+            'svg' => SvgMatch::with(['player1', 'player2'])->orderBy('created_at')->get(),
+            'chess' => ChessMatch::with(['white', 'black'])->orderBy('created_at')->get(),
+            default => throw new \InvalidArgumentException("Unknown game type: {$gameType}")
+        };
     }
 }

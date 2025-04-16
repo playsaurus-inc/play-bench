@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Contracts\RankedMatch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
-class SvgMatch extends Model
+class SvgMatch extends Model implements RankedMatch
 {
     /** @use HasFactory<\Database\Factories\SvgMatchFactory> */
     use HasFactory;
@@ -121,5 +122,52 @@ class SvgMatch extends Model
         }
 
         return $this->ended_at->diffInSeconds($this->started_at);
+    }
+
+    /**
+     * Gets the player 1 of the match.
+     */
+    public function getPlayer1(): AiModel
+    {
+        return $this->player1;
+    }
+
+    /**
+     * Gets the player 2 of the match.
+     */
+    public function getPlayer2(): AiModel
+    {
+        return $this->player2;
+    }
+
+    /**
+     * Gets the outcome of the match. '1' for player 1 win, '2' for player 2 win, 't' for tie.
+     */
+    public function getOutcome(): string
+    {
+        if ($this->winner_id === $this->player1_id) {
+            return '1';
+        } elseif ($this->winner_id === $this->player2_id) {
+            return '2';
+        } else {
+            return 't'; // Though SVG matches typically don't have ties
+        }
+    }
+
+    /**
+     * Updates the ELO ratings of the match.
+     */
+    public function updateEloRatings(
+        float $player1EloBefore,
+        float $player2EloBefore,
+        float $player1EloAfter,
+        float $player2EloAfter
+    ): void {
+        $this->update([
+            'player1_elo_before' => $player1EloBefore,
+            'player2_elo_before' => $player2EloBefore,
+            'player1_elo_after' => $player1EloAfter,
+            'player2_elo_after' => $player2EloAfter,
+        ]);
     }
 }
