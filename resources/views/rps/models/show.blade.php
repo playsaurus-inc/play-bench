@@ -74,7 +74,7 @@
                                 <span class="ml-2 text-sm text-gray-500">matches</span>
                             </div>
                             <div class="mt-2 flex items-center text-xs text-gray-500">
-                                <span>{{ $totalRpsWins }} wins ({{ $totalRpsMatches > 0 ? Number::percentage(($totalRpsWins / $totalRpsMatches) * 100, 1) : '0' }}%)</span>
+                                <span>{{ $totalRpsWins }} wins ({{ $totalRpsMatches > 0 ? Number::percentage(($totalRpsWins / $totalRpsMatches) * 100, 1) : '0.0%' }})</span>
                             </div>
                         </div>
                     </div>
