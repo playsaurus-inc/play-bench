@@ -191,7 +191,7 @@
 
                     <div class="mt-6">
                         <h3 class="text-sm font-medium text-gray-700 mb-2">Strategy Analysis</h3>
-                        <div class="prose prose-sm prose-amber max-w-none text-gray-600">
+                        <div class="max-w-none bg-gray-50 text-gray-600 rounded-lg p-4 text-sm font-semibold">
                             <p>{{ $strategyAnalysis }}</p>
                         </div>
                     </div>

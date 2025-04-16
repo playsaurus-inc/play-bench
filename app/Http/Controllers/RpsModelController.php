@@ -67,11 +67,8 @@ class RpsModelController extends Controller
         $winRate = $totalRpsMatches > 0 ? $totalRpsWins / $totalRpsMatches : 0;
 
         // Get rankings information
-        $ranking = AiModel::withCount([
-            'rpsMatchesAsPlayer1',
-            'rpsMatchesAsPlayer2',
-            'rpsMatchesWon',
-        ])
+        $ranking = AiModel::query()
+            ->withCount(['rpsMatchesAsPlayer1', 'rpsMatchesAsPlayer2', 'rpsMatchesWon'])
             ->get()
             ->map(function ($model) {
                 $model->total_rps_matches = $model->rps_matches_as_player1_count + $model->rps_matches_as_player2_count;
@@ -171,11 +168,13 @@ class RpsModelController extends Controller
                             abs(($moveBreakdown['paper'] - $totalMoves / 3) / $totalMoves) < 0.1 &&
                             abs(($moveBreakdown['scissors'] - $totalMoves / 3) / $totalMoves) < 0.1;
 
+        $name = ucfirst($aiModel->name);
+
         if ($perfectDistribution) {
-            return "{$aiModel->name} uses a highly balanced strategy, playing rock, paper, and scissors with nearly equal frequency. ".
+            return "{$name} uses a highly balanced strategy, playing rock, paper, and scissors with nearly equal frequency. ".
                    'This makes its moves very difficult to predict, as there is no clear pattern to exploit.';
         } else {
-            return "{$aiModel->name} shows a preference for {$highestMove}, using it more frequently than other moves. ".
+            return "{$name} shows a preference for {$highestMove}, using it more frequently than other moves. ".
                    'This tendency could potentially be exploited by opponents who can detect and adapt to this pattern.';
         }
     }
