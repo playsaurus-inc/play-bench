@@ -2,7 +2,7 @@
     <!-- Header section -->
     <div class="mb-8">
         <div class="flex items-center justify-between">
-            <x-ui.button :href="route('rps.models.index')" variant="secondary" class="text-sm">
+            <x-ui.button :href="route('models.index')" variant="secondary" class="text-sm">
                 <x-phosphor-arrow-left class="w-4 h-4 mr-4" />
                 Back to All Models
             </x-ui.button>

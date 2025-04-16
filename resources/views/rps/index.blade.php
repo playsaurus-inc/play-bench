@@ -151,7 +151,7 @@
         <x-rps.models-ranking-table :models="$models" />
 
         <div class="mt-4 text-center">
-            <x-ui.button href="{{ route('rps.models.index') }}" variant="outline">
+            <x-ui.button href="{{ route('models.index') }}" variant="outline">
                 <x-phosphor-chart-bar-fill class="w-4 h-4 mr-2" />
                 View Detailed Model Analysis
             </x-ui.button>
@@ -230,7 +230,7 @@
         </div>
 
         <div class="mt-6 flex justify-center">
-            <x-ui.button href="{{ route('rps.models.index') }}" variant="outline">
+            <x-ui.button href="{{ route('models.index') }}" variant="outline">
                 <x-phosphor-robot-fill class="size-4 mr-3" />
                 Browse AI Models
             </x-ui.button>

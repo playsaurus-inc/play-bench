@@ -9,46 +9,6 @@ use Illuminate\View\View;
 class RpsModelController extends Controller
 {
     /**
-     * Display a listing of the AI models with their RPS performance.
-     */
-    public function index(): View
-    {
-        $models = AiModel::query()
-            ->withCount([
-                'rpsMatchesAsPlayer1',
-                'rpsMatchesAsPlayer2',
-                'rpsMatchesWon',
-            ])
-            ->get()
-            ->map(function ($model) {
-                $model->total_rps_matches = $model->rps_matches_as_player1_count + $model->rps_matches_as_player2_count;
-                $model->win_rate = $model->total_rps_matches > 0
-                    ? $model->rps_matches_won_count / $model->total_rps_matches
-                    : 0;
-
-                return $model;
-            })
-            ->sortByDesc('rps_elo')
-            ->reject(fn ($model) => $model->total_rps_matches < 1);
-
-        // Get top 3 models
-        $topModels = $models->where('total_rps_matches', '>=', 5)->take(3);
-
-        // Get statistics for the entire benchmark
-        $benchmarkStats = [
-            'total_models' => $models->count(),
-            'total_matches' => RpsMatch::count(),
-            'avg_win_rate' => $models->where('total_rps_matches', '>', 0)->avg('win_rate') * 100,
-        ];
-
-        return view('rps.models.index', [
-            'models' => $models->values(),
-            'topModels' => $topModels,
-            'benchmarkStats' => $benchmarkStats,
-        ]);
-    }
-
-    /**
      * Display the specified AI model and its performance details.
      */
     public function show(AiModel $aiModel): View
