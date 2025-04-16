@@ -27,6 +27,11 @@ return new class extends Migration
             $table->float('chess_elo')->default(1000);
             $table->float('svg_elo')->default(1000);
 
+            // Ranks
+            $table->integer('rps_rank')->default(0); // 0 = unranked
+            $table->integer('chess_rank')->default(0); // 0 = unranked
+            $table->integer('svg_rank')->default(0); // 0 = unranked
+
             $table->timestamps();
         });
     }

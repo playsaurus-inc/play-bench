@@ -138,6 +138,8 @@ class EloRatingService
 
                 $count++;
             }
+
+            $this->updateRankings($gameType);
         });
 
         return $count;
@@ -184,6 +186,48 @@ class EloRatingService
             'rps' => RpsMatch::with(['player1', 'player2'])->orderBy('created_at')->get(),
             'svg' => SvgMatch::with(['player1', 'player2'])->orderBy('created_at')->get(),
             'chess' => ChessMatch::with(['white', 'black'])->orderBy('created_at')->get(),
+            default => throw new \InvalidArgumentException("Unknown game type: {$gameType}")
+        };
+    }
+
+    /**
+     * Update rankings for all AI models for a specific game type.
+     * The ranking is based on ELO rating (higher ELO = better rank).
+     *
+     * @param string $gameType The game type ('rps', 'svg', or 'chess')
+     * @return void
+     */
+    protected function updateRankings(string $gameType): void
+    {
+        $eloColumn = $this->getEloColumnName($gameType);
+        $rankColumn = $this->getRankColumnName($gameType);
+
+        // Get all AI models sorted by ELO rating descending
+        $models = AiModel::query()
+            ->orderByDesc($eloColumn)
+            ->get();
+
+        // Update rank for each model
+        $rank = 1;
+        foreach ($models as $model) {
+            $model->update([
+                $rankColumn => $rank++
+            ]);
+        }
+    }
+
+    /**
+     * Get the name of the rank column in the AI models table for the specified game type.
+     *
+     * @param string $gameType The game type ('rps', 'svg', or 'chess')
+     * @return string The rank column name
+     */
+    protected function getRankColumnName(string $gameType): string
+    {
+        return match ($gameType) {
+            'rps' => 'rps_rank',
+            'svg' => 'svg_rank',
+            'chess' => 'chess_rank',
             default => throw new \InvalidArgumentException("Unknown game type: {$gameType}")
         };
     }
