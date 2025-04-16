@@ -274,10 +274,10 @@
                                     <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         Model
                                     </th>
-                                    <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         Matches
                                     </th>
-                                    <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         Win Rate
                                     </th>
                                     <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -304,10 +304,10 @@
                                                 </div>
                                             </a>
                                         </td>
-                                        <td class="px-4 py-3 whitespace-nowrap">
+                                        <td class="px-4 py-3 whitespace-nowrap text-right">
                                             <div class="text-sm text-gray-900">{{ $opponent->total_matches }}</div>
                                         </td>
-                                        <td class="px-4 py-3 whitespace-nowrap">
+                                        <td class="px-4 py-3 whitespace-nowrap text-right">
                                             <div class="text-sm font-medium {{ $opponent->win_rate > 0.5 ? 'text-green-600' : ($opponent->win_rate == 0.5 ? 'text-amber-600' : 'text-red-600') }}">
                                                 {{ Number::percentage($opponent->win_rate * 100, 1) }}
                                             </div>

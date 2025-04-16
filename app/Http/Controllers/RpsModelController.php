@@ -134,12 +134,7 @@ class RpsModelController extends Controller
             }
         }
 
-        // Get most impressive victory (highest point difference)
-        $mostImpressiveVictory = RpsMatch::query()
-            ->wonBy($aiModel)
-            ->with(['player1', 'player2'])
-            ->orderByRaw('ABS(player1_score - player2_score) DESC')
-            ->first();
+        $mostImpressiveVictory = $this->mostImpressiveVictory($aiModel);
 
         // Get rankings information
         $ranking = AiModel::withCount([
@@ -161,20 +156,20 @@ class RpsModelController extends Controller
             return $rankedModel->id === $aiModel->id;
         }) + 1;
 
-        return view('rps.models.show', compact(
-            'aiModel',
-            'rpsMatches',
-            'winRate',
-            'totalRpsMatches',
-            'totalRpsWins',
-            'opponents',
-            'moveBreakdown',
-            'totalMoves',
-            'consecutiveMoves',
-            'totalConsecutiveMoves',
-            'mostImpressiveVictory',
-            'rankPosition'
-        ));
+        return view('rps.models.show', [
+            'aiModel' => $aiModel,
+            'rpsMatches' => $rpsMatches,
+            'winRate' => $winRate,
+            'totalRpsMatches' => $totalRpsMatches,
+            'totalRpsWins' => $totalRpsWins,
+            'opponents' => $opponents,
+            'moveBreakdown' => $moveBreakdown,
+            'totalMoves' => $totalMoves,
+            'consecutiveMoves' => $consecutiveMoves,
+            'totalConsecutiveMoves' => $totalConsecutiveMoves,
+            'mostImpressiveVictory' => $mostImpressiveVictory,
+            'rankPosition' => $rankPosition,
+        ]);
     }
 
     /**
@@ -201,5 +196,18 @@ class RpsModelController extends Controller
                     'total_matches' => $total,
                 ];
             });
+    }
+
+    /**
+     * Get the most impressive victory of the given AI model.
+     * This is the match with the highest point difference.
+     */
+    protected function mostImpressiveVictory(AiModel $aiModel): RpsMatch
+    {
+        return RpsMatch::query()
+            ->wonBy($aiModel)
+            ->with(['player1', 'player2'])
+            ->orderByRaw('ABS(player1_score - player2_score) DESC')
+            ->first();
     }
 }
