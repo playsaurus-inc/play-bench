@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,14 @@ class RpsMatch extends Model
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
         'is_forced_completion' => 'boolean',
+        'move_history' => 'string',
+        'rounds_played' => 'integer',
+        'player1_score' => 'integer',
+        'player2_score' => 'integer',
+        'player1_win_streak' => 'integer',
+        'player2_win_streak' => 'integer',
+        'player1_move_distribution' => 'array',
+        'player2_move_distribution' => 'array',
     ];
 
     /**
@@ -48,6 +57,14 @@ class RpsMatch extends Model
 
             if (! $model->rounds_played) {
                 $model->rounds_played = Str::of($model->move_history)->explode(' ')->count() + 1;
+            }
+
+            if (! $model->player1_move_distribution) {
+                $model->player1_move_distribution = static::calculateMoveDistribution($model->move_history, player: 1);
+            }
+
+            if (! $model->player2_move_distribution) {
+                $model->player2_move_distribution = static::calculateMoveDistribution($model->move_history, player: 2);
             }
         });
     }
@@ -249,8 +266,6 @@ class RpsMatch extends Model
      */
     public static function calculateWinStreak(string $moveHistory, int $player): int
     {
-        // Move history is `abc abc abc` where `a` is player 1's move, `b` is player 2's move, and `c` is the result
-        // Results can be: `1` (player 1 wins), `2` (player 2 wins), or `t` (tie)
         $wins = Str::of($moveHistory)->explode(' ')->map(fn ($s) => $s[2]);
 
         $streak = 0;
@@ -264,5 +279,65 @@ class RpsMatch extends Model
             }
         }
         return $maxStreak;
+    }
+
+    /**
+     * Calculate the move distribution for the given player based on the move history.
+     *
+     * @param  string  $moveHistory  The move history string
+     * @param  int  $player  The player number
+     * @return array<{rock: int, paper: int, scissors: int}>  The move distribution for the given player
+     */
+    public static function calculateMoveDistribution(string $moveHistory, int $player): array
+    {
+        $index = $player === 1 ? 0 : 1;
+        $moves = Str::of($moveHistory)->explode(' ')->map(fn ($s) => $s[$index]);
+
+        return [
+            'rock' => $moves->filter(fn ($m) => $m === 'r')->count(),
+            'paper' => $moves->filter(fn ($m) => $m === 'p')->count(),
+            'scissors' => $moves->filter(fn ($m) => $m === 's')->count(),
+        ];
+    }
+
+    /**
+     * Get the move distribution percentages for player 1.
+     */
+    public function player1MoveDistributionPercentages(): Attribute
+    {
+        return Attribute::get(fn() => $this->calculateMoveDistributionPercentages($this->player1_move_distribution));
+    }
+
+    /**
+     * Get the move distribution percentages for player 2.
+     */
+    public function player2MoveDistributionPercentages(): Attribute
+    {
+        return Attribute::get(fn() => $this->calculateMoveDistributionPercentages($this->player2_move_distribution));
+    }
+
+    /**
+     * Calculate the move distribution percentages for the given player.
+     *
+     * @param  array<{rock: int, paper: int, scissors: int}>  $moveDistribution  The move distribution for the given player
+     * @return array<{rock: float, paper: float, scissors: float}>  The move distribution percentages for the given player
+     */
+    protected function calculateMoveDistributionPercentages(array $moveDistribution): array
+    {
+        $totalMoves = array_sum($moveDistribution);
+
+        if ($totalMoves === 0) {
+            return [
+                'rock' => 0,
+                'paper' => 0,
+                'scissors' => 0,
+            ];
+        }
+
+        return [
+            'rock' => $moveDistribution['rock'] / $totalMoves,
+            'paper' => $moveDistribution['paper'] / $totalMoves,
+            'scissors' => $moveDistribution['scissors'] / $totalMoves,
+        ];
     }
 }

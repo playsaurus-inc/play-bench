@@ -113,42 +113,6 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
         <!-- Move distribution -->
         <x-ui.card title="Move Distribution" subtitle="Analysis of move choices by each player">
-            @php
-                $moveBreakdown = [
-                    'player1' => [
-                        'rock' => 0,
-                        'paper' => 0,
-                        'scissors' => 0,
-                    ],
-                    'player2' => [
-                        'rock' => 0,
-                        'paper' => 0,
-                        'scissors' => 0,
-                    ],
-                ];
-
-                foreach ($rpsMatch->getRounds() as $round) {
-                    $moveBreakdown['player1'][$round['player1_move']]++;
-                    $moveBreakdown['player2'][$round['player2_move']]++;
-                }
-
-                // Calculate percentages
-                $player1Total = array_sum($moveBreakdown['player1']);
-                $player2Total = array_sum($moveBreakdown['player2']);
-
-                $player1Percentages = [
-                    'rock' => $player1Total > 0 ? ($moveBreakdown['player1']['rock'] / $player1Total) * 100 : 0,
-                    'paper' => $player1Total > 0 ? ($moveBreakdown['player1']['paper'] / $player1Total) * 100 : 0,
-                    'scissors' => $player1Total > 0 ? ($moveBreakdown['player1']['scissors'] / $player1Total) * 100 : 0,
-                ];
-
-                $player2Percentages = [
-                    'rock' => $player2Total > 0 ? ($moveBreakdown['player2']['rock'] / $player2Total) * 100 : 0,
-                    'paper' => $player2Total > 0 ? ($moveBreakdown['player2']['paper'] / $player2Total) * 100 : 0,
-                    'scissors' => $player2Total > 0 ? ($moveBreakdown['player2']['scissors'] / $player2Total) * 100 : 0,
-                ];
-            @endphp
-
             <div class="space-y-8">
                 <!-- Player 1 moves -->
                 <div>
@@ -164,12 +128,12 @@
                             <div class="flex flex-col grow">
                                 <div class="flex items-center justify-between mb-2">
                                     <span class="text-sm font-medium">Rock</span>
-                                    <span class="text-sm font-bold">{{ $moveBreakdown['player1']['rock'] }}</span>
+                                    <span class="text-sm font-bold">{{ $rpsMatch->player1_move_distribution['rock'] }}</span>
                                 </div>
                                 <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                                    <div class="h-2 bg-red-500 rounded-full" style="width: {{ $player1Percentages['rock'] }}%"></div>
+                                    <div class="h-2 bg-red-500 rounded-full" style="width: {{ $rpsMatch->player1_move_distribution_percentages['rock'] * 100 }}%"></div>
                                 </div>
-                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player1Percentages['rock'], 1) }}%</div>
+                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($rpsMatch->player1_move_distribution_percentages['rock'] * 100, 1) }}%</div>
                             </div>
                         </div>
 
@@ -179,12 +143,12 @@
                             <div class="flex flex-col grow">
                                 <div class="flex items-center justify-between mb-2">
                                     <span class="text-sm font-medium">Paper</span>
-                                    <span class="text-sm font-bold">{{ $moveBreakdown['player1']['paper'] }}</span>
+                                    <span class="text-sm font-bold">{{ $rpsMatch->player1_move_distribution['paper'] }}</span>
                                 </div>
                                 <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                                    <div class="h-2 bg-red-500 rounded-full" style="width: {{ $player1Percentages['paper'] }}%"></div>
+                                    <div class="h-2 bg-red-500 rounded-full" style="width: {{ $rpsMatch->player1_move_distribution_percentages['paper'] * 100 }}%"></div>
                                 </div>
-                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player1Percentages['paper'], 1) }}%</div>
+                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($rpsMatch->player1_move_distribution_percentages['paper'] * 100, 1) }}%</div>
                             </div>
                         </div>
 
@@ -194,12 +158,12 @@
                             <div class="flex flex-col grow">
                                 <div class="flex items-center justify-between mb-2">
                                     <span class="text-sm font-medium">Scissors</span>
-                                    <span class="text-sm font-bold">{{ $moveBreakdown['player1']['scissors'] }}</span>
+                                    <span class="text-sm font-bold">{{ $rpsMatch->player1_move_distribution['scissors'] }}</span>
                                 </div>
                                 <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                                    <div class="h-2 bg-red-500 rounded-full" style="width: {{ $player1Percentages['scissors'] }}%"></div>
+                                    <div class="h-2 bg-red-500 rounded-full" style="width: {{ $rpsMatch->player1_move_distribution_percentages['scissors'] * 100 }}%"></div>
                                 </div>
-                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player1Percentages['scissors'], 1) }}%</div>
+                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($rpsMatch->player1_move_distribution_percentages['scissors'] * 100, 1) }}%</div>
                             </div>
                         </div>
                     </div>
@@ -219,12 +183,12 @@
                             <div class="flex flex-col grow">
                                 <div class="flex items-center justify-between mb-2">
                                     <span class="text-sm font-medium">Rock</span>
-                                    <span class="text-sm font-bold">{{ $moveBreakdown['player2']['rock'] }}</span>
+                                    <span class="text-sm font-bold">{{ $rpsMatch->player2_move_distribution['rock'] }}</span>
                                 </div>
                                 <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                                    <div class="h-2 bg-blue-500 rounded-full" style="width: {{ $player2Percentages['rock'] }}%"></div>
+                                    <div class="h-2 bg-blue-500 rounded-full" style="width: {{ $rpsMatch->player2_move_distribution_percentages['rock'] * 100 }}%"></div>
                                 </div>
-                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player2Percentages['rock'], 1) }}%</div>
+                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($rpsMatch->player2_move_distribution_percentages['rock'] * 100, 1) }}%</div>
                             </div>
                         </div>
 
@@ -234,12 +198,12 @@
                             <div class="flex flex-col grow">
                                 <div class="flex items-center justify-between mb-2">
                                     <span class="text-sm font-medium">Paper</span>
-                                    <span class="text-sm font-bold">{{ $moveBreakdown['player2']['paper'] }}</span>
+                                    <span class="text-sm font-bold">{{ $rpsMatch->player2_move_distribution['paper'] }}</span>
                                 </div>
                                 <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                                    <div class="h-2 bg-blue-500 rounded-full" style="width: {{ $player2Percentages['paper'] }}%"></div>
+                                    <div class="h-2 bg-blue-500 rounded-full" style="width: {{ $rpsMatch->player2_move_distribution_percentages['paper'] * 100 }}%"></div>
                                 </div>
-                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player2Percentages['paper'], 1) }}%</div>
+                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($rpsMatch->player2_move_distribution_percentages['paper'] * 100, 1) }}%</div>
                             </div>
                         </div>
 
@@ -249,12 +213,12 @@
                             <div class="flex flex-col grow">
                                 <div class="flex items-center justify-between mb-2">
                                     <span class="text-sm font-medium">Scissors</span>
-                                    <span class="text-sm font-bold">{{ $moveBreakdown['player2']['scissors'] }}</span>
+                                    <span class="text-sm font-bold">{{ $rpsMatch->player2_move_distribution['scissors'] }}</span>
                                 </div>
                                 <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                                    <div class="h-2 bg-blue-500 rounded-full" style="width: {{ $player2Percentages['scissors'] }}%"></div>
+                                    <div class="h-2 bg-blue-500 rounded-full" style="width: {{ $rpsMatch->player2_move_distribution_percentages['scissors'] * 100 }}%"></div>
                                 </div>
-                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player2Percentages['scissors'], 1) }}%</div>
+                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($rpsMatch->player2_move_distribution_percentages['scissors'] * 100, 1) }}%</div>
                             </div>
                         </div>
                     </div>
@@ -293,6 +257,10 @@
                     <h3 class="text-base font-medium mb-3">Strategic Insights</h3>
 
                     <div class="prose prose-sm prose-amber max-w-none">
+                        @php
+                            $player1Percentages = $rpsMatch->player1_move_distribution_percentages;
+                            $player2Percentages = $rpsMatch->player2_move_distribution_percentages;
+                        @endphp
                         @if($rpsMatch->isTie())
                             <p>
                                 This match ended in a tie, with both models demonstrating equally effective strategies. The distribution of moves suggests

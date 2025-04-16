@@ -38,6 +38,8 @@ return new class extends Migration
             $table->integer('player2_score'); // [Auto] Number of rounds won by player 2
             $table->integer('player1_win_streak'); // [Auto] Number of rounds won by player 1 in a row
             $table->integer('player2_win_streak'); // [Auto] Number of rounds won by player 2 in a row
+            $table->jsonb('player1_move_distribution'); // [Auto] Number of times player 1 played rock, paper or scissors
+            $table->jsonb('player2_move_distribution'); // [Auto] Number of times player 2 played rock, paper or scissors
 
             $table->timestamp('started_at')->nullable(); // When the match started
             $table->timestamp('ended_at')->nullable(); // When the match ended
