@@ -283,52 +283,49 @@
                                     <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         Status
                                     </th>
-                                    <th scope="col" class="relative px-4 py-3">
-                                        <span class="sr-only">Actions</span>
-                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200" x-data="{ hoverRow: null }">
-                                @foreach($opponents->sortByDesc('win_rate_against') as $opponent)
+                                @foreach($opponents->sortByDesc('win_rate') as $opponent)
                                     <tr
-                                        x-on:mouseenter="hoverRow = {{ $opponent->id }}"
+                                        x-on:mouseenter="hoverRow = {{ $opponent->model->id }}"
                                         x-on:mouseleave="hoverRow = null"
                                         class="hover:bg-gray-50 transition-colors"
                                     >
                                         <td class="px-4 py-3 whitespace-nowrap">
-                                            <a href="{{ route('rps.models.show', $opponent) }}" class="group">
+                                            <a href="{{ route('rps.models.show', $opponent->model) }}" class="group">
                                                 <div class="flex items-center">
                                                     <div class="flex-shrink-0 w-8 h-8 rounded-md bg-gray-100 flex items-center justify-center overflow-hidden group-hover:bg-amber-50 transition-colors">
                                                         <x-phosphor-robot-fill class="w-4 h-4 text-gray-500 group-hover:text-amber-600" />
                                                     </div>
                                                     <div class="ml-3">
-                                                        <div class="text-sm font-medium text-gray-900 group-hover:text-amber-600 transition-colors">{{ $opponent->name }}</div>
+                                                        <div class="text-sm font-medium text-gray-900 group-hover:text-amber-600 transition-colors">{{ $opponent->model->name }}</div>
                                                     </div>
                                                 </div>
                                             </a>
                                         </td>
                                         <td class="px-4 py-3 whitespace-nowrap">
-                                            <div class="text-sm text-gray-900">{{ $opponent->total_matches_against }}</div>
+                                            <div class="text-sm text-gray-900">{{ $opponent->total_matches }}</div>
                                         </td>
                                         <td class="px-4 py-3 whitespace-nowrap">
-                                            <div class="text-sm font-medium {{ $opponent->win_rate_against > 0.5 ? 'text-green-600' : ($opponent->win_rate_against == 0.5 ? 'text-amber-600' : 'text-red-600') }}">
-                                                {{ number_format($opponent->win_rate_against * 100, 1) }}%
+                                            <div class="text-sm font-medium {{ $opponent->win_rate > 0.5 ? 'text-green-600' : ($opponent->win_rate == 0.5 ? 'text-amber-600' : 'text-red-600') }}">
+                                                {{ Number::percentage($opponent->win_rate * 100, 1) }}
                                             </div>
                                         </td>
                                         <td class="px-4 py-3 whitespace-nowrap">
-                                            @if($opponent->win_rate_against > 0.7)
+                                            @if($opponent->win_rate > 0.7)
                                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                     Dominates
                                                 </span>
-                                            @elseif($opponent->win_rate_against > 0.5)
+                                            @elseif($opponent->win_rate > 0.5)
                                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                     Counters
                                                 </span>
-                                            @elseif($opponent->win_rate_against == 0.5)
+                                            @elseif($opponent->win_rate == 0.5)
                                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
                                                     Evenly matched
                                                 </span>
-                                            @elseif($opponent->win_rate_against < 0.3)
+                                            @elseif($opponent->win_rate < 0.3)
                                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
                                                     Weak against
                                                 </span>
@@ -337,14 +334,6 @@
                                                     Struggles
                                                 </span>
                                             @endif
-                                        </td>
-                                        <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-                                            @php
-                                                $url = route('rps.index') . '?player1=' . $aiModel->id . '&player2=' . $opponent->id;
-                                            @endphp
-                                            <a href="{{ $url }}" class="text-amber-600 hover:text-amber-900 opacity-0 transition-opacity duration-150" :class="{'opacity-100': hoverRow === {{ $opponent->id }}}">
-                                                View Matches
-                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach

@@ -69,33 +69,7 @@ class RpsModelController extends Controller
         $winRate = $totalRpsMatches > 0 ? $totalRpsWins / $totalRpsMatches : 0;
 
         // Get opponent win rates
-        $opponents = AiModel::whereHas('rpsMatchesAsPlayer1', function (Builder $query) use ($aiModel) {
-                $query->where('player2_id', $aiModel->id);
-            })
-            ->orWhereHas('rpsMatchesAsPlayer2', function (Builder $query) use ($aiModel) {
-                $query->where('player1_id', $aiModel->id);
-            })
-            ->get()
-            ->map(function ($opponent) use ($aiModel) {
-                // Calculate win rate against this specific opponent
-                $matchesAgainstOpponent = RpsMatch::where(function (Builder $query) use ($aiModel, $opponent) {
-                        $query->where('player1_id', $aiModel->id)->where('player2_id', $opponent->id)
-                            ->orWhere('player1_id', $opponent->id)->where('player2_id', $aiModel->id);
-                    })
-                    ->get();
-
-                $winsAgainstOpponent = $matchesAgainstOpponent->filter(function ($match) use ($aiModel) {
-                    return $match->winner_id === $aiModel->id;
-                })->count();
-
-                $totalMatchesAgainstOpponent = $matchesAgainstOpponent->count();
-                $opponent->win_rate_against = $totalMatchesAgainstOpponent > 0
-                    ? $winsAgainstOpponent / $totalMatchesAgainstOpponent
-                    : 0;
-                $opponent->total_matches_against = $totalMatchesAgainstOpponent;
-
-                return $opponent;
-            });
+        $opponents = $this->oponents($aiModel);
 
         // Calculate move tendencies
         $moveBreakdown = [
@@ -201,5 +175,31 @@ class RpsModelController extends Controller
             'mostImpressiveVictory',
             'rankPosition'
         ));
+    }
+
+    /**
+     * Get all opponents of the given AI model and their win rates.
+     */
+    protected function oponents(AiModel $aiModel)
+    {
+        return AiModel::query()
+            ->whereHas('rpsMatchesAsPlayer1', fn ($q) => $q->where('player2_id', $aiModel->id))
+            ->orWhereHas('rpsMatchesAsPlayer2', fn ($q) => $q->where('player1_id', $aiModel->id))
+            ->with([
+                'rpsMatchesAsPlayer1' => fn ($q) => $q->where('player2_id', $aiModel->id),
+                'rpsMatchesAsPlayer2' => fn ($q) => $q->where('player1_id', $aiModel->id),
+            ])
+            ->get()
+            ->map(function (AiModel $opponent) use ($aiModel) {
+                $matches = $opponent->rpsMatchesAsPlayer1->concat($opponent->rpsMatchesAsPlayer2);
+                $wins = $matches->where('winner_id', $aiModel->id)->count();
+                $total = $matches->count();
+
+                return (object)[
+                    'model' => $opponent,
+                    'win_rate' => $total > 0 ? $wins / $total : 0,
+                    'total_matches' => $total,
+                ];
+            });
     }
 }
