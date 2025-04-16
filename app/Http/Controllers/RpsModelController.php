@@ -13,11 +13,12 @@ class RpsModelController extends Controller
      */
     public function index(): View
     {
-        $models = AiModel::withCount([
-            'rpsMatchesAsPlayer1',
-            'rpsMatchesAsPlayer2',
-            'rpsMatchesWon',
-        ])
+        $models = AiModel::query()
+            ->withCount([
+                'rpsMatchesAsPlayer1',
+                'rpsMatchesAsPlayer2',
+                'rpsMatchesWon',
+            ])
             ->get()
             ->map(function ($model) {
                 $model->total_rps_matches = $model->rps_matches_as_player1_count + $model->rps_matches_as_player2_count;
@@ -27,12 +28,11 @@ class RpsModelController extends Controller
 
                 return $model;
             })
-            ->sortByDesc('win_rate');
+            ->sortByDesc('rps_elo')
+            ->reject(fn ($model) => $model->total_rps_matches < 1);
 
-        // Get top 3 models by win rate (with minimum matches)
-        $topModels = $models->filter(function ($model) {
-            return $model->total_rps_matches >= 5;
-        })->take(3);
+        // Get top 3 models
+        $topModels = $models->where('total_rps_matches', '>=', 5)->take(3);
 
         // Get statistics for the entire benchmark
         $benchmarkStats = [
@@ -42,7 +42,7 @@ class RpsModelController extends Controller
         ];
 
         return view('rps.models.index', [
-            'models' => $models,
+            'models' => $models->values(),
             'topModels' => $topModels,
             'benchmarkStats' => $benchmarkStats,
         ]);

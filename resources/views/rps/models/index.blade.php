@@ -70,7 +70,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100">
                 <div class="px-4 py-5 sm:px-6 border-b border-gray-100">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-gray-900">Models Ranking for Rock Paper Scissors</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">Models Ranking for Rock Paper Scissors by ELO</h3>
                         <span class="text-sm text-gray-500">{{ $models->count() }} models</span>
                     </div>
                 </div>
@@ -85,16 +85,16 @@
                                     Model
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                    ELO Rating
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                     RPS Matches
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                     RPS Wins
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                     Win Rate
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    ELO Rating
                                 </th>
                                 <th scope="col" class="relative px-6 py-3">
                                     <span class="sr-only">Actions</span>
@@ -104,14 +104,14 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach($models as $index => $model)
                                 <tr class="hover:bg-gray-50 transition-colors duration-150" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-3 whitespace-nowrap">
                                         <div class="flex items-center">
                                             <div class="w-8 h-8 rounded-full {{ $index < 3 ? 'bg-amber-100' : 'bg-gray-100' }} flex items-center justify-center {{ $index < 3 ? 'border-2 border-amber-200' : 'border border-gray-200' }}">
                                                 <span class="{{ $index < 3 ? 'text-amber-800' : 'text-gray-600' }} text-sm font-bold">{{ $index + 1 }}</span>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-3 whitespace-nowrap">
                                         <a href="{{ route('rps.models.show', $model) }}" class="group">
                                             <div class="flex items-center">
                                                 <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-amber-50 transition-colors">
@@ -123,22 +123,19 @@
                                             </div>
                                         </a>
                                     </td>
-                                    <td class="px-6 py-4 text-right whitespace-nowrap">
-                                        <div class="text-sm text-amber-600 font-bold">{{ (int)$model->rps_elo }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 text-right whitespace-nowrap">
+                                    <td class="px-6 py-3 text-right whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{ $model->total_rps_matches }}</div>
                                     </td>
-                                    <td class="px-6 py-4 text-right whitespace-nowrap">
+                                    <td class="px-6 py-3 text-right whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{ $model->rps_matches_won_count }}</div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-3 whitespace-nowrap">
                                         @if($model->total_rps_matches > 0)
                                             <div class="flex items-center">
                                                 <span class="mr-2 text-sm font-medium {{ $model->win_rate > 0.5 ? 'text-green-600' : ($model->win_rate == 0.5 ? 'text-amber-600' : 'text-red-600') }}">
                                                     {{ Number::percentage($model->win_rate * 100, precision: 1) }}
                                                 </span>
-                                                <div class="relative w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                                <div class="grow relative w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
                                                     <div class="absolute top-0 left-0 h-2 rounded-full {{ $model->win_rate > 0.5 ? 'bg-green-500' : ($model->win_rate == 0.5 ? 'bg-amber-500' : 'bg-red-500') }}" style="width: {{ $model->win_rate * 100 }}%"></div>
                                                 </div>
                                             </div>
@@ -146,7 +143,10 @@
                                             <span class="text-sm text-gray-500">N/A</span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <td class="px-6 py-3 text-right whitespace-nowrap">
+                                        <div class="text-sm text-amber-600 font-bold">{{ (int)$model->rps_elo }}</div>
+                                    </td>
+                                    <td class="px-6 py-3 whitespace-nowrap text-right text-sm font-medium">
                                         <x-ui.button :href="route('rps.models.show', $model)" variant="secondary" size="sm" class="transition-all duration-200" x-bind:class="{'opacity-0': !hover, 'opacity-100': hover}">
                                             View Details
                                         </x-ui.button>
