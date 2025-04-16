@@ -32,7 +32,7 @@
                     </div>
                     <div class="text-center">
                         <div class="text-lg font-bold {{ $model->win_rate > 0.5 ? 'text-green-600' : ($model->win_rate == 0.5 ? 'text-amber-600' : 'text-red-600') }}">
-                            {{ number_format($model->win_rate * 100, 1) }}%
+                            {{ Number::percentage($model->win_rate * 100, 1) }}
                         </div>
                         <div class="text-xs text-gray-500">Win Rate</div>
                     </div>
