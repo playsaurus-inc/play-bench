@@ -89,134 +89,116 @@
         <div class="space-y-8">
             <!-- Move tendencies chart -->
             <x-ui.card title="Move Tendencies" subtitle="Frequency analysis of move choices">
+                @php
+                    $totalMoves = $moveBreakdown['rock'] + $moveBreakdown['paper'] + $moveBreakdown['scissors'];
+                @endphp
                 <div class="space-y-6">
-                    @if($totalMoves > 0)
-                        <div x-data="{
-                            moveData: [
-                                {{ $moveBreakdown['rock'] }},
-                                {{ $moveBreakdown['paper'] }},
-                                {{ $moveBreakdown['scissors'] }}
-                            ],
-                            get total() { return this.moveData.reduce((a, b) => a + b, 0) },
-                            get percentages() {
-                                return this.moveData.map(value => (value / this.total) * 100)
-                            },
-                            animate: false
-                            init() {
-                                this.setTimeout(() => animate = true, 100);
-                            },
-                        }">
-                            <div class="grid grid-cols-3 gap-4">
-                                <!-- Rock -->
-                                <div class="text-center" x-cloak>
-                                    <div class="relative aspect-square w-full max-w-[100px] mx-auto mb-3">
-                                        <!-- Background circle -->
-                                        <div class="absolute inset-0 rounded-full bg-gray-100"></div>
-                                        <!-- Progress circle -->
-                                        <div class="absolute inset-0 rounded-full bg-red-100"
-                                                :style="{ clipPath: `circle(${animate ? percentages[0]/2 : 0}% at 50% 50%)` }"
-                                                style="transition: clip-path 1s ease-out;"></div>
-                                        <!-- Icon -->
-                                        <div class="absolute inset-0 flex items-center justify-center">
-                                            <x-fas-hand-rock class="size-8"  />
-                                        </div>
-                                    </div>
-                                    <div class="text-xl font-bold">{{ $moveBreakdown['rock'] }}</div>
-                                    <div class="text-sm text-gray-500">Rock</div>
-                                    <div class="text-xs text-gray-400 mt-0.5">
-                                        {{ $totalMoves > 0 ? number_format(($moveBreakdown['rock'] / $totalMoves) * 100, 1) : '0' }}%
+                    <div x-data="{
+                        moveData: [
+                            {{ $moveBreakdown['rock'] }},
+                            {{ $moveBreakdown['paper'] }},
+                            {{ $moveBreakdown['scissors'] }}
+                        ],
+                        get total() { return this.moveData.reduce((a, b) => a + b, 0) },
+                        get percentages() {
+                            return this.moveData.map(value => (value / this.total) * 100)
+                        },
+                        animate: false
+                        init() {
+                            this.setTimeout(() => animate = true, 100);
+                        },
+                    }">
+                        <div class="grid grid-cols-3 gap-4">
+                            <!-- Rock -->
+                            <div class="text-center" x-cloak>
+                                <div class="relative aspect-square w-full max-w-[100px] mx-auto mb-3">
+                                    <!-- Background circle -->
+                                    <div class="absolute inset-0 rounded-full bg-gray-100"></div>
+                                    <!-- Progress circle -->
+                                    <div
+                                        class="absolute inset-0 rounded-full bg-red-100"
+                                        x-bind:style="{ clipPath: `circle(${animate ? percentages[0]/2 : 0}% at 50% 50%)` }"
+                                        style="transition: clip-path 1s ease-out;"
+                                    ></div>
+                                    <!-- Icon -->
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <x-fas-hand-rock class="size-8"  />
                                     </div>
                                 </div>
+                                <div class="text-xl font-bold">{{ Number::abbreviate($moveBreakdown['rock'], precision: 2) }}</div>
+                                <div class="text-sm text-gray-500">Rock</div>
+                                <div class="text-xs text-gray-400 mt-0.5">
+                                    {{ $totalMoves > 0 ? Number::percentage(($moveBreakdown['rock'] / $totalMoves) * 100, 1) : '0' }}%
+                                </div>
+                            </div>
 
-                                <!-- Paper -->
-                                <div class="text-center" x-cloak>
-                                    <div class="relative aspect-square w-full max-w-[100px] mx-auto mb-3">
-                                        <!-- Background circle -->
-                                        <div class="absolute inset-0 rounded-full bg-gray-100"></div>
-                                        <!-- Progress circle -->
-                                        <div class="absolute inset-0 rounded-full bg-blue-100"
-                                                :style="{ clipPath: `circle(${animate ? percentages[1]/2 : 0}% at 50% 50%)` }"
-                                                style="transition: clip-path 1s ease-out;"></div>
-                                        <!-- Icon -->
-                                        <div class="absolute inset-0 flex items-center justify-center">
-                                            <x-fas-hand-paper class="size-8" />
-                                        </div>
-                                    </div>
-                                    <div class="text-xl font-bold">{{ $moveBreakdown['paper'] }}</div>
-                                    <div class="text-sm text-gray-500">Paper</div>
-                                    <div class="text-xs text-gray-400 mt-0.5">
-                                        {{ $totalMoves > 0 ? number_format(($moveBreakdown['paper'] / $totalMoves) * 100, 1) : '0' }}%
+                            <!-- Paper -->
+                            <div class="text-center" x-cloak>
+                                <div class="relative aspect-square w-full max-w-[100px] mx-auto mb-3">
+                                    <!-- Background circle -->
+                                    <div class="absolute inset-0 rounded-full bg-gray-100"></div>
+                                    <!-- Progress circle -->
+                                    <div class="absolute inset-0 rounded-full bg-blue-100"
+                                            :style="{ clipPath: `circle(${animate ? percentages[1]/2 : 0}% at 50% 50%)` }"
+                                            style="transition: clip-path 1s ease-out;"></div>
+                                    <!-- Icon -->
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <x-fas-hand-paper class="size-8" />
                                     </div>
                                 </div>
+                                <div class="text-xl font-bold">{{ Number::abbreviate($moveBreakdown['paper'], precision: 2) }}</div>
+                                <div class="text-sm text-gray-500">Paper</div>
+                                <div class="text-xs text-gray-400 mt-0.5">
+                                    {{ $totalMoves > 0 ? Number::percentage(($moveBreakdown['paper'] / $totalMoves) * 100, 1) : '0' }}%
+                                </div>
+                            </div>
 
-                                <!-- Scissors -->
-                                <div class="text-center" x-cloak>
-                                    <div class="relative aspect-square w-full max-w-[100px] mx-auto mb-3">
-                                        <!-- Background circle -->
-                                        <div class="absolute inset-0 rounded-full bg-gray-100"></div>
-                                        <!-- Progress circle -->
-                                        <div class="absolute inset-0 rounded-full bg-green-100"
-                                                :style="{ clipPath: `circle(${animate ? percentages[2]/2 : 0}% at 50% 50%)` }"
-                                                style="transition: clip-path 1s ease-out;"></div>
-                                        <!-- Icon -->
-                                        <div class="absolute inset-0 flex items-center justify-center">
-                                            <x-fas-hand-scissors class="size-8" />
-                                        </div>
+                            <!-- Scissors -->
+                            <div class="text-center" x-cloak>
+                                <div class="relative aspect-square w-full max-w-[100px] mx-auto mb-3">
+                                    <!-- Background circle -->
+                                    <div class="absolute inset-0 rounded-full bg-gray-100"></div>
+                                    <!-- Progress circle -->
+                                    <div class="absolute inset-0 rounded-full bg-green-100"
+                                            :style="{ clipPath: `circle(${animate ? percentages[2]/2 : 0}% at 50% 50%)` }"
+                                            style="transition: clip-path 1s ease-out;"></div>
+                                    <!-- Icon -->
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <x-fas-hand-scissors class="size-8" />
                                     </div>
-                                    <div class="text-xl font-bold">{{ $moveBreakdown['scissors'] }}</div>
-                                    <div class="text-sm text-gray-500">Scissors</div>
-                                    <div class="text-xs text-gray-400 mt-0.5">
-                                        {{ $totalMoves > 0 ? number_format(($moveBreakdown['scissors'] / $totalMoves) * 100, 1) : '0' }}%
-                                    </div>
+                                </div>
+                                <div class="text-xl font-bold">{{ Number::abbreviate($moveBreakdown['scissors'], precision: 2) }}</div>
+                                <div class="text-sm text-gray-500">Scissors</div>
+                                <div class="text-xs text-gray-400 mt-0.5">
+                                    {{ $totalMoves > 0 ? Number::percentage(($moveBreakdown['scissors'] / $totalMoves) * 100, 1) : '0' }}%
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="mt-6">
-                            <h3 class="text-sm font-medium text-gray-700 mb-2">Strategy Analysis</h3>
-                            <div class="prose prose-sm prose-amber max-w-none text-gray-600">
-                                @php
-                                    $highestMove = array_search(max($moveBreakdown), $moveBreakdown);
-                                    $perfectDistribution = abs(($moveBreakdown['rock'] - $totalMoves/3) / $totalMoves) < 0.1 &&
-                                                        abs(($moveBreakdown['paper'] - $totalMoves/3) / $totalMoves) < 0.1 &&
-                                                        abs(($moveBreakdown['scissors'] - $totalMoves/3) / $totalMoves) < 0.1;
-                                @endphp
+                    <div class="mt-6">
+                        <h3 class="text-sm font-medium text-gray-700 mb-2">Strategy Analysis</h3>
+                        <div class="prose prose-sm prose-amber max-w-none text-gray-600">
+                            @php
+                                $highestMove = array_search(max($moveBreakdown), $moveBreakdown);
+                                $perfectDistribution = abs(($moveBreakdown['rock'] - $totalMoves/3) / $totalMoves) < 0.1 &&
+                                                    abs(($moveBreakdown['paper'] - $totalMoves/3) / $totalMoves) < 0.1 &&
+                                                    abs(($moveBreakdown['scissors'] - $totalMoves/3) / $totalMoves) < 0.1;
+                            @endphp
 
-                                @if($perfectDistribution)
-                                    <p>
-                                        {{ $aiModel->name }} uses a highly balanced strategy, playing rock, paper, and scissors with nearly equal frequency.
-                                        This makes its moves very difficult to predict, as there is no clear pattern to exploit.
-                                    </p>
-                                @else
-                                    <p>
-                                        {{ $aiModel->name }} shows a preference for <strong>{{ $highestMove }}</strong>, using it more frequently than other moves.
-                                        This tendency could potentially be exploited by opponents who can detect and adapt to this pattern.
-                                    </p>
-                                @endif
-
-                                @if($totalConsecutiveMoves > 0)
-                                    @php
-                                        // Find most common transition
-                                        $maxTransition = array_search(max($consecutiveMoves), $consecutiveMoves);
-                                        $parts = explode('_to_', $maxTransition);
-                                        $transitionPercentage = ($consecutiveMoves[$maxTransition] / $totalConsecutiveMoves) * 100;
-                                    @endphp
-
-                                    @if($transitionPercentage > 40)
-                                        <p>
-                                            There's a notable pattern in its move transitions: after playing <strong>{{ $parts[0] }}</strong>,
-                                            it follows with <strong>{{ $parts[1] }}</strong> {{ number_format($transitionPercentage, 1) }}% of the time.
-                                        </p>
-                                    @endif
-                                @endif
-                            </div>
+                            @if($perfectDistribution)
+                                <p>
+                                    {{ $aiModel->name }} uses a highly balanced strategy, playing rock, paper, and scissors with nearly equal frequency.
+                                    This makes its moves very difficult to predict, as there is no clear pattern to exploit.
+                                </p>
+                            @else
+                                <p>
+                                    {{ $aiModel->name }} shows a preference for <strong>{{ $highestMove }}</strong>, using it more frequently than other moves.
+                                    This tendency could potentially be exploited by opponents who can detect and adapt to this pattern.
+                                </p>
+                            @endif
                         </div>
-                    @else
-                        <div class="text-center py-6">
-                            <x-phosphor-chart-pie-fill class="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                            <p class="text-gray-500">No move data available for this model yet.</p>
-                        </div>
-                    @endif
+                    </div>
                 </div>
             </x-ui.card>
 

@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\AiModel;
 use App\Models\RpsMatch;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class RpsModelController extends Controller
@@ -68,74 +66,6 @@ class RpsModelController extends Controller
         $totalRpsWins = $aiModel->rpsMatchesWon()->count();
         $winRate = $totalRpsMatches > 0 ? $totalRpsWins / $totalRpsMatches : 0;
 
-        // Get opponent win rates
-        $opponents = $this->oponents($aiModel);
-
-        // Calculate move tendencies
-        $moveBreakdown = [
-            'rock' => 0,
-            'paper' => 0,
-            'scissors' => 0,
-        ];
-        $totalMoves = 0;
-        $consecutiveMoves = [
-            'rock_to_rock' => 0,
-            'rock_to_paper' => 0,
-            'rock_to_scissors' => 0,
-            'paper_to_rock' => 0,
-            'paper_to_paper' => 0,
-            'paper_to_scissors' => 0,
-            'scissors_to_rock' => 0,
-            'scissors_to_paper' => 0,
-            'scissors_to_scissors' => 0,
-        ];
-        $totalConsecutiveMoves = 0;
-
-        foreach ($rpsMatches as $match) {
-            $rounds = $match->getRounds();
-            $previousMove = null;
-
-            foreach ($rounds as $round) {
-                $move = null;
-
-                if ($match->player1_id === $aiModel->id) {
-                    $move = $round['player1_move'];
-                    if (isset($moveBreakdown[$move])) {
-                        $moveBreakdown[$move]++;
-                        $totalMoves++;
-
-                        if ($previousMove !== null) {
-                            $key = "{$previousMove}_to_{$move}";
-                            if (isset($consecutiveMoves[$key])) {
-                                $consecutiveMoves[$key]++;
-                                $totalConsecutiveMoves++;
-                            }
-                        }
-
-                        $previousMove = $move;
-                    }
-                } else {
-                    $move = $round['player2_move'];
-                    if (isset($moveBreakdown[$move])) {
-                        $moveBreakdown[$move]++;
-                        $totalMoves++;
-
-                        if ($previousMove !== null) {
-                            $key = "{$previousMove}_to_{$move}";
-                            if (isset($consecutiveMoves[$key])) {
-                                $consecutiveMoves[$key]++;
-                                $totalConsecutiveMoves++;
-                            }
-                        }
-
-                        $previousMove = $move;
-                    }
-                }
-            }
-        }
-
-        $mostImpressiveVictory = $this->mostImpressiveVictory($aiModel);
-
         // Get rankings information
         $ranking = AiModel::withCount([
                 'rpsMatchesAsPlayer1',
@@ -162,12 +92,9 @@ class RpsModelController extends Controller
             'winRate' => $winRate,
             'totalRpsMatches' => $totalRpsMatches,
             'totalRpsWins' => $totalRpsWins,
-            'opponents' => $opponents,
-            'moveBreakdown' => $moveBreakdown,
-            'totalMoves' => $totalMoves,
-            'consecutiveMoves' => $consecutiveMoves,
-            'totalConsecutiveMoves' => $totalConsecutiveMoves,
-            'mostImpressiveVictory' => $mostImpressiveVictory,
+            'opponents' => $this->oponents($aiModel),
+            'moveBreakdown' => $this->moveBreakdown($aiModel),
+            'mostImpressiveVictory' => $this->mostImpressiveVictory($aiModel),
             'rankPosition' => $rankPosition,
         ]);
     }
@@ -209,5 +136,25 @@ class RpsModelController extends Controller
             ->with(['player1', 'player2'])
             ->orderByRaw('ABS(player1_score - player2_score) DESC')
             ->first();
+    }
+
+    /**
+     * Get the move breakdown of the given AI model.
+     *
+     * @return  array<{rock: int, paper: int, scissors: int}>
+     */
+    protected function moveBreakdown(AiModel $aiModel)
+    {
+        return [
+            'rock' =>
+                $aiModel->rpsMatchesAsPlayer1()->sum('player1_move_distribution->rock') +
+                $aiModel->rpsMatchesAsPlayer2()->sum('player2_move_distribution->rock'),
+            'paper' =>
+                $aiModel->rpsMatchesAsPlayer1()->sum('player1_move_distribution->paper') +
+                $aiModel->rpsMatchesAsPlayer2()->sum('player2_move_distribution->paper'),
+            'scissors' =>
+                $aiModel->rpsMatchesAsPlayer1()->sum('player1_move_distribution->scissors') +
+                $aiModel->rpsMatchesAsPlayer2()->sum('player2_move_distribution->scissors'),
+        ];
     }
 }
