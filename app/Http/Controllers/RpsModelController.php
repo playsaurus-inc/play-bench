@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class AiModelController extends Controller
+class RpsModelController extends Controller
 {
     /**
      * Display a listing of the AI models with their RPS performance.
@@ -43,7 +43,7 @@ class AiModelController extends Controller
             'avg_win_rate' => $models->where('total_rps_matches', '>', 0)->avg('win_rate') * 100,
         ];
 
-        return view('models.index', [
+        return view('rps.models.index', [
             'models' => $models,
             'topModels' => $topModels,
             'benchmarkStats' => $benchmarkStats,
@@ -192,7 +192,7 @@ class AiModelController extends Controller
             return $rankedModel->id === $aiModel->id;
         }) + 1;
 
-        return view('models.show', compact(
+        return view('rps.models.show', compact(
             'aiModel',
             'rpsMatches',
             'winRate',
