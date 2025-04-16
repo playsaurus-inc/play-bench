@@ -1,4 +1,4 @@
-@props(['model', 'rank' => null])
+@props(['model'])
 
 <a href="{{ route('rps.models.show', $model) }}"
    class="block bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 rounded-xl"
@@ -6,13 +6,11 @@
    @mouseenter="hover = true"
    @mouseleave="hover = false">
     <div class="relative p-6">
-        @if($rank !== null)
-            <div class="absolute top-4 right-4">
-                <div class="w-8 h-8 rounded-full flex items-center justify-center {{ $rank <= 3 ? 'bg-amber-100 border-2 border-amber-200' : 'bg-gray-100 border border-gray-200' }}">
-                    <span class="{{ $rank <= 3 ? 'text-amber-800' : 'text-gray-600' }} text-sm font-bold">{{ $rank }}</span>
-                </div>
+        <div class="absolute top-4 right-4">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center {{ $model->rps_rank <= 3 ? 'bg-amber-100 border-2 border-amber-200' : 'bg-gray-100 border border-gray-200' }}">
+                <span class="{{ $model->rps_rank <= 3 ? 'text-amber-800' : 'text-gray-600' }} text-sm font-bold">{{ $model->rps_rank }}</span>
             </div>
-        @endif
+        </div>
 
         <div class="flex flex-col items-center">
             <!-- Avatar -->

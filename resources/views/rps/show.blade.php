@@ -433,7 +433,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 @foreach($similarMatches as $match)
-                    <x-ui.rps-match-card :match="$match" :compact="true" />
+                    <x-ui.rps-match-card :match="$match" />
                 @endforeach
             </div>
         </section>

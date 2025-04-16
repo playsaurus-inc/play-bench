@@ -1,4 +1,4 @@
-@props(['match', 'compact' => false])
+@props(['match'])
 
 <a
     href="{{ route('rps.matches.show', $match) }}"
@@ -8,54 +8,35 @@
     @mouseleave="hover = false"
 >
     <div class="p-6">
-        @if(!$compact)
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center">
-                    <x-phosphor-hand-fill class="h-5 w-5 text-amber-500 mr-2" />
-                    <span class="text-sm font-medium text-amber-700">Match #{{ $match->id }}</span>
-                </div>
-                <span class="text-xs text-gray-500">
-                    {{ $match->created_at->format('M d, Y') }}
-                </span>
-            </div>
-        @else
-            <div class="flex items-center justify-between mb-4">
-                <span class="text-sm font-medium text-amber-700">#{{ $match->id }}</span>
-                <span class="text-xs text-gray-500">
-                    {{ $match->created_at->format('M d, Y') }}
-                </span>
-            </div>
-        @endif
+        <div class="flex items-center justify-between mb-3">
+            <span class="text-sm font-medium text-amber-700">Match #{{ $match->id }}</span>
+            <span class="text-xs text-gray-500">
+                {{ $match->created_at->format('M d, Y') }}
+            </span>
+        </div>
 
         <!-- Players -->
-        <div class="flex items-center justify-between {{ $compact ? 'mb-3' : 'mb-6' }}">
-            <div class="flex items-center space-x-4">
-                <div class="flex-shrink-0">
-                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                        <x-phosphor-robot-fill class="w-5 h-5 text-red-500" />
-                    </div>
-                </div>
-                <div>
-                    <div class="text-sm font-medium text-gray-900">{{ $match->player1->name }}</div>
-                    <div class="text-xs text-gray-500">Player 1</div>
-                </div>
+        <div class="flex items-center justify-between mb-3">
+            <div class="basis-1/2 flex flex-col">
+                <div class="text-sm font-medium text-gray-900">{{ $match->player1->name }}</div>
+                <div class="text-xs text-gray-500">Player 1</div>
             </div>
-            <div class="text-lg font-bold">VS</div>
-            <div class="flex items-center space-x-4">
-                <div>
-                    <div class="text-sm font-medium text-gray-900 text-right">{{ $match->player2->name }}</div>
-                    <div class="text-xs text-gray-500 text-right">Player 2</div>
-                </div>
-                <div class="flex-shrink-0">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                        <x-phosphor-robot-fill class="w-5 h-5 text-blue-500" />
-                    </div>
-                </div>
+            <div class="text-lg font-bold mx-4 text-gray-500">
+                VS
+            </div>
+            <div class="basis-1/2 flex flex-col">
+                <div class="text-sm font-medium text-gray-900 text-right">{{ $match->player2->name }}</div>
+                <div class="text-xs text-gray-500 text-right">Player 2</div>
             </div>
         </div>
 
         <!-- Score and rounds -->
-        <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center justify-between mb-4 gap-4">
+            <div class="flex-shrink-0">
+                <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <x-phosphor-robot-fill class="w-5 h-5 text-red-500" />
+                </div>
+            </div>
             <div class="w-full">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xl font-bold {{ $match->winner_id === $match->player1_id ? 'text-red-600' : 'text-gray-800' }}">
@@ -68,7 +49,7 @@
                         {{ $match->player2_score }}
                     </span>
                 </div>
-                <div class="relative h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div class="grow relative h-2 bg-gray-100 rounded-full overflow-hidden">
                     @php
                         $p1Percentage = ($match->player1_score / $match->rounds_played) * 100;
                         $p2Percentage = ($match->player2_score / $match->rounds_played) * 100;
@@ -89,7 +70,13 @@
                     <div class="absolute right-0 top-0 h-2 bg-blue-400" style="width: {{ $p2Percentage }}%"></div>
                 </div>
             </div>
+            <div class="flex-shrink-0">
+                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <x-phosphor-robot-fill class="w-5 h-5 text-blue-500" />
+                </div>
+            </div>
         </div>
+
 
         <!-- Winner -->
         <div class="flex items-center justify-between">
