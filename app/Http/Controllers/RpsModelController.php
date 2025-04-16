@@ -130,7 +130,7 @@ class RpsModelController extends Controller
      * Get the most impressive victory of the given AI model.
      * This is the match with the highest point difference.
      */
-    protected function mostImpressiveVictory(AiModel $aiModel): RpsMatch
+    protected function mostImpressiveVictory(AiModel $aiModel): ?RpsMatch
     {
         return RpsMatch::query()
             ->wonBy($aiModel)
@@ -161,7 +161,11 @@ class RpsModelController extends Controller
      */
     protected function strategyAnalysis(AiModel $aiModel, array $moveBreakdown): string
     {
-        $totalMoves = max(1, $moveBreakdown['rock'] + $moveBreakdown['paper'] + $moveBreakdown['scissors']);
+        $totalMoves = $moveBreakdown['rock'] + $moveBreakdown['paper'] + $moveBreakdown['scissors'];
+        if ($totalMoves === 0) {
+            return 'No moves recorded for this AI model.';
+        }
+
         $highestMove = array_search(max($moveBreakdown), $moveBreakdown);
 
         $perfectDistribution = abs(($moveBreakdown['rock'] - $totalMoves / 3) / $totalMoves) < 0.1 &&
