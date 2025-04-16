@@ -15,7 +15,8 @@
                     Rock Paper Scissors Benchmark
                 </h1>
                 <p class="text-lg text-gray-600 max-w-2xl">
-                    Watch AI models compete in the classic game of Rock Paper Scissors to reveal their strategic thinking capabilities and pattern recognition skills.
+                    Watch AI models compete in the classic game of Rock Paper Scissors to reveal their
+                    strategic thinking capabilities and pattern recognition skills.
                 </p>
 
                 <div class="mt-6 flex flex-wrap gap-3">

@@ -159,48 +159,48 @@
 
                     <div class="grid grid-cols-3 gap-4">
                         <!-- Rock -->
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="flex items-center">
-                                    <x-fas-hand-rock class="mr-2" />
+                        <div class="bg-gray-50 rounded-lg p-4 flex flex-row items-center">
+                            <x-fas-hand-rock class="size-8 text-gray-400 mr-4" />
+                            <div class="flex flex-col grow">
+                                <div class="flex items-center justify-between mb-2">
                                     <span class="text-sm font-medium">Rock</span>
+                                    <span class="text-sm font-bold">{{ $moveBreakdown['player1']['rock'] }}</span>
                                 </div>
-                                <span class="text-sm font-bold">{{ $moveBreakdown['player1']['rock'] }}</span>
+                                <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-2 bg-red-500 rounded-full" style="width: {{ $player1Percentages['rock'] }}%"></div>
+                                </div>
+                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player1Percentages['rock'], 1) }}%</div>
                             </div>
-                            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                                <div class="h-2 bg-red-500 rounded-full" style="width: {{ $player1Percentages['rock'] }}%"></div>
-                            </div>
-                            <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player1Percentages['rock'], 1) }}</div>
                         </div>
 
                         <!-- Paper -->
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="flex items-center">
-                                    <x-fas-hand-paper class="mr-2" />
+                        <div class="bg-gray-50 rounded-lg p-4 flex flex-row items-center">
+                            <x-fas-hand-paper class="size-8 text-gray-400 mr-4" />
+                            <div class="flex flex-col grow">
+                                <div class="flex items-center justify-between mb-2">
                                     <span class="text-sm font-medium">Paper</span>
+                                    <span class="text-sm font-bold">{{ $moveBreakdown['player1']['paper'] }}</span>
                                 </div>
-                                <span class="text-sm font-bold">{{ $moveBreakdown['player1']['paper'] }}</span>
+                                <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-2 bg-red-500 rounded-full" style="width: {{ $player1Percentages['paper'] }}%"></div>
+                                </div>
+                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player1Percentages['paper'], 1) }}%</div>
                             </div>
-                            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                                <div class="h-2 bg-red-500 rounded-full" style="width: {{ $player1Percentages['paper'] }}%"></div>
-                            </div>
-                            <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player1Percentages['paper'], 1) }}</div>
                         </div>
 
                         <!-- Scissors -->
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="flex items-center">
-                                    <x-fas-hand-scissors class="mr-2" />
+                        <div class="bg-gray-50 rounded-lg p-4 flex flex-row items-center">
+                            <x-fas-hand-scissors class="size-8 text-gray-400 mr-4" />
+                            <div class="flex flex-col grow">
+                                <div class="flex items-center justify-between mb-2">
                                     <span class="text-sm font-medium">Scissors</span>
+                                    <span class="text-sm font-bold">{{ $moveBreakdown['player1']['scissors'] }}</span>
                                 </div>
-                                <span class="text-sm font-bold">{{ $moveBreakdown['player1']['scissors'] }}</span>
+                                <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-2 bg-red-500 rounded-full" style="width: {{ $player1Percentages['scissors'] }}%"></div>
+                                </div>
+                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player1Percentages['scissors'], 1) }}%</div>
                             </div>
-                            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                                <div class="h-2 bg-red-500 rounded-full" style="width: {{ $player1Percentages['scissors'] }}%"></div>
-                            </div>
-                            <div class="mt-1 text-xs text-gray-500 text-right">{{ number_format($player1Percentages['scissors'], 1) }}%</div>
                         </div>
                     </div>
                 </div>
@@ -214,48 +214,48 @@
 
                     <div class="grid grid-cols-3 gap-4">
                         <!-- Rock -->
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="flex items-center">
-                                    <x-fas-hand-rock class="mr-2" />
+                        <div class="bg-gray-50 rounded-lg p-4 flex flex-row items-center">
+                            <x-fas-hand-rock class="size-8 text-gray-400 mr-4" />
+                            <div class="flex flex-col grow">
+                                <div class="flex items-center justify-between mb-2">
                                     <span class="text-sm font-medium">Rock</span>
+                                    <span class="text-sm font-bold">{{ $moveBreakdown['player2']['rock'] }}</span>
                                 </div>
-                                <span class="text-sm font-bold">{{ $moveBreakdown['player2']['rock'] }}</span>
+                                <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-2 bg-blue-500 rounded-full" style="width: {{ $player2Percentages['rock'] }}%"></div>
+                                </div>
+                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player2Percentages['rock'], 1) }}%</div>
                             </div>
-                            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                                <div class="h-2 bg-blue-500 rounded-full" style="width: {{ $player2Percentages['rock'] }}%"></div>
-                            </div>
-                            <div class="mt-1 text-xs text-gray-500 text-right">{{ number_format($player2Percentages['rock'], 1) }}%</div>
                         </div>
 
                         <!-- Paper -->
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="flex items-center">
-                                    <x-fas-hand-paper class="mr-2" />
+                        <div class="bg-gray-50 rounded-lg p-4 flex flex-row items-center">
+                            <x-fas-hand-paper class="size-8 text-gray-400 mr-4" />
+                            <div class="flex flex-col grow">
+                                <div class="flex items-center justify-between mb-2">
                                     <span class="text-sm font-medium">Paper</span>
+                                    <span class="text-sm font-bold">{{ $moveBreakdown['player2']['paper'] }}</span>
                                 </div>
-                                <span class="text-sm font-bold">{{ $moveBreakdown['player2']['paper'] }}</span>
+                                <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-2 bg-blue-500 rounded-full" style="width: {{ $player2Percentages['paper'] }}%"></div>
+                                </div>
+                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player2Percentages['paper'], 1) }}%</div>
                             </div>
-                            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                                <div class="h-2 bg-blue-500 rounded-full" style="width: {{ $player2Percentages['paper'] }}%"></div>
-                            </div>
-                            <div class="mt-1 text-xs text-gray-500 text-right">{{ number_format($player2Percentages['paper'], 1) }}%</div>
                         </div>
 
                         <!-- Scissors -->
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="flex items-center">
-                                    <x-fas-hand-scissors class="mr-2" />
+                        <div class="bg-gray-50 rounded-lg p-4 flex flex-row items-center">
+                            <x-fas-hand-scissors class="size-8 text-gray-400 mr-4" />
+                            <div class="flex flex-col grow">
+                                <div class="flex items-center justify-between mb-2">
                                     <span class="text-sm font-medium">Scissors</span>
+                                    <span class="text-sm font-bold">{{ $moveBreakdown['player2']['scissors'] }}</span>
                                 </div>
-                                <span class="text-sm font-bold">{{ $moveBreakdown['player2']['scissors'] }}</span>
+                                <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-2 bg-blue-500 rounded-full" style="width: {{ $player2Percentages['scissors'] }}%"></div>
+                                </div>
+                                <div class="mt-1 text-xs text-gray-500 text-right">{{ Number::percentage($player2Percentages['scissors'], 1) }}%</div>
                             </div>
-                            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                                <div class="h-2 bg-blue-500 rounded-full" style="width: {{ $player2Percentages['scissors'] }}%"></div>
-                            </div>
-                            <div class="mt-1 text-xs text-gray-500 text-right">{{ number_format($player2Percentages['scissors'], 1) }}%</div>
                         </div>
                     </div>
                 </div>
