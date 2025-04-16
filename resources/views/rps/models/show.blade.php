@@ -36,7 +36,7 @@
                 </div>
 
                 <!-- Performance stats -->
-                <div class="md:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div class="md:w-2/3 grid grid-cols-1 sm:grid-cols-3 gap-6">
                     <!-- Win Rate -->
                     <div class="bg-gray-50 rounded-lg p-5 relative group transition-all duration-300 hover:bg-white hover:shadow-md hover:-translate-y-1">
                         <div class="absolute top-0 right-0 w-16 h-16 border-l border-b border-gray-100 rounded-bl-3xl opacity-40"></div>
@@ -75,6 +75,23 @@
                             </div>
                             <div class="mt-2 flex items-center text-xs text-gray-500">
                                 <span>{{ $totalRpsWins }} wins ({{ $totalRpsMatches > 0 ? Number::percentage(($totalRpsWins / $totalRpsMatches) * 100, 1) : '0.0%' }})</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ELO Rating -->
+                    <div class="bg-gray-50 rounded-lg p-5 relative group transition-all duration-300 hover:bg-white hover:shadow-md hover:-translate-y-1">
+                        <div class="absolute top-0 right-0 w-16 h-16 border-l border-b border-gray-100 rounded-bl-3xl opacity-40"></div>
+                        <div class="relative">
+                            <h3 class="text-sm font-medium text-gray-500 mb-2 flex items-center">
+                                <x-phosphor-trophy-fill class="w-4 h-4 mr-1.5 text-amber-500" />
+                                ELO Rating
+                            </h3>
+                            <div class="flex items-baseline">
+                                <span class="text-3xl font-bold text-amber-600">{{ (int)$aiModel->rps_elo }}</span>
+                            </div>
+                            <div class="mt-2 flex items-center text-xs text-gray-500">
+                                <span>Rock Paper Scissors skill rating</span>
                             </div>
                         </div>
                     </div>

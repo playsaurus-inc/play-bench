@@ -21,7 +21,7 @@
     <!-- Match overview card -->
     <div class="relative bg-white rounded-3xl shadow-md border border-gray-100 mb-10 overflow-hidden">
         <!-- Background decorations -->
-        <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-red-100 via-white to-blue-100 opacity-50"></div>
+        <div class="absolute top-0 left-0 w-full h-26 bg-gradient-to-r from-red-100 via-white to-blue-100 opacity-50"></div>
 
         <!-- Content -->
         <div class="relative p-8">
@@ -37,6 +37,19 @@
                             <div class="text-center sm:text-left">
                                 <div class="text-xl font-bold text-gray-900 group-hover:text-red-600 transition-colors">{{ $rpsMatch->player1->name }}</div>
                                 <div class="text-sm text-gray-500">Player 1</div>
+
+                                @if($rpsMatch->player1_elo_before && $rpsMatch->player1_elo_after)
+                                <div class="text-xs mt-1 flex items-center whitespace-nowrap">
+                                    <span class="font-mono">ELO: {{ number_format($rpsMatch->player1_elo_before) }}</span>
+                                    <x-phosphor-arrow-right class="w-3 h-3 mx-1 text-gray-400" />
+                                    <span class="font-mono {{ $rpsMatch->player1_elo_after > $rpsMatch->player1_elo_before ? 'text-green-600' : ($rpsMatch->player1_elo_after < $rpsMatch->player1_elo_before ? 'text-red-600' : 'text-gray-600') }}">
+                                        {{ number_format($rpsMatch->player1_elo_after) }}
+                                        @if($rpsMatch->player1_elo_after != $rpsMatch->player1_elo_before)
+                                            ({{ $rpsMatch->player1_elo_after > $rpsMatch->player1_elo_before ? '+' : '' }}{{ number_format($rpsMatch->player1_elo_after - $rpsMatch->player1_elo_before, 1) }})
+                                        @endif
+                                    </span>
+                                </div>
+                                @endif
                             </div>
                         </div>
                     </a>
@@ -105,6 +118,19 @@
                             <div class="sm:order-1 text-center sm:text-right">
                                 <div class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{{ $rpsMatch->player2->name }}</div>
                                 <div class="text-sm text-gray-500">Player 2</div>
+
+                                @if($rpsMatch->player2_elo_before && $rpsMatch->player2_elo_after)
+                                <div class="text-xs mt-1 flex items-center justify-end whitespace-nowrap">
+                                    <span class="font-mono">ELO: {{ (int)$rpsMatch->player2_elo_before }}</span>
+                                    <x-phosphor-arrow-right class="w-3 h-3 mx-1 text-gray-400" />
+                                    <span class="font-mono {{ $rpsMatch->player2_elo_after > $rpsMatch->player2_elo_before ? 'text-green-600' : ($rpsMatch->player2_elo_after < $rpsMatch->player2_elo_before ? 'text-red-600' : 'text-gray-600') }}">
+                                        {{ (int)$rpsMatch->player2_elo_after }}
+                                        @if($rpsMatch->player2_elo_after != $rpsMatch->player2_elo_before)
+                                            ({{ $rpsMatch->player2_elo_after > $rpsMatch->player2_elo_before ? '+' : '' }}{{ number_format($rpsMatch->player2_elo_after - $rpsMatch->player2_elo_before, 1) }})
+                                        @endif
+                                    </span>
+                                </div>
+                                @endif
                             </div>
                         </div>
                     </a>

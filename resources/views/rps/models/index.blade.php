@@ -70,7 +70,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100">
                 <div class="px-4 py-5 sm:px-6 border-b border-gray-100">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-gray-900">Models Ranking</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">Models Ranking for Rock Paper Scissors</h3>
                         <span class="text-sm text-gray-500">{{ $models->count() }} models</span>
                     </div>
                 </div>
@@ -84,13 +84,16 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                     Model
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    ELO Rating
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                     RPS Matches
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                     RPS Wins
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                     Win Rate
                                 </th>
                                 <th scope="col" class="relative px-6 py-3">
@@ -120,10 +123,13 @@
                                             </div>
                                         </a>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-4 text-right whitespace-nowrap">
+                                        <div class="text-sm text-amber-600 font-bold">{{ (int)$model->rps_elo }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{ $model->total_rps_matches }}</div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-4 text-right whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{ $model->rps_matches_won_count }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
