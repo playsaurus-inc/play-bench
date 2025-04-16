@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Services\RpsMatchAnalysisService;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
+use Illuminate\Support\HtmlString;
 
 class RpsMatch extends Model
 {
@@ -339,5 +341,13 @@ class RpsMatch extends Model
             'paper' => $moveDistribution['paper'] / $totalMoves,
             'scissors' => $moveDistribution['scissors'] / $totalMoves,
         ];
+    }
+
+    /**
+     * Get strategic insights text for the match
+     */
+    public function getStrategicInsights(): HtmlString
+    {
+        return RpsMatchAnalysisService::strategicInsights($this);
     }
 }

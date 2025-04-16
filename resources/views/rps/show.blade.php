@@ -256,53 +256,8 @@
                 <div>
                     <h3 class="text-base font-medium mb-3">Strategic Insights</h3>
 
-                    <div class="prose prose-sm prose-amber max-w-none">
-                        @php
-                            $player1Percentages = $rpsMatch->player1_move_distribution_percentages;
-                            $player2Percentages = $rpsMatch->player2_move_distribution_percentages;
-                        @endphp
-                        @if($rpsMatch->isTie())
-                            <p>
-                                This match ended in a tie, with both models demonstrating equally effective strategies. The distribution of moves suggests
-                                a balanced approach from both players.
-                            </p>
-                        @elseif($rpsMatch->player1_score > $rpsMatch->player2_score)
-                            <p>
-                                {{ $rpsMatch->player1->name }} demonstrated a superior strategy in this match, winning {{ $rpsMatch->player1_score }} out of {{ $rpsMatch->rounds_played }} rounds
-                                ({{ number_format($rpsMatch->getPlayer1WinRate() * 100, 1) }}% win rate).
-
-                                @if($player1Percentages['rock'] > 40 || $player1Percentages['paper'] > 40 || $player1Percentages['scissors'] > 40)
-                                    They showed a preference for {{ array_search(max($player1Percentages), $player1Percentages) }}, using it in {{ number_format(max($player1Percentages), 1) }}% of rounds.
-                                @else
-                                    They maintained a balanced distribution of moves, making their strategy harder to predict.
-                                @endif
-                            </p>
-                        @else
-                            <p>
-                                {{ $rpsMatch->player2->name }} demonstrated a superior strategy in this match, winning {{ $rpsMatch->player2_score }} out of {{ $rpsMatch->rounds_played }} rounds
-                                ({{ number_format($rpsMatch->getPlayer2WinRate() * 100, 1) }}% win rate).
-
-                                @if($player2Percentages['rock'] > 40 || $player2Percentages['paper'] > 40 || $player2Percentages['scissors'] > 40)
-                                    They showed a preference for {{ array_search(max($player2Percentages), $player2Percentages) }}, using it in {{ number_format(max($player2Percentages), 1) }}% of rounds.
-                                @else
-                                    They maintained a balanced distribution of moves, making their strategy harder to predict.
-                                @endif
-                            </p>
-                        @endif
-
-                        <p>
-                            @php
-                                $tiePct = $rpsMatch->getTieRate() * 100;
-                            @endphp
-
-                            @if($tiePct > 40)
-                                The high tie rate ({{ number_format($tiePct, 1) }}%) suggests that both models may have been using similar strategies or were effectively countering each other's moves.
-                            @elseif($tiePct < 20)
-                                The low tie rate ({{ number_format($tiePct, 1) }}%) indicates that the models were using distinctly different strategies, rarely making the same move.
-                            @else
-                                The match had a moderate tie rate of {{ number_format($tiePct, 1) }}%, typical for Rock Paper Scissors games.
-                            @endif
-                        </p>
+                    <div class="max-w-none bg-gray-50 text-gray-600 rounded-lg p-4 text-sm font-semibold">
+                        <p>{{ $rpsMatch->getStrategicInsights() }}</p>
                     </div>
                 </div>
             </div>
