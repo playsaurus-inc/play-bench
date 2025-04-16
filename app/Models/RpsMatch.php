@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Services\RpsMatchAnalysisService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -149,6 +150,28 @@ class RpsMatch extends Model
     public function winner(): BelongsTo
     {
         return $this->belongsTo(AiModel::class, 'winner_id');
+    }
+
+    /**
+     * Scopes the query to only include matches with a specific player.
+     */
+    public function scopePlayedBy(Builder $query, AiModel|int $player): void
+    {
+        $player = $player instanceof AiModel ? $player->id : $player;
+
+        $query->where(fn ($q) =>
+            $q->where('player1_id', $player)->orWhere('player2_id', $player)
+        );
+    }
+
+    /**
+     * Scopes the query to only include matches with a specific winner.
+     */
+    public function scopeWonBy(Builder $query, AiModel|int $winner): void
+    {
+        $winner = $winner instanceof AiModel ? $winner->id : $winner;
+
+        $query->where('winner_id', $winner);
     }
 
     /**

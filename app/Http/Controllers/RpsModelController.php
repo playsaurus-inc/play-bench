@@ -56,10 +56,8 @@ class RpsModelController extends Controller
     public function show(AiModel $aiModel): View
     {
         // Load RPS matches for this model
-        $rpsMatches = RpsMatch::where(function (Builder $query) use ($aiModel) {
-                $query->where('player1_id', $aiModel->id)
-                    ->orWhere('player2_id', $aiModel->id);
-            })
+        $rpsMatches = RpsMatch::query()
+            ->playedBy($aiModel)
             ->with(['player1', 'player2', 'winner'])
             ->latest()
             ->take(6)
@@ -163,11 +161,8 @@ class RpsModelController extends Controller
         }
 
         // Get most impressive victory (highest point difference)
-        $mostImpressiveVictory = RpsMatch::where('winner_id', $aiModel->id)
-            ->where(function (Builder $query) use ($aiModel) {
-                $query->where('player1_id', $aiModel->id)
-                    ->orWhere('player2_id', $aiModel->id);
-            })
+        $mostImpressiveVictory = RpsMatch::query()
+            ->wonBy($aiModel)
             ->with(['player1', 'player2'])
             ->orderByRaw('ABS(player1_score - player2_score) DESC')
             ->first();
