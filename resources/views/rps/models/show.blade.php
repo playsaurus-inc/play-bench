@@ -47,7 +47,7 @@
                             </h3>
                             <div class="flex items-end">
                                 <span class="text-3xl font-bold {{ $winRate > 0.5 ? 'text-green-600' : ($winRate == 0.5 ? 'text-amber-600' : 'text-red-600') }}">
-                                    {{ number_format($winRate * 100, 1) }}%
+                                    {{ Number::percentage($winRate * 100, 1) }}
                                 </span>
                             </div>
                             <div class="mt-3 w-full h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -74,7 +74,7 @@
                                 <span class="ml-2 text-sm text-gray-500">matches</span>
                             </div>
                             <div class="mt-2 flex items-center text-xs text-gray-500">
-                                <span>{{ $totalRpsWins }} wins ({{ $totalRpsMatches > 0 ? number_format(($totalRpsWins / $totalRpsMatches) * 100, 1) : '0' }}%)</span>
+                                <span>{{ $totalRpsWins }} wins ({{ $totalRpsMatches > 0 ? Number::percentage(($totalRpsWins / $totalRpsMatches) * 100, 1) : '0' }}%)</span>
                             </div>
                         </div>
                     </div>
@@ -90,7 +90,7 @@
             <!-- Move tendencies chart -->
             <x-ui.card title="Move Tendencies" subtitle="Frequency analysis of move choices">
                 @php
-                    $totalMoves = $moveBreakdown['rock'] + $moveBreakdown['paper'] + $moveBreakdown['scissors'];
+                    $totalMoves = max(1, $moveBreakdown['rock'] + $moveBreakdown['paper'] + $moveBreakdown['scissors']);
                 @endphp
                 <div class="space-y-6">
                     <div x-data="{
@@ -99,13 +99,22 @@
                             {{ $moveBreakdown['paper'] }},
                             {{ $moveBreakdown['scissors'] }}
                         ],
-                        get total() { return this.moveData.reduce((a, b) => a + b, 0) },
+                        total: {{ $totalMoves }},
+                        animate: false,
                         get percentages() {
                             return this.moveData.map(value => (value / this.total) * 100)
                         },
-                        animate: false
+                        get rockStyle() {
+                            return {clipPath: `circle(${this.animate ? this.percentages[0]/2 : 0}% at 50% 50%)`};
+                        },
+                        get paperStyle() {
+                            return {clipPath: `circle(${this.animate ? this.percentages[1]/2 : 0}% at 50% 50%)`};
+                        },
+                        get scissorsStyle() {
+                            return {clipPath: `circle(${this.animate ? this.percentages[2]/2 : 0}% at 50% 50%)`};
+                        },
                         init() {
-                            this.setTimeout(() => animate = true, 100);
+                            setTimeout(() => this.animate = true, 100);
                         },
                     }">
                         <div class="grid grid-cols-3 gap-4">
@@ -116,19 +125,19 @@
                                     <div class="absolute inset-0 rounded-full bg-gray-100"></div>
                                     <!-- Progress circle -->
                                     <div
-                                        class="absolute inset-0 rounded-full bg-red-100"
-                                        x-bind:style="{ clipPath: `circle(${animate ? percentages[0]/2 : 0}% at 50% 50%)` }"
+                                        class="absolute inset-0 rounded-full bg-red-300"
+                                        x-bind:style="rockStyle"
                                         style="transition: clip-path 1s ease-out;"
                                     ></div>
                                     <!-- Icon -->
                                     <div class="absolute inset-0 flex items-center justify-center">
-                                        <x-fas-hand-rock class="size-8"  />
+                                        <x-fas-hand-rock class="text-red-800/70 size-8"  />
                                     </div>
                                 </div>
                                 <div class="text-xl font-bold">{{ Number::abbreviate($moveBreakdown['rock'], precision: 2) }}</div>
                                 <div class="text-sm text-gray-500">Rock</div>
                                 <div class="text-xs text-gray-400 mt-0.5">
-                                    {{ $totalMoves > 0 ? Number::percentage(($moveBreakdown['rock'] / $totalMoves) * 100, 1) : '0' }}%
+                                    {{ Number::percentage(($moveBreakdown['rock'] / $totalMoves) * 100, 1) }}
                                 </div>
                             </div>
 
@@ -138,18 +147,20 @@
                                     <!-- Background circle -->
                                     <div class="absolute inset-0 rounded-full bg-gray-100"></div>
                                     <!-- Progress circle -->
-                                    <div class="absolute inset-0 rounded-full bg-blue-100"
-                                            :style="{ clipPath: `circle(${animate ? percentages[1]/2 : 0}% at 50% 50%)` }"
-                                            style="transition: clip-path 1s ease-out;"></div>
+                                    <div
+                                        class="absolute inset-0 rounded-full bg-blue-300"
+                                        x-bind:style="paperStyle"
+                                        style="transition: clip-path 1s ease-out;"
+                                    ></div>
                                     <!-- Icon -->
                                     <div class="absolute inset-0 flex items-center justify-center">
-                                        <x-fas-hand-paper class="size-8" />
+                                        <x-fas-hand-paper class="text-blue-800/70 size-8" />
                                     </div>
                                 </div>
                                 <div class="text-xl font-bold">{{ Number::abbreviate($moveBreakdown['paper'], precision: 2) }}</div>
                                 <div class="text-sm text-gray-500">Paper</div>
                                 <div class="text-xs text-gray-400 mt-0.5">
-                                    {{ $totalMoves > 0 ? Number::percentage(($moveBreakdown['paper'] / $totalMoves) * 100, 1) : '0' }}%
+                                    {{ Number::percentage(($moveBreakdown['paper'] / $totalMoves) * 100, 1) }}
                                 </div>
                             </div>
 
@@ -159,18 +170,20 @@
                                     <!-- Background circle -->
                                     <div class="absolute inset-0 rounded-full bg-gray-100"></div>
                                     <!-- Progress circle -->
-                                    <div class="absolute inset-0 rounded-full bg-green-100"
-                                            :style="{ clipPath: `circle(${animate ? percentages[2]/2 : 0}% at 50% 50%)` }"
-                                            style="transition: clip-path 1s ease-out;"></div>
+                                    <div
+                                        class="absolute inset-0 rounded-full bg-green-300"
+                                        x-bind:style="scissorsStyle"
+                                        style="transition: clip-path 1s ease-out;"
+                                    ></div>
                                     <!-- Icon -->
                                     <div class="absolute inset-0 flex items-center justify-center">
-                                        <x-fas-hand-scissors class="size-8" />
+                                        <x-fas-hand-scissors class="text-green-800/70 size-8" />
                                     </div>
                                 </div>
                                 <div class="text-xl font-bold">{{ Number::abbreviate($moveBreakdown['scissors'], precision: 2) }}</div>
                                 <div class="text-sm text-gray-500">Scissors</div>
                                 <div class="text-xs text-gray-400 mt-0.5">
-                                    {{ $totalMoves > 0 ? Number::percentage(($moveBreakdown['scissors'] / $totalMoves) * 100, 1) : '0' }}%
+                                    {{ Number::percentage(($moveBreakdown['scissors'] / $totalMoves) * 100, 1) }}
                                 </div>
                             </div>
                         </div>
