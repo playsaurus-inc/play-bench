@@ -88,7 +88,7 @@
                                 ELO Rating
                             </h3>
                             <div class="flex items-baseline">
-                                <span class="text-3xl font-bold text-amber-600">{{ (int)$aiModel->rps_elo }}</span>
+                                <span class="text-3xl font-bold text-amber-600">{{ Number::format($aiModel->rps_elo, 0) }}</span>
                             </div>
                             <div class="mt-2 flex items-center text-xs text-gray-500">
                                 <span>Rock Paper Scissors skill rating</span>

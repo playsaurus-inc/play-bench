@@ -144,7 +144,7 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-3 text-right whitespace-nowrap">
-                                        <div class="text-sm text-amber-600 font-bold">{{ (int)$model->rps_elo }}</div>
+                                        <div class="text-sm text-amber-600 font-bold">{{ Number::format($model->rps_elo, 0) }}</div>
                                     </td>
                                     <td class="px-6 py-3 whitespace-nowrap text-right text-sm font-medium">
                                         <x-ui.button :href="route('rps.models.show', $model)" variant="secondary" size="sm" class="transition-all duration-200" x-bind:class="{'opacity-0': !hover, 'opacity-100': hover}">

@@ -121,12 +121,12 @@
 
                                 @if($rpsMatch->player2_elo_before && $rpsMatch->player2_elo_after)
                                 <div class="text-xs mt-1 flex items-center justify-end whitespace-nowrap">
-                                    <span class="font-mono">ELO: {{ (int)$rpsMatch->player2_elo_before }}</span>
+                                    <span class="font-mono">ELO: {{ Number::format($rpsMatch->player2_elo_before, 0) }}</span>
                                     <x-phosphor-arrow-right class="w-3 h-3 mx-1 text-gray-400" />
                                     <span class="font-mono {{ $rpsMatch->player2_elo_after > $rpsMatch->player2_elo_before ? 'text-green-600' : ($rpsMatch->player2_elo_after < $rpsMatch->player2_elo_before ? 'text-red-600' : 'text-gray-600') }}">
-                                        {{ (int)$rpsMatch->player2_elo_after }}
+                                        {{ Number::format($rpsMatch->player2_elo_after, 0) }}
                                         @if($rpsMatch->player2_elo_after != $rpsMatch->player2_elo_before)
-                                            ({{ $rpsMatch->player2_elo_after > $rpsMatch->player2_elo_before ? '+' : '' }}{{ number_format($rpsMatch->player2_elo_after - $rpsMatch->player2_elo_before, 1) }})
+                                            ({{ $rpsMatch->player2_elo_after > $rpsMatch->player2_elo_before ? '+' : '' }}{{ Number::format($rpsMatch->player2_elo_after - $rpsMatch->player2_elo_before, 1) }})
                                         @endif
                                     </span>
                                 </div>
