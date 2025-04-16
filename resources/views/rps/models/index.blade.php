@@ -9,7 +9,7 @@
                 <div class="flex items-center justify-center w-12 h-12 bg-amber-500 rounded-full shadow-md">
                     <x-phosphor-robot-fill class="h-6 w-6 text-white" />
                 </div>
-                AI Models Performance
+                AI Models in Rock Paper Scissors
             </h1>
 
             <p class="text-lg text-gray-600 max-w-2xl mb-4">
