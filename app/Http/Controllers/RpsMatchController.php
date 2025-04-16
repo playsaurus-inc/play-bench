@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\AiModel;
 use App\Models\RpsMatch;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Database\Eloquent\Builder;
 
 class RpsMatchController extends Controller
 {
@@ -55,10 +55,10 @@ class RpsMatchController extends Controller
             ->where(function (Builder $query) use ($rpsMatch) {
                 $query->where(function (Builder $q) use ($rpsMatch) {
                     $q->where('player1_id', $rpsMatch->player1_id)
-                      ->where('player2_id', $rpsMatch->player2_id);
+                        ->where('player2_id', $rpsMatch->player2_id);
                 })->orWhere(function (Builder $q) use ($rpsMatch) {
                     $q->where('player1_id', $rpsMatch->player2_id)
-                      ->where('player2_id', $rpsMatch->player1_id);
+                        ->where('player2_id', $rpsMatch->player1_id);
                 });
             })
             ->where('id', '!=', $rpsMatch->id)

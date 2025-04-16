@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\AiModel;
 use App\Models\RpsMatch;
 use Illuminate\Support\Carbon;
 use Symfony\Component\Console\Attribute\AsCommand;

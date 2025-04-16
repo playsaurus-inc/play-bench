@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\AiModel;
 use App\Models\SvgMatch;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Carbon;

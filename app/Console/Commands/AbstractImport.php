@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Models\AiModel;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use App\Models\AiModel;
 
 abstract class AbstractImport extends Command
 {

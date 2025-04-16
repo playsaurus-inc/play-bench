@@ -14,10 +14,10 @@ class RpsModelController extends Controller
     public function index(): View
     {
         $models = AiModel::withCount([
-                'rpsMatchesAsPlayer1',
-                'rpsMatchesAsPlayer2',
-                'rpsMatchesWon',
-            ])
+            'rpsMatchesAsPlayer1',
+            'rpsMatchesAsPlayer2',
+            'rpsMatchesWon',
+        ])
             ->get()
             ->map(function ($model) {
                 $model->total_rps_matches = $model->rps_matches_as_player1_count + $model->rps_matches_as_player2_count;
@@ -68,23 +68,26 @@ class RpsModelController extends Controller
 
         // Get rankings information
         $ranking = AiModel::withCount([
-                'rpsMatchesAsPlayer1',
-                'rpsMatchesAsPlayer2',
-                'rpsMatchesWon',
-            ])
+            'rpsMatchesAsPlayer1',
+            'rpsMatchesAsPlayer2',
+            'rpsMatchesWon',
+        ])
             ->get()
             ->map(function ($model) {
                 $model->total_rps_matches = $model->rps_matches_as_player1_count + $model->rps_matches_as_player2_count;
                 $model->win_rate = $model->total_rps_matches > 0
                     ? $model->rps_matches_won_count / $model->total_rps_matches
                     : 0;
+
                 return $model;
             })
             ->sortByDesc('win_rate');
 
-        $rankPosition = $ranking->search(function($rankedModel) use ($aiModel) {
+        $rankPosition = $ranking->search(function ($rankedModel) use ($aiModel) {
             return $rankedModel->id === $aiModel->id;
         }) + 1;
+
+        $moveBreakdown = $this->moveBreakdown($aiModel);
 
         return view('rps.models.show', [
             'aiModel' => $aiModel,
@@ -93,9 +96,10 @@ class RpsModelController extends Controller
             'totalRpsMatches' => $totalRpsMatches,
             'totalRpsWins' => $totalRpsWins,
             'opponents' => $this->oponents($aiModel),
-            'moveBreakdown' => $this->moveBreakdown($aiModel),
+            'moveBreakdown' => $moveBreakdown,
             'mostImpressiveVictory' => $this->mostImpressiveVictory($aiModel),
             'rankPosition' => $rankPosition,
+            'strategyAnalysis' => $this->strategyAnalysis($aiModel, $moveBreakdown),
         ]);
     }
 
@@ -117,7 +121,7 @@ class RpsModelController extends Controller
                 $wins = $matches->where('winner_id', $aiModel->id)->count();
                 $total = $matches->count();
 
-                return (object)[
+                return (object) [
                     'model' => $opponent,
                     'win_rate' => $total > 0 ? $wins / $total : 0,
                     'total_matches' => $total,
@@ -141,20 +145,38 @@ class RpsModelController extends Controller
     /**
      * Get the move breakdown of the given AI model.
      *
-     * @return  array<{rock: int, paper: int, scissors: int}>
+     * @return array<{rock: int, paper: int, scissors: int}>
      */
     protected function moveBreakdown(AiModel $aiModel)
     {
         return [
-            'rock' =>
-                $aiModel->rpsMatchesAsPlayer1()->sum('player1_move_distribution->rock') +
+            'rock' => $aiModel->rpsMatchesAsPlayer1()->sum('player1_move_distribution->rock') +
                 $aiModel->rpsMatchesAsPlayer2()->sum('player2_move_distribution->rock'),
-            'paper' =>
-                $aiModel->rpsMatchesAsPlayer1()->sum('player1_move_distribution->paper') +
+            'paper' => $aiModel->rpsMatchesAsPlayer1()->sum('player1_move_distribution->paper') +
                 $aiModel->rpsMatchesAsPlayer2()->sum('player2_move_distribution->paper'),
-            'scissors' =>
-                $aiModel->rpsMatchesAsPlayer1()->sum('player1_move_distribution->scissors') +
+            'scissors' => $aiModel->rpsMatchesAsPlayer1()->sum('player1_move_distribution->scissors') +
                 $aiModel->rpsMatchesAsPlayer2()->sum('player2_move_distribution->scissors'),
         ];
+    }
+
+    /**
+     * Analyze the strategy of the given AI model based on move breakdown.
+     */
+    protected function strategyAnalysis(AiModel $aiModel, array $moveBreakdown): string
+    {
+        $totalMoves = max(1, $moveBreakdown['rock'] + $moveBreakdown['paper'] + $moveBreakdown['scissors']);
+        $highestMove = array_search(max($moveBreakdown), $moveBreakdown);
+
+        $perfectDistribution = abs(($moveBreakdown['rock'] - $totalMoves / 3) / $totalMoves) < 0.1 &&
+                            abs(($moveBreakdown['paper'] - $totalMoves / 3) / $totalMoves) < 0.1 &&
+                            abs(($moveBreakdown['scissors'] - $totalMoves / 3) / $totalMoves) < 0.1;
+
+        if ($perfectDistribution) {
+            return "{$aiModel->name} uses a highly balanced strategy, playing rock, paper, and scissors with nearly equal frequency. ".
+                   'This makes its moves very difficult to predict, as there is no clear pattern to exploit.';
+        } else {
+            return "{$aiModel->name} shows a preference for {$highestMove}, using it more frequently than other moves. ".
+                   'This tendency could potentially be exploited by opponents who can detect and adapt to this pattern.';
+        }
     }
 }

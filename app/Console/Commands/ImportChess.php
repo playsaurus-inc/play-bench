@@ -2,8 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Console\Concerns\ImportsAiModels;
-use App\Models\AiModel;
 use App\Models\ChessMatch;
 use Illuminate\Support\Carbon;
 use Symfony\Component\Console\Attribute\AsCommand;

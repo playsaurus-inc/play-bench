@@ -54,7 +54,7 @@ class RpsMatchAnalysisService
             $moveUsagePercentage = Number::percentage($maxMovePercentage, 1);
             $insight .= " They showed a preference for {$maxMove}, using it in {$moveUsagePercentage} of rounds.";
         } else {
-            $insight .= " They maintained a balanced distribution of moves, making their strategy harder to predict.";
+            $insight .= ' They maintained a balanced distribution of moves, making their strategy harder to predict.';
         }
 
         return $insight;

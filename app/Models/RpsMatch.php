@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Str;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 class RpsMatch extends Model
 {
@@ -159,8 +159,7 @@ class RpsMatch extends Model
     {
         $player = $player instanceof AiModel ? $player->id : $player;
 
-        $query->where(fn ($q) =>
-            $q->where('player1_id', $player)->orWhere('player2_id', $player)
+        $query->where(fn ($q) => $q->where('player1_id', $player)->orWhere('player2_id', $player)
         );
     }
 
@@ -287,7 +286,7 @@ class RpsMatch extends Model
      *
      * @param  string  $moveHistory  The move history string
      * @param  int  $player  The player number
-     * @return int  The longest win streak for the given player
+     * @return int The longest win streak for the given player
      */
     public static function calculateWinStreak(string $moveHistory, int $player): int
     {
@@ -303,6 +302,7 @@ class RpsMatch extends Model
                 $streak = 0;
             }
         }
+
         return $maxStreak;
     }
 
@@ -330,7 +330,7 @@ class RpsMatch extends Model
      */
     public function player1MoveDistributionPercentages(): Attribute
     {
-        return Attribute::get(fn() => $this->calculateMoveDistributionPercentages($this->player1_move_distribution));
+        return Attribute::get(fn () => $this->calculateMoveDistributionPercentages($this->player1_move_distribution));
     }
 
     /**
@@ -338,7 +338,7 @@ class RpsMatch extends Model
      */
     public function player2MoveDistributionPercentages(): Attribute
     {
-        return Attribute::get(fn() => $this->calculateMoveDistributionPercentages($this->player2_move_distribution));
+        return Attribute::get(fn () => $this->calculateMoveDistributionPercentages($this->player2_move_distribution));
     }
 
     /**

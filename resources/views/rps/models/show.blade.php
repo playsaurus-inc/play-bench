@@ -192,24 +192,7 @@
                     <div class="mt-6">
                         <h3 class="text-sm font-medium text-gray-700 mb-2">Strategy Analysis</h3>
                         <div class="prose prose-sm prose-amber max-w-none text-gray-600">
-                            @php
-                                $highestMove = array_search(max($moveBreakdown), $moveBreakdown);
-                                $perfectDistribution = abs(($moveBreakdown['rock'] - $totalMoves/3) / $totalMoves) < 0.1 &&
-                                                    abs(($moveBreakdown['paper'] - $totalMoves/3) / $totalMoves) < 0.1 &&
-                                                    abs(($moveBreakdown['scissors'] - $totalMoves/3) / $totalMoves) < 0.1;
-                            @endphp
-
-                            @if($perfectDistribution)
-                                <p>
-                                    {{ $aiModel->name }} uses a highly balanced strategy, playing rock, paper, and scissors with nearly equal frequency.
-                                    This makes its moves very difficult to predict, as there is no clear pattern to exploit.
-                                </p>
-                            @else
-                                <p>
-                                    {{ $aiModel->name }} shows a preference for <strong>{{ $highestMove }}</strong>, using it more frequently than other moves.
-                                    This tendency could potentially be exploited by opponents who can detect and adapt to this pattern.
-                                </p>
-                            @endif
+                            <p>{{ $strategyAnalysis }}</p>
                         </div>
                     </div>
                 </div>
