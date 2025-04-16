@@ -16,7 +16,9 @@ class Import extends Command
      *
      * @var string
      */
-    protected $signature = 'import {--fresh : Clear existing data before importing}';
+    protected $signature = 'import
+        {--fresh : Clear existing data before importing}
+        {--skip-elo : Skip ELO calculation after import}';
 
     /**
      * The console command description.
@@ -51,6 +53,12 @@ class Import extends Command
         $this->components->task('Importing SVG Matches', function () {
             return $this->callSilently('import:svg', ['--fresh' => $this->option('fresh')]) === 0;
         });
+
+        if (!$this->option('skip-elo')) {
+            $this->components->task('Calculating ELO Ratings', function () {
+                return $this->callSilently('calculate:elo') === 0;
+            });
+        }
 
         $this->components->info('All benchmark data imported successfully!');
 

@@ -28,6 +28,12 @@ return new class extends Migration
             $table->integer('illegal_moves_black')->default(0); // Number of illegal moves made by black
             $table->boolean('is_forced_completion')->default(false); // Whether the match was forced due to technical issues
 
+            // ELOs
+            $table->float('white_elo_before')->nullable(); // ELO of whites before the match
+            $table->float('black_elo_before')->nullable(); // ELO of blacks before the match
+            $table->float('white_elo_after')->nullable(); // ELO of whites after the match
+            $table->float('black_elo_after')->nullable(); // ELO of blacks after the match
+
             $table->timestamp('started_at')->nullable(); // When the match started
             $table->timestamp('ended_at')->nullable(); // When the match ended
             $table->timestamps(); // When the record was stored + updated

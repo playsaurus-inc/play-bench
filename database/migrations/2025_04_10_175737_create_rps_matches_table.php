@@ -41,6 +41,12 @@ return new class extends Migration
             $table->jsonb('player1_move_distribution'); // [Auto] Number of times player 1 played rock, paper or scissors
             $table->jsonb('player2_move_distribution'); // [Auto] Number of times player 2 played rock, paper or scissors
 
+            // ELO
+            $table->float('player1_elo_before')->nullable(); // ELO of player 1 before the match
+            $table->float('player2_elo_before')->nullable(); // ELO of player 2 before the match
+            $table->float('player1_elo_after')->nullable(); // ELO of player 1 after the match
+            $table->float('player2_elo_after')->nullable(); // ELO of player 2 after the match
+
             $table->timestamp('started_at')->nullable(); // When the match started
             $table->timestamp('ended_at')->nullable(); // When the match ended
             $table->boolean('is_forced_completion')->default(false); // Whether the match was forced due to technical issues

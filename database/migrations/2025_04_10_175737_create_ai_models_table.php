@@ -22,6 +22,11 @@ return new class extends Migration
 
             $table->string('slug')->unique(); // Only used for URLs
 
+            // ELO rating of the model
+            $table->float('rps_elo')->default(1000);
+            $table->float('chess_elo')->default(1000);
+            $table->float('svg_elo')->default(1000);
+
             $table->timestamps();
         });
     }

@@ -21,6 +21,12 @@ return new class extends Migration
             $table->string('player2_svg_path'); // Path to the SVG file from player 2
             $table->text('judge_reasoning'); // Explanation of the winner, according to the judge AI
 
+            // ELOs
+            $table->float('player1_elo_before')->nullable(); // ELO of player 1 before the match
+            $table->float('player2_elo_before')->nullable(); // ELO of player 2 before the match
+            $table->float('player1_elo_after')->nullable(); // ELO of player 1 after the match
+            $table->float('player2_elo_after')->nullable(); // ELO of player 2 after the match
+
             $table->integer('started_at')->nullable(); // When the match started
             $table->integer('ended_at')->nullable(); // When the match ended
             $table->timestamps(); // When the record was stored + updated
