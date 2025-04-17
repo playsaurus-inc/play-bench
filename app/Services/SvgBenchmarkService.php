@@ -183,8 +183,8 @@ Return ONLY valid SVG code in your response.";
             ]);
 
             // Step 3: Prepare SVGs for judging
-            $svg1DataUrl = $this->svgService->svgToPngDataUrl($svg1);
-            $svg2DataUrl = $this->svgService->svgToPngDataUrl($svg2);
+            $svg1DataUrl = $this->svgService->svgToPngDataUrl($svg1, width: 300, height: 300);
+            $svg2DataUrl = $this->svgService->svgToPngDataUrl($svg2, width: 300, height: 300);
 
             // Step 4: Judge the SVGs
             $judgmentResult = $this->judgeSvgs(
