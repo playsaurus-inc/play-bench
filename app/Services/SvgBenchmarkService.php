@@ -97,11 +97,11 @@ Return ONLY valid SVG code in your response.";
             $svg2 = $this->cleanupSvgContent($svg2);
 
             // Store SVGs
-            $player1SvgPath = 'svg/' . $match->id . '_player1.svg';
-            $player2SvgPath = 'svg/' . $match->id . '_player2.svg';
+            $player1SvgPath = $match->id . '_player1.svg';
+            $player2SvgPath = $match->id . '_player2.svg';
 
-            Storage::put($player1SvgPath, $svg1);
-            Storage::put($player2SvgPath, $svg2);
+            Storage::disk('svg')->put($player1SvgPath, $svg1);
+            Storage::disk('svg')->put($player2SvgPath, $svg2);
 
             // Update the match with SVG paths
             $match->player1_svg_path = $player1SvgPath;
