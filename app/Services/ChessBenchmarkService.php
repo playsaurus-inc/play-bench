@@ -52,7 +52,6 @@ class ChessBenchmarkService
         $match->illegal_moves_white = 0;
         $match->illegal_moves_black = 0;
         $match->is_forced_completion = false;
-        $match->save();
 
         Log::info('Starting chess match', [
             'match_id' => $match->id,
