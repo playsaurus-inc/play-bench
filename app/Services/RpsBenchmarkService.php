@@ -74,8 +74,8 @@ class RpsBenchmarkService
             //    fn () => app(AiClientService::class)->getResponse($player1->name, $player1SystemPrompt, $player1Prompt, 'rps'),
             //    fn() => app(AiClientService::class)->getResponse($player2->name, $player2SystemPrompt, $player2Prompt, 'rps'),
             //]);
-            $player1Answer = $this->aiClient->getResponse($player1->name, $player1SystemPrompt, $player1Prompt, 'rps');
-            $player2Answer = $this->aiClient->getResponse($player2->name, $player2SystemPrompt, $player2Prompt, 'rps');
+            $player1Answer = $this->getResponse($player1, $player1SystemPrompt, $player1Prompt);
+            $player2Answer = $this->getResponse($player2, $player2SystemPrompt, $player2Prompt);
 
             // Get the player moves
             $player1Move = $this->getNormalizedMove($player1Answer);
@@ -182,6 +182,30 @@ class RpsBenchmarkService
         $prompt .= "Please provide your move in JSON format (e.g., {\"move\":\"rock\"}).";
 
         return $prompt;
+    }
+
+    /**
+     * Get the response from the AI model
+     */
+    protected function getResponse(AiModel $aiModel, string $systemPrompt, string $playerPrompt): string
+    {
+        if ($aiModel->name === 'random') {
+            return ['rock', 'paper', 'scissors'][random_int(0, 2)];
+        }
+
+        $response = $this->aiClient->getResponse($aiModel->name, $systemPrompt, $playerPrompt);
+
+        // Extract the move from a JSON response
+        if (preg_match('/"move"\s*:\s*"([^"]+)"/', $response, $matches)) {
+            return strtolower($matches[1]);
+        }
+
+        // If not in JSON format, look for "rock", "paper", or "scissors" keywords
+        if (preg_match('/\b(rock|paper|scissors)\b/i', $response, $matches)) {
+            return strtolower($matches[1]);
+        }
+
+        throw new \Exception("Could not parse RPS move from response: " . $response);
     }
 
     /**

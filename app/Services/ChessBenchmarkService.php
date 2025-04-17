@@ -80,11 +80,11 @@ class ChessBenchmarkService
                 $systemPrompt = $chess->turn === Piece::WHITE ? $whiteSystemPrompt : $blackSystemPrompt;
                 $playerPrompt = $this->buildPlayerPrompt($chess, $illegalMoves);
 
-                $aiMove = $this->aiClient->getResponse(
+                $aiMove = $this->getResponse(
+                    $chess,
                     $playerToMove,
                     $systemPrompt,
                     $playerPrompt,
-                    'chess'
                 );
 
                 // Validate and apply the move
@@ -288,6 +288,32 @@ class ChessBenchmarkService
         }
 
         return null;
+    }
+
+    /**
+     * Get the response from the AI model
+     */
+    protected function getResponse(Chess $chess, AiModel $aiModel, string $systemPrompt, string $playerPrompt): string
+    {
+        if ($aiModel->name === 'random') {
+            // For random model, return a random move
+            $legalMoves = $this->getLegalMovesUci($chess);
+            return $legalMoves[array_rand($legalMoves)];
+        }
+
+        $response = $this->aiClient->getResponse($aiModel->name, $systemPrompt, $playerPrompt);
+
+        // Extract the move from a JSON response
+        if (preg_match('/"move"\s*:\s*"([^"]+)"/', $response, $matches)) {
+            return $matches[1];
+        }
+
+        // Look for a UCI format move (e.g., e2e4)
+        if (preg_match('/\b([a-h][1-8][a-h][1-8][qrbnk]?)\b/', $response, $matches)) {
+            return $matches[1];
+        }
+
+        throw new \Exception("Could not parse chess move from response: " . $response);
     }
 
     /**
