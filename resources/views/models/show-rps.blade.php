@@ -1,4 +1,4 @@
-<x-layouts::app :title="$aiModel->name">
+<x-layouts::app :title="$model->name . ' - Rock Paper Scissors'">
     <!-- Header section -->
     <div class="mb-8">
         <div class="flex items-center justify-between">
@@ -8,15 +8,15 @@
             </x-ui.button>
 
             <div class="flex items-center">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $aiModel->rps_rank <= 3 ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-800' }}">
-                    <x-phosphor-trophy-fill class="w-3.5 h-3.5 mr-1 {{ $aiModel->rps_rank <= 3 ? 'text-amber-600' : 'text-gray-500' }}" />
-                    Rank #{{ $aiModel->rps_rank }}
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $model->rps_rank <= 3 ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-800' }}">
+                    <x-phosphor-trophy-fill class="w-3.5 h-3.5 mr-1 {{ $model->rps_rank <= 3 ? 'text-amber-600' : 'text-gray-500' }}" />
+                    RPS Rank #{{ $model->rps_rank }}
                 </span>
             </div>
         </div>
     </div>
 
-    <!-- Model overview -->
+    <!-- Model Overview -->
     <div class="relative bg-white rounded-3xl shadow-md border border-gray-100 mb-10 overflow-hidden">
         <!-- Background decorations -->
         <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-amber-50 to-white opacity-50"></div>
@@ -25,17 +25,17 @@
         <div class="relative px-6 py-8 md:px-8">
             <div class="flex flex-col md:flex-row items-start gap-8">
                 <!-- Model avatar and info -->
-                <div class="md:w-1/2">
+                <div class="md:w-1/3">
                     <div class="flex flex-col items-center md:items-start">
                         <div class="w-24 h-24 md:w-32 md:h-32 rounded-xl bg-amber-100 border-4 border-white shadow-lg flex items-center justify-center mb-4">
                             <x-phosphor-robot-fill class="w-12 h-12 md:w-16 md:h-16 text-amber-500" />
                         </div>
-                        <h1 class="text-2xl md:text-4xl font-bold text-gray-900 text-center md:text-left">{{ $aiModel->name }}</h1>
-                        <p class="text-lg text-gray-600 mt-2 text-center md:text-left">{{ $aiModel->description ?? 'AI Model' }}</p>
+                        <h1 class="text-2xl md:text-4xl font-bold text-gray-900 text-center md:text-left">{{ $model->name }}</h1>
+                        <p class="text-lg text-gray-600 mt-2 text-center md:text-left">{{ $model->description ?? 'AI Model' }}</p>
                     </div>
                 </div>
 
-                <!-- Performance stats -->
+                <!-- RPS Performance stats -->
                 <div class="md:w-2/3 grid grid-cols-1 sm:grid-cols-3 gap-6">
                     <!-- Win Rate -->
                     <div class="bg-gray-50 rounded-lg p-5 relative group transition-all duration-300 hover:bg-white hover:shadow-md hover:-translate-y-1">
@@ -88,7 +88,7 @@
                                 ELO Rating
                             </h3>
                             <div class="flex items-baseline">
-                                <span class="text-3xl font-bold text-amber-600">{{ Number::format($aiModel->rps_elo, 0) }}</span>
+                                <span class="text-3xl font-bold text-amber-600">{{ Number::format($model->rps_elo, 0) }}</span>
                             </div>
                             <div class="mt-2 flex items-center text-xs text-gray-500">
                                 <span>Rock Paper Scissors skill rating</span>
@@ -99,6 +99,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Tabs Navigation -->
+    <x-models.tabs :model="$model" :activeTab="$activeTab" />
 
     <!-- Main content -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -229,17 +232,17 @@
 
                         <div class="flex items-center justify-between mb-3">
                             <div class="text-sm font-medium">
-                                @if($mostImpressiveVictory->player1_id === $aiModel->id)
-                                    <div class="text-lg font-bold text-gray-900">{{ $aiModel->name }}</div>
+                                @if($mostImpressiveVictory->player1_id === $model->id)
+                                    <div class="text-lg font-bold text-gray-900">{{ $model->name }}</div>
                                     <div class="text-xs text-gray-500">vs {{ $mostImpressiveVictory->player2->name }}</div>
                                 @else
-                                    <div class="text-lg font-bold text-gray-900">{{ $aiModel->name }}</div>
+                                    <div class="text-lg font-bold text-gray-900">{{ $model->name }}</div>
                                     <div class="text-xs text-gray-500">vs {{ $mostImpressiveVictory->player1->name }}</div>
                                 @endif
                             </div>
 
                             <div class="text-right">
-                                @if($mostImpressiveVictory->player1_id === $aiModel->id)
+                                @if($mostImpressiveVictory->player1_id === $model->id)
                                     <div class="text-xl font-bold text-green-600">{{ $mostImpressiveVictory->player1_score }} - {{ $mostImpressiveVictory->player2_score }}</div>
                                 @else
                                     <div class="text-xl font-bold text-green-600">{{ $mostImpressiveVictory->player2_score }} - {{ $mostImpressiveVictory->player1_score }}</div>
@@ -288,7 +291,7 @@
                                         class="hover:bg-gray-50 transition-colors"
                                     >
                                         <td class="px-4 py-3 whitespace-nowrap">
-                                            <a href="{{ route('models.show.rps', $opponent->model) }}" class="group">
+                                            <a href="{{ route('models.show', $opponent->model) }}" class="group">
                                                 <div class="flex items-center">
                                                     <div class="flex-shrink-0 w-8 h-8 rounded-md bg-gray-100 flex items-center justify-center overflow-hidden group-hover:bg-amber-50 transition-colors">
                                                         <x-phosphor-robot-fill class="w-4 h-4 text-gray-500 group-hover:text-amber-600" />
@@ -344,11 +347,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         @foreach($rpsMatches as $match)
                             @php
-                                $isPlayer1 = $match->player1_id === $aiModel->id;
+                                $isPlayer1 = $match->player1_id === $model->id;
                                 $opponent = $isPlayer1 ? $match->player2 : $match->player1;
                                 $aiModelScore = $isPlayer1 ? $match->player1_score : $match->player2_score;
                                 $opponentScore = $isPlayer1 ? $match->player2_score : $match->player1_score;
-                                $result = $match->isTie() ? 'tie' : ($match->winner_id === $aiModel->id ? 'win' : 'loss');
+                                $result = $match->isTie() ? 'tie' : ($match->winner_id === $model->id ? 'win' : 'loss');
                                 $resultColor = $result === 'win' ? 'green' : ($result === 'loss' ? 'red' : 'gray');
                             @endphp
                             <a href="{{ route('rps.matches.show', $match) }}" class="block bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all">

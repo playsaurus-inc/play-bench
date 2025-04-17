@@ -128,19 +128,25 @@
                             <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 <div class="flex items-center justify-center">
                                     <x-phosphor-hand-fill class="w-4 h-4 mr-1 text-red-500" />
-                                    RPS Rank/ELO
+                                    RPS Rank
+                                </div>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                <div class="flex items-center justify-center">
+                                    <x-phosphor-hand-fill class="w-4 h-4 mr-1 text-red-500" />
+                                    RPS ELO
                                 </div>
                             </th>
                             <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider opacity-50">
                                 <div class="flex items-center justify-center">
                                     <x-phosphor-paint-brush-fill class="w-4 h-4 mr-1 text-blue-500" />
-                                    SVG Rank/ELO
+                                    SVG Rank
                                 </div>
                             </th>
                             <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider opacity-50">
                                 <div class="flex items-center justify-center">
                                     <x-phosphor-crown-cross-fill class="w-4 h-4 mr-1 text-green-500" />
-                                    Chess Rank/ELO
+                                    Chess Rank
                                 </div>
                             </th>
                             <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -173,7 +179,9 @@
                                     @else
                                         <span class="text-sm text-gray-500">-</span>
                                     @endif
-                                    <span class="text-sm font-medium text-amber-600 ml-3">
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    <span class="text-sm font-medium text-amber-600">
                                         {{ Number::format($model->rps_elo, 0) }}
                                     </span>
                                 </td>

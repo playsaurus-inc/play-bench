@@ -46,7 +46,7 @@ class RpsModelController extends Controller
 
         $moveBreakdown = $this->moveBreakdown($aiModel);
 
-        return view('rps.models.show', [
+        return view('models.show.rps', [
             'aiModel' => $aiModel,
             'rpsMatches' => $rpsMatches,
             'winRate' => $winRate,

@@ -48,7 +48,7 @@
                                         <span class="font-medium">{{ Number::format($model->rps_elo, 0) }}</span>
                                     </div>
                                     <div class="mt-1">
-                                        <a href="{{ route('rps.models.show', $model) }}" class="text-xs text-amber-600 hover:text-amber-700 flex items-center">
+                                        <a href="{{ route('models.show.rps', $model) }}" class="text-xs text-amber-600 hover:text-amber-700 flex items-center">
                                             View RPS performance
                                             <x-phosphor-arrow-right class="w-3 h-3 ml-1" />
                                         </a>
@@ -161,7 +161,7 @@
             </div>
 
             <div class="mt-4 text-center">
-                <x-ui.button :href="route('rps.models.show', $model)" variant="outline" size="sm">
+                <x-ui.button :href="route('models.show.rps', $model)" variant="outline" size="sm">
                     View All RPS Matches
                     <x-phosphor-arrow-right class="w-4 h-4 ml-1" />
                 </x-ui.button>

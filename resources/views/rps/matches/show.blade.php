@@ -29,7 +29,7 @@
             <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-8">
                 <!-- Player 1 -->
                 <div class="flex flex-col items-center md:items-start">
-                    <a href="{{ route('rps.models.show', $rpsMatch->player1) }}" class="group">
+                    <a href="{{ route('models.show.rps', $rpsMatch->player1) }}" class="group">
                         <div class="flex flex-col sm:flex-row items-center mb-3">
                             <div class="w-20 h-20 rounded-full bg-red-100 border-4 border-white shadow-lg flex items-center justify-center mb-3 sm:mb-0 sm:mr-4 group-hover:ring-2 group-hover:ring-red-300 transition-all">
                                 <x-phosphor-robot-fill class="w-8 h-8 text-red-500" />
@@ -110,7 +110,7 @@
 
                 <!-- Player 2 -->
                 <div class="flex flex-col items-center md:items-end">
-                    <a href="{{ route('rps.models.show', $rpsMatch->player2) }}" class="group">
+                    <a href="{{ route('models.show.rps', $rpsMatch->player2) }}" class="group">
                         <div class="flex flex-col sm:flex-row items-center mb-3">
                             <div class="sm:order-2 w-20 h-20 rounded-full bg-blue-100 border-4 border-white shadow-lg flex items-center justify-center mb-3 sm:mb-0 sm:ml-4 group-hover:ring-2 group-hover:ring-blue-300 transition-all">
                                 <x-phosphor-robot-fill class="w-8 h-8 text-blue-500" />

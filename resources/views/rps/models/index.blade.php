@@ -112,7 +112,7 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-3 whitespace-nowrap">
-                                        <a href="{{ route('rps.models.show', $model) }}" class="group">
+                                        <a href="{{ route('models.show.rps', $model) }}" class="group">
                                             <div class="flex items-center">
                                                 <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-amber-50 transition-colors">
                                                     <x-phosphor-robot-fill class="h-5 w-5 text-gray-500 group-hover:text-amber-600 transition-colors" />
@@ -147,7 +147,7 @@
                                         <div class="text-sm text-amber-600 font-bold">{{ Number::format($model->rps_elo, 0) }}</div>
                                     </td>
                                     <td class="px-6 py-3 whitespace-nowrap text-right text-sm font-medium">
-                                        <x-ui.button :href="route('rps.models.show', $model)" variant="secondary" size="sm" class="transition-all duration-200" x-bind:class="{'opacity-0': !hover, 'opacity-100': hover}">
+                                        <x-ui.button :href="route('models.show.rps', $model)" variant="secondary" size="sm" class="transition-all duration-200" x-bind:class="{'opacity-0': !hover, 'opacity-100': hover}">
                                             View Details
                                         </x-ui.button>
                                     </td>

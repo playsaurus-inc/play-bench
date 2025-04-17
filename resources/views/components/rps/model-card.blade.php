@@ -1,6 +1,6 @@
 @props(['model'])
 
-<a href="{{ route('rps.models.show', $model) }}"
+<a href="{{ route('models.show.rps', $model) }}"
    class="block bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 rounded-xl"
    x-data="{ hover: false }"
    @mouseenter="hover = true"
