@@ -137,7 +137,7 @@
                             <img
                                 src="{{ asset('images/playsaurus-logo.svg') }}"
                                 alt="Playsaurus"
-                                class="w-auto h-18 ml-2"
+                                class="w-auto h-14 ml-2 hover:opacity-80 transition-all hover:drop-shadow-xl"
                             >
                         </a>
                     </div>
