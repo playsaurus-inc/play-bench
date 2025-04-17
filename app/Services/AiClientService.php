@@ -16,88 +16,88 @@ class AiClientService
      */
     protected array $providerMapping = [
         // OpenAI models
-        //'gpt-4o' => [
-        //    'provider' => 'openai',
-        //    'model' => 'gpt-4o',
-        //],
-        //'gpt-4o-mini' => [
-        //    'provider' => 'openai',
-        //    'model' => 'gpt-4o-mini',
-        //],
-        //'gpt-3.5-turbo' => [
-        //    'provider' => 'openai',
-        //    'model' => 'gpt-3.5-turbo-0125',
-        //],
-        //'o1-mini' => [
-        //    'provider' => 'openai',
-        //    'model' => 'o1-mini',
-        //    'direct' => true,
-        //],
-        //'o3-mini-low' => [
-        //    'provider' => 'openai',
-        //    'model' => 'o3-mini',
-        //    'reasoning_effort' => 'low',
-        //],
-        //'o3-mini-high' => [
-        //    'provider' => 'openai',
-        //    'model' => 'o3-mini',
-        //    'reasoning_effort' => 'high',
-        //],
+        'gpt-4o' => [
+            'provider' => 'openai',
+            'model' => 'gpt-4o',
+        ],
+        'gpt-4o-mini' => [
+            'provider' => 'openai',
+            'model' => 'gpt-4o-mini',
+        ],
+        'gpt-3.5-turbo' => [
+            'provider' => 'openai',
+            'model' => 'gpt-3.5-turbo-0125',
+        ],
+        'o1-mini' => [
+            'provider' => 'openai',
+            'model' => 'o1-mini',
+            'direct' => true,
+        ],
+        'o3-mini-low' => [
+            'provider' => 'openai',
+            'model' => 'o3-mini',
+            'reasoning_effort' => 'low',
+        ],
+        'o3-mini-high' => [
+            'provider' => 'openai',
+            'model' => 'o3-mini',
+            'reasoning_effort' => 'high',
+        ],
 
         // Anthropic models
-        //'claude-3-7-sonnet' => [
-        //    'provider' => 'anthropic',
-        //    'model' => 'claude-3-7-sonnet-20250219',
-        //],
-        //'claude-3-7-sonnet-thinking' => [
-        //    'provider' => 'anthropic',
-        //    'model' => 'claude-3-7-sonnet-20250219',
-        //    'thinking' => true,
-        //],
-        //'claude-3-5-sonnet' => [
-        //    'provider' => 'anthropic',
-        //    'model' => 'claude-3-5-sonnet-20241022',
-        //],
+        'claude-3-7-sonnet' => [
+            'provider' => 'anthropic',
+            'model' => 'claude-3-7-sonnet-20250219',
+        ],
+        'claude-3-7-sonnet-thinking' => [
+            'provider' => 'anthropic',
+            'model' => 'claude-3-7-sonnet-20250219',
+            'thinking' => true,
+        ],
+        'claude-3-5-sonnet' => [
+            'provider' => 'anthropic',
+            'model' => 'claude-3-5-sonnet-20241022',
+        ],
 
         // Groq models
-        //'llama3-70b-8192' => [
-        //    'provider' => 'groq',
-        //    'model' => 'llama3-70b-8192',
-        //],
+        'llama3-70b-8192' => [
+            'provider' => 'groq',
+            'model' => 'llama3-70b-8192',
+        ],
         //'qwen-2.5-32b' => [ // DEPRECATED IN FAVOR OF qwen-qwq-32b
         //    'provider' => 'groq',
         //    'model' => 'qwen-2.5-32b',
         //],
-        //'deepseek-r1-distill-llama-70b' => [
-        //    'provider' => 'groq',
-        //    'model' => 'deepseek-r1-distill-llama-70b',
-        //],
-        //'deepseek-r1-distill-qwen-32b' => [ // DEPRECATED in favor of qwen-qwq-32b
-        //    'provider' => 'groq',
-        //    'model' => 'deepseek-r1-distill-qwen-32b',
-        //],
+        'deepseek-r1-distill-llama-70b' => [
+            'provider' => 'groq',
+            'model' => 'deepseek-r1-distill-llama-70b',
+        ],
+        'deepseek-r1-distill-qwen-32b' => [ // DEPRECATED in favor of qwen-qwq-32b
+            'provider' => 'groq',
+            'model' => 'deepseek-r1-distill-qwen-32b',
+        ],
         'qwen-qwq-32b' => [
             'provider' => 'groq',
             'model' => 'qwen-qwq-32b',
         ],
 
         // RedPill hosted models
-        //'deepseek-r1' => [
-        //    'provider' => 'redpill',
-        //    'model' => 'deepseek/deepseek-r1',
-        //],
-        //'llama-3.1-405b-instruct' => [
-        //    'provider' => 'redpill',
-        //    'model' => 'meta-llama/llama-3.1-405b-instruct',
-        //],
-        //'deepseek-v3' => [
-        //    'provider' => 'redpill',
-        //    'model' => 'deepseek/deepseek-chat',
-        //],
-        //'gemini-pro-1.5' => [
-        //    'provider' => 'redpill',
-        //    'model' => 'google/gemini-pro-1.5',
-        //],
+        'deepseek-r1' => [
+            'provider' => 'redpill',
+            'model' => 'deepseek/deepseek-r1',
+        ],
+        'llama-3.1-405b-instruct' => [
+            'provider' => 'redpill',
+            'model' => 'meta-llama/llama-3.1-405b-instruct',
+        ],
+        'deepseek-v3' => [
+            'provider' => 'redpill',
+            'model' => 'deepseek/deepseek-chat',
+        ],
+        'gemini-pro-1.5' => [
+            'provider' => 'redpill',
+            'model' => 'google/gemini-pro-1.5',
+        ],
 
         // Random baseline
         'random' => [
