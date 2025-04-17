@@ -36,11 +36,11 @@
                         <!-- Navigation Links -->
                         <div class="hidden space-x-8 sm:ml-10 sm:flex">
                             <a href="{{ route('rps.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('rps.*') ? 'border-amber-500 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-amber-300' }} transition-colors duration-200">
-                                <x-phosphor-hand-fill class="w-5 h-5 mr-1 {{ request()->routeIs('rps.*') ? 'text-amber-500' : 'text-gray-400' }}" />
+                                <x-phosphor-hand-fill class="size-5 mr-1 {{ request()->routeIs('rps.*') ? 'text-amber-500' : 'text-gray-400' }}" />
                                 Rock Paper Scissors
                             </a>
                             <a href="{{ route('models.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('models.*') ? 'border-amber-500 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-amber-300' }} transition-colors duration-200">
-                                <x-phosphor-robot-fill class="w-5 h-5 mr-1 {{ request()->routeIs('models.*') ? 'text-amber-500' : 'text-gray-400' }}" />
+                                <x-phosphor-robot-fill class="size-5 mr-1 {{ request()->routeIs('models.*') ? 'text-amber-500' : 'text-gray-400' }}" />
                                 AI Models
                             </a>
                         </div>
@@ -48,9 +48,9 @@
 
                     <!-- Right side menu -->
                     <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
-                        <a href="#" class="text-gray-500 hover:text-amber-600 transition-colors flex items-center gap-2">
+                        <a href="{{ route('about') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors duration-200">
                             About
-                            <x-phosphor-question-fill class="w-5 h-5" />
+                            <x-phosphor-question-fill class="size-5 ml-1" />
                         </a>
                     </div>
 
@@ -113,7 +113,7 @@
                     <div class="text- text-gray-500">
                         <div class="flex space-x-4 mb-2 justify-center md:justify-start">
                             <a
-                                href="#"
+                                href="{{ route('about') }}"
                                 class="text-amber-600 hover:underline hover:text-amber-700 transition-colors"
                             >
                                 About

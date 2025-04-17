@@ -7,7 +7,14 @@ use App\Http\Controllers\Models\ChessController;
 use App\Http\Controllers\Models\SvgController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/models');
+Route::get('/', function () {
+    return view('welcome');
+});
+
+// About page
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
 
 // Cross-benchmark model routes
 Route::get('/models', [AiModelController::class, 'index'])->name('models.index');
