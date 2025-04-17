@@ -151,8 +151,8 @@
                     </p>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-500">Repository:</span>
-                        <a href="https://github.com/playsaurus-inc/play-bench-web" target="_blank" class="text-amber-600 hover:text-amber-700 flex items-center text-sm font-medium">
-                            github.com/playsaurus-inc/play-bench-web
+                        <a href="{{ config('playbench.github_repo_url') }}" target="_blank" class="text-amber-600 hover:text-amber-700 flex items-center text-sm font-medium">
+                            {{ config('playbench.github_repo_url') }}
                             <x-phosphor-arrow-square-out class="w-4 h-4 ml-1" />
                         </a>
                     </div>
@@ -172,8 +172,6 @@
                         <span class="text-sm font-medium bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
                             Coming Soon
                         </span>
-
-                        {{-- The benchmark code is now available in the repository. --}}
                     </div>
                 </div>
             </div>
