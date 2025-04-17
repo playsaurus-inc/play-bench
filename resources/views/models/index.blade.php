@@ -9,7 +9,7 @@
                 <div class="flex items-center justify-center w-12 h-12 bg-amber-500 rounded-full shadow-md">
                     <x-phosphor-robot-fill class="h-6 w-6 text-white" />
                 </div>
-                AI Model Performance Across Benchmarks
+                AI Model Performance
             </h1>
 
             <p class="text-lg text-gray-600 max-w-2xl mb-4">
@@ -33,6 +33,79 @@
             </div>
         </div>
     </div>
+
+    <!-- Top performing models cards -->
+    <section class="mb-10">
+        <h2 class="text-2xl font-bold mb-6 text-gray-900 flex items-center">
+            <x-phosphor-star-fill class="w-6 h-6 mr-2 text-amber-500" />
+            Top Performing Models
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            @foreach($models->take(3) as $model)
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 group">
+                    <a href="{{ route('models.show', $model) }}" class="block p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 rounded-lg bg-amber-100 flex items-center justify-center mr-4 group-hover:bg-amber-200 transition-colors">
+                                <x-phosphor-robot-fill class="w-8 h-8 text-amber-500" />
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 group-hover:text-amber-600 transition-colors">{{ $model->name }}</h3>
+                                <p class="text-sm text-gray-500">Overall Rank: #{{ $loop->iteration }}</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <!-- RPS Performance -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center mr-2">
+                                        <x-phosphor-hand-fill class="w-3 h-3 text-red-500" />
+                                    </div>
+                                    <span class="text-sm text-gray-700">RPS</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-sm font-medium text-amber-600 mr-2">{{ Number::format($model->rps_elo, 0) }}</span>
+                                    <span class="text-xs text-gray-500">ELO</span>
+                                </div>
+                            </div>
+
+                            <!-- Chess (placeholder) -->
+                            <div class="flex items-center justify-between opacity-50">
+                                <div class="flex items-center">
+                                    <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-2">
+                                        <x-phosphor-crown-cross-fill class="w-3 h-3 text-green-500" />
+                                    </div>
+                                    <span class="text-sm text-gray-700">Chess</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-xs text-gray-500">Coming soon</span>
+                                </div>
+                            </div>
+
+                            <!-- SVG Drawing (placeholder) -->
+                            <div class="flex items-center justify-between opacity-50">
+                                <div class="flex items-center">
+                                    <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                                        <x-phosphor-paint-brush-fill class="w-3 h-3 text-blue-500" />
+                                    </div>
+                                    <span class="text-sm text-gray-700">SVG Drawing</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-xs text-gray-500">Coming soon</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 text-xs text-amber-600 group-hover:text-amber-700 flex items-center justify-end">
+                            View model details
+                            <x-phosphor-arrow-right class="w-3 h-3 ml-1 group-hover:translate-x-0.5 transition-transform" />
+                        </div>
+                    </a>
+                </div>
+            @endforeach
+        </div>
+    </section>
 
     <!-- Benchmark Categories -->
     <div class="mb-10">
@@ -128,25 +201,19 @@
                             <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 <div class="flex items-center justify-center">
                                     <x-phosphor-hand-fill class="w-4 h-4 mr-1 text-red-500" />
-                                    RPS Rank
-                                </div>
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                <div class="flex items-center justify-center">
-                                    <x-phosphor-hand-fill class="w-4 h-4 mr-1 text-red-500" />
-                                    RPS ELO
+                                    RPS Rank & ELO
                                 </div>
                             </th>
                             <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider opacity-50">
                                 <div class="flex items-center justify-center">
                                     <x-phosphor-paint-brush-fill class="w-4 h-4 mr-1 text-blue-500" />
-                                    SVG Rank
+                                    SVG Rank & ELO
                                 </div>
                             </th>
                             <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider opacity-50">
                                 <div class="flex items-center justify-center">
                                     <x-phosphor-crown-cross-fill class="w-4 h-4 mr-1 text-green-500" />
-                                    Chess Rank
+                                    Chess Rank & ELO
                                 </div>
                             </th>
                             <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -176,14 +243,12 @@
                                         <span class="text-sm font-medium px-2.5 py-0.5 rounded-full {{ $model->rps_rank <= 3 ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-800' }}">
                                             {{ $model->rps_rank }}
                                         </span>
+                                        <span class="text-sm font-medium text-amber-600 ml-2">
+                                            {{ Number::format($model->rps_elo, 0) }}
+                                        </span>
                                     @else
-                                        <span class="text-sm text-gray-500">-</span>
+                                        <span class="text-sm text-gray-500">N/A</span>
                                     @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-center">
-                                    <span class="text-sm font-medium text-amber-600">
-                                        {{ Number::format($model->rps_elo, 0) }}
-                                    </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center opacity-50">
                                     <span class="text-sm text-gray-500">Coming soon</span>

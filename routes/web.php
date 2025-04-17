@@ -1,23 +1,24 @@
 <?php
 
 use App\Http\Controllers\RpsMatchController;
-use App\Http\Controllers\ModelController;
+use App\Http\Controllers\Models\AiModelController;
+use App\Http\Controllers\Models\RpsController;
+use App\Http\Controllers\Models\ChessController;
+use App\Http\Controllers\Models\SvgController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/models');
 
 // Cross-benchmark model routes
-Route::get('/models', [ModelController::class, 'index'])->name('models.index');
-Route::get('/models/{aiModel}', [ModelController::class, 'show'])->name('models.show');
+Route::get('/models', [AiModelController::class, 'index'])->name('models.index');
+Route::get('/models/{aiModel}', [AiModelController::class, 'show'])->name('models.show');
 
 // Benchmark-specific model subpages
-Route::get('/models/{aiModel}/rock-paper-scissors', [ModelController::class, 'showRps'])
+Route::get('/models/{aiModel}/rock-paper-scissors', [RpsController::class, 'show'])
     ->name('models.show.rps');
-Route::get('/models/{aiModel}/chess', [ModelController::class, 'showChess'])
+Route::get('/models/{aiModel}/chess', [ChessController::class, 'show'])
     ->name('models.show.chess');
-Route::get('/models/{aiModel}/svg-drawing', [ModelController::class, 'showSvg'])
+Route::get('/models/{aiModel}/svg-drawing', [SvgController::class, 'show'])
     ->name('models.show.svg');
 
 // Benchmark index pages

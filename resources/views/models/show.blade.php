@@ -49,7 +49,7 @@
                                     </div>
                                     <div class="mt-1">
                                         <a href="{{ route('models.show.rps', $model) }}" class="text-xs text-amber-600 hover:text-amber-700 flex items-center">
-                                            View RPS performance
+                                            View RPS details
                                             <x-phosphor-arrow-right class="w-3 h-3 ml-1" />
                                         </a>
                                     </div>
@@ -100,6 +100,9 @@
         </div>
     </div>
 
+    <!-- Tabs Navigation -->
+    <x-models.tabs :model="$model" :activeTab="$activeTab" />
+
     <!-- Recent Rock Paper Scissors Matches -->
     @if($rpsMatches->count() > 0)
         <section class="mb-10">
@@ -136,7 +139,7 @@
                                     <div class="bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center mr-2">
                                         <x-phosphor-robot-fill class="w-4 h-4 text-gray-500" />
                                     </div>
-                                    <div class="truncate grow">
+                                    <div class="truncate max-w-[120px]">
                                         <div class="text-sm font-medium text-gray-900">{{ $opponent->name }}</div>
                                     </div>
                                 </div>

@@ -1,90 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Models;
 
+use App\Http\Controllers\Controller;
 use App\Models\AiModel;
 use App\Models\RpsMatch;
-use App\Models\ChessMatch;
-use App\Models\SvgMatch;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class ModelController extends Controller
+class RpsController extends Controller
 {
-    /**
-     * Display a listing of all AI models across all benchmarks.
-     */
-    public function index(): View
-    {
-        // Get all models with their rankings
-        $models = AiModel::query()
-            ->withCount([
-                'rpsMatchesAsPlayer1',
-                'rpsMatchesAsPlayer2',
-                'rpsMatchesWon',
-            ])
-            ->get()
-            ->map(function ($model) {
-                $model->total_rps_matches = $model->rps_matches_as_player1_count + $model->rps_matches_as_player2_count;
-                $model->win_rate = $model->total_rps_matches > 0
-                    ? $model->rps_matches_won_count / $model->total_rps_matches
-                    : 0;
-
-                return $model;
-            })
-            ->sortByDesc('rps_elo');
-
-        // Overall stats
-        $modelCount = $models->count();
-        $matchCount = RpsMatch::count() + ChessMatch::count() + SvgMatch::count();
-        $rpsMatchCount = RpsMatch::count();
-
-        // For now, we only have Rock Paper Scissors, but in the future we'll add more
-        $benchmarkCount = 1; // Will become 3 when Chess and SVG are implemented
-
-        return view('models.index', [
-            'models' => $models,
-            'modelCount' => $modelCount,
-            'matchCount' => $matchCount,
-            'rpsMatchCount' => $rpsMatchCount,
-            'benchmarkCount' => $benchmarkCount,
-        ]);
-    }
-
-    /**
-     * Display the specified model with performance across all benchmarks.
-     */
-    public function show(AiModel $aiModel): View
-    {
-        // Load RPS matches for this model
-        $rpsMatches = RpsMatch::query()
-            ->playedBy($aiModel)
-            ->with(['player1', 'player2', 'winner'])
-            ->latest()
-            ->take(4)
-            ->get();
-
-        // Calculate RPS stats
-        $totalRpsMatches = $aiModel->rpsMatches()->count();
-        $totalRpsWins = $aiModel->rpsMatchesWon()->count();
-        $rpsWinRate = $totalRpsMatches > 0 ? $totalRpsWins / $totalRpsMatches : 0;
-
-        // In the future, we would also load chess matches and SVG matches here
-
-        return view('models.show', [
-            'model' => $aiModel,
-            'rpsMatches' => $rpsMatches,
-            'totalRpsMatches' => $totalRpsMatches,
-            'totalRpsWins' => $totalRpsWins,
-            'rpsWinRate' => $rpsWinRate,
-            'activeTab' => 'overview',
-        ]);
-    }
-
     /**
      * Display the RPS-specific performance for this model.
      */
-    public function showRps(AiModel $aiModel): View
+    public function show(AiModel $aiModel): View
     {
         // Get RPS matches
         $rpsMatches = RpsMatch::query()
@@ -100,13 +29,13 @@ class ModelController extends Controller
         $winRate = $totalRpsMatches > 0 ? $totalRpsWins / $totalRpsMatches : 0;
 
         // Calculate move breakdown
-        $moveBreakdown = $this->calculateRpsMoveBreakdown($aiModel);
+        $moveBreakdown = $this->calculateMoveBreakdown($aiModel);
 
         // Get most impressive victory
-        $mostImpressiveVictory = $this->getMostImpressiveRpsVictory($aiModel);
+        $mostImpressiveVictory = $this->getMostImpressiveVictory($aiModel);
 
         // Get opponents info
-        $opponents = $this->getRpsOpponents($aiModel);
+        $opponents = $this->getOpponents($aiModel);
 
         return view('models.show-rps', [
             'model' => $aiModel,
@@ -117,39 +46,15 @@ class ModelController extends Controller
             'opponents' => $opponents,
             'moveBreakdown' => $moveBreakdown,
             'mostImpressiveVictory' => $mostImpressiveVictory,
-            'strategyAnalysis' => $this->getRpsStrategyAnalysis($aiModel, $moveBreakdown),
+            'strategyAnalysis' => $this->getStrategyAnalysis($aiModel, $moveBreakdown),
             'activeTab' => 'rps',
         ]);
     }
 
     /**
-     * Display the Chess-specific performance for this model.
-     * (Placeholder for future implementation)
+     * Calculate the move breakdown of the given AI model.
      */
-    public function showChess(AiModel $aiModel): View
-    {
-        return view('models.show-chess', [
-            'model' => $aiModel,
-            'activeTab' => 'chess',
-        ]);
-    }
-
-    /**
-     * Display the SVG Drawing-specific performance for this model.
-     * (Placeholder for future implementation)
-     */
-    public function showSvg(AiModel $aiModel): View
-    {
-        return view('models.show-svg', [
-            'model' => $aiModel,
-            'activeTab' => 'svg',
-        ]);
-    }
-
-    /**
-     * Calculate the move breakdown of the given AI model for Rock Paper Scissors.
-     */
-    protected function calculateRpsMoveBreakdown(AiModel $aiModel): array
+    protected function calculateMoveBreakdown(AiModel $aiModel): array
     {
         return [
             'rock' => $aiModel->rpsMatchesAsPlayer1()->sum('player1_move_distribution->rock') +
@@ -162,9 +67,9 @@ class ModelController extends Controller
     }
 
     /**
-     * Get all RPS opponents of the given AI model and their win rates.
+     * Get all opponents of the given AI model and their win rates.
      */
-    protected function getRpsOpponents(AiModel $aiModel)
+    protected function getOpponents(AiModel $aiModel)
     {
         return AiModel::query()
             ->whereHas('rpsMatchesAsPlayer1', fn ($q) => $q->where('player2_id', $aiModel->id))
@@ -188,9 +93,9 @@ class ModelController extends Controller
     }
 
     /**
-     * Get the most impressive RPS victory of the given AI model.
+     * Get the most impressive victory of the given AI model.
      */
-    protected function getMostImpressiveRpsVictory(AiModel $aiModel): ?RpsMatch
+    protected function getMostImpressiveVictory(AiModel $aiModel): ?RpsMatch
     {
         return RpsMatch::query()
             ->wonBy($aiModel)
@@ -200,9 +105,9 @@ class ModelController extends Controller
     }
 
     /**
-     * Analyze the RPS strategy of the given AI model based on move breakdown.
+     * Analyze the strategy of the given AI model based on move breakdown.
      */
-    protected function getRpsStrategyAnalysis(AiModel $aiModel, array $moveBreakdown): string
+    protected function getStrategyAnalysis(AiModel $aiModel, array $moveBreakdown): string
     {
         $totalMoves = $moveBreakdown['rock'] + $moveBreakdown['paper'] + $moveBreakdown['scissors'];
         if ($totalMoves === 0) {
