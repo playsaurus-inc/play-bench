@@ -20,7 +20,7 @@ class SvgBenchmarkService
     ) {}
 
     /**
-     * Get all available AI models for the chess benchmark
+     * Get all available AI models for the SVG benchmark
      */
     public function getAvailableModels(): Collection
     {
