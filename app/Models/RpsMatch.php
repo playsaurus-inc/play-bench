@@ -421,4 +421,82 @@ class RpsMatch extends Model implements RankedMatch
             'player2_elo_after' => $player2EloAfter,
         ]);
     }
+
+    /**
+     * Generate cumulative win data for charting
+     *
+     * @return array{labels: array<int>, player1Data: array<int>, player2Data: array<int>, player1Name: string, player2Name: string}
+     */
+    public function getCumulativeWinChartData(): array
+    {
+        $rounds = $this->getRounds();
+        $labels = [];
+        $player1CumulativeWins = [];
+        $player2CumulativeWins = [];
+
+        $player1Wins = 0;
+        $player2Wins = 0;
+
+        foreach ($rounds as $index => $round) {
+            $roundNumber = $round['round_number'];
+            $labels[] = $roundNumber;
+
+            if ($round['result'] === 'player1_win') {
+                $player1Wins++;
+            } elseif ($round['result'] === 'player2_win') {
+                $player2Wins++;
+            }
+
+            $player1CumulativeWins[] = $player1Wins;
+            $player2CumulativeWins[] = $player2Wins;
+        }
+
+        return [
+            'labels' => $labels,
+            'player1Data' => $player1CumulativeWins,
+            'player2Data' => $player2CumulativeWins,
+            'player1Name' => $this->player1->name,
+            'player2Name' => $this->player2->name,
+        ];
+    }
+
+    /**
+     * Generate win percentage over time data for charting
+     *
+     * @return array{labels: array<int>, player1Data: array<float>, player2Data: array<float>, player1Name: string, player2Name: string}
+     */
+    public function getWinPercentageChartData(): array
+    {
+        $rounds = $this->getRounds();
+        $labels = [];
+        $player1WinPercentages = [];
+        $player2WinPercentages = [];
+
+        $player1Wins = 0;
+        $player2Wins = 0;
+
+        foreach ($rounds as $index => $round) {
+            $roundNumber = $round['round_number'];
+            $labels[] = $roundNumber;
+
+            if ($round['result'] === 'player1_win') {
+                $player1Wins++;
+            } elseif ($round['result'] === 'player2_win') {
+                $player2Wins++;
+            }
+
+            // Calculate percentages based on current round number
+            $currentRound = $index + 1;
+            $player1WinPercentages[] = $currentRound > 0 ? ($player1Wins / $currentRound) * 100 : 0;
+            $player2WinPercentages[] = $currentRound > 0 ? ($player2Wins / $currentRound) * 100 : 0;
+        }
+
+        return [
+            'labels' => $labels,
+            'player1Data' => $player1WinPercentages,
+            'player2Data' => $player2WinPercentages,
+            'player1Name' => $this->player1->name,
+            'player2Name' => $this->player2->name,
+        ];
+    }
 }

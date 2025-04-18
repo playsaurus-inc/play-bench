@@ -301,6 +301,13 @@
         </x-ui.card>
     </div>
 
+    <!-- Match Charts -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+        <x-rps.charts.cumulative-wins-chart :rpsMatch="$rpsMatch" />
+
+        <x-rps.charts.win-percentage-chart :rpsMatch="$rpsMatch" />
+    </div>
+
     <!-- Round-by-Round Results -->
     <div x-data="{ showAllRounds: false }">
         <x-ui.card>
