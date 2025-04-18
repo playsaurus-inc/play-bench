@@ -27,7 +27,7 @@
     <div class="min-h-screen flex flex-col">
         <!-- Navigation -->
         <nav
-            class="bg-white border-b border-amber-100 shadow-sm sticky top-0 z-10"
+            class="z-50 bg-white border-b border-amber-100 shadow-sm sticky top-0"
             x-data="{mobileMenuOpen: false, gamesMenuOpen: false}"
             @keydown.escape="mobileMenuOpen = false; gamesMenuOpen = false"
         >

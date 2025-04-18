@@ -56,7 +56,7 @@
                     <!-- Rock -->
                     <div
                         class="size-24 md:size-32 rounded-full bg-red-100 border-4 border-white shadow-lg flex items-center justify-center absolute -left-22 md:-left-28 top-0 md:top-0"
-                        :class="{'scale-110 shadow-xl z-50': currentMove === 0, 'z-0': currentMove !== 0}"
+                        :class="{'scale-110 shadow-xl z-10': currentMove === 0, 'z-0': currentMove !== 0}"
                         style="transition: all 0.3s ease"
                     >
                         <x-fas-hand-rock class="size-8" x-bind:class="{'text-red-600': currentMove === 0}" />
@@ -65,7 +65,7 @@
                     <!-- Scissors -->
                     <div
                         class="size-24 md:size-32 rounded-full bg-green-100 border-4 border-white shadow-lg flex items-center justify-center absolute -right-22 md:-right-28 top-0 md:top-0"
-                        :class="{'scale-110 shadow-xl z-50': currentMove === 2, 'z-10': currentMove !== 2}"
+                        :class="{'scale-110 shadow-xl z-10': currentMove === 2, 'z-0': currentMove !== 2}"
                         style="transition: all 0.3s ease"
                     >
                         <x-fas-hand-scissors class="size-8" x-bind:class="{'text-green-600': currentMove === 2}" />
@@ -74,7 +74,7 @@
                     <!-- Paper -->
                     <div
                         class="size-24 md:size-32 rounded-full bg-blue-100 border-4 border-white shadow-lg flex items-center justify-center relative"
-                        :class="{'scale-110 shadow-xl z-50': currentMove === 1, 'z-20': currentMove !== 1}"
+                        :class="{'scale-110 shadow-xl z-10': currentMove === 1, 'z-0': currentMove !== 1}"
                         style="transition: all 0.3s ease"
                     >
                         <x-fas-hand-paper class="size-8" x-bind:class="{'text-blue-600': currentMove === 1}" />
