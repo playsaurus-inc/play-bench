@@ -7,8 +7,10 @@ use App\Models\ChessMatch;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
+use PChess\Chess\Board;
 use PChess\Chess\Chess;
 use PChess\Chess\Entry;
+use PChess\Chess\Move;
 use PChess\Chess\Piece;
 
 class ChessBenchmarkService
@@ -21,7 +23,7 @@ class ChessBenchmarkService
     /**
      * Max number of illegal moves before forfeiting
      */
-    protected const MAX_ILLEGAL_MOVES = 3;
+    protected const MAX_ILLEGAL_MOVES = 10;
 
     /**
      * Create a new service instance.
@@ -204,7 +206,8 @@ class ChessBenchmarkService
         // Include move history
         $moveHistory = collect($chess->getHistory()->getEntries())
             ->map(fn (Entry $entry) => $entry->move->san)
-            ->jsonSerialize();
+            ->toJson();
+
         $prompt .= "Move History (SAN): " . $moveHistory . "\n";
 
         // Include illegal moves if any
@@ -229,13 +232,22 @@ class ChessBenchmarkService
         $board = $chess->board;
         $text = "Chess Board State:\n";
 
-        for ($i = 0; $i < 8; $i++) {
+        for ($i = 0; $i < 8; $i++) {  // i represents rank (0 = rank 8, 7 = rank 1)
             $rank = 8 - $i;
             $text .= $rank . " | ";
 
-            for ($j = 0; $j < 8; $j++) {
-                $piece = $board[$i][$j];
-                $text .= ($piece ? ($piece['color'] === "w" ? strtoupper($piece['type']) : $piece['type']) : ".") . "  ";
+            for ($j = 0; $j < 8; $j++) {  // j represents file (0 = a, 7 = h)
+                $piece = $board[$i * 16 + $j]; // Calculate the correct square index
+
+                if ($piece !== null) {
+                    $symbol = $piece->getType();
+                    if ($piece->getColor() === 'w') {
+                        $symbol = strtoupper($symbol);
+                    }
+                    $text .= $symbol . "  ";
+                } else {
+                    $text .= ".  ";
+                }
             }
 
             $text .= "\n";
@@ -251,8 +263,8 @@ class ChessBenchmarkService
     protected function getLegalMovesUci(Chess $chess): array
     {
         $moves = $chess->moves();
-        return array_map(function($move) {
-            return $move['from'] . $move['to'] . ($move['promotion'] ?? '');
+        return array_map(function(Move $move) {
+            return $move->from . $move->to . ($move->promotion ?? '');
         }, $moves);
     }
 
@@ -283,7 +295,7 @@ class ChessBenchmarkService
             $move = $chess->move($moveObj);
 
             if ($move) {
-                return $move['san'];
+                return $move->san;
             }
         }
 
