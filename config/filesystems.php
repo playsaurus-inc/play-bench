@@ -59,6 +59,15 @@ return [
             'throw' => false,
             'report' => false,
         ],
+
+        'svg' => [
+            'driver' => 'local',
+            'root' => storage_path('app/svg-matches'),
+            'url' => env('APP_URL').'/storage/svg-matches',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
     ],
 
     /*

@@ -55,9 +55,9 @@ class EloRatingService
     /**
      * Calculate new ELO ratings for players based on match outcome.
      *
-     * @param float $player1Elo Current ELO rating of player 1
-     * @param float $player2Elo Current ELO rating of player 2
-     * @param string $outcome '1' for player 1 win, '2' for player 2 win, 't' for tie
+     * @param  float  $player1Elo  Current ELO rating of player 1
+     * @param  float  $player2Elo  Current ELO rating of player 2
+     * @param  string  $outcome  '1' for player 1 win, '2' for player 2 win, 't' for tie
      * @return array{player1_new_elo: float, player2_new_elo: float} New ELO ratings
      */
     protected function calculateElo(float $player1Elo, float $player2Elo, string $outcome): array
@@ -87,8 +87,8 @@ class EloRatingService
     /**
      * Calculate the expected score for a player.
      *
-     * @param float $playerElo Player's current ELO rating
-     * @param float $opponentElo Opponent's current ELO rating
+     * @param  float  $playerElo  Player's current ELO rating
+     * @param  float  $opponentElo  Opponent's current ELO rating
      * @return float Expected score between 0 and 1
      */
     protected function calculateExpectedScore(float $playerElo, float $opponentElo): float
@@ -99,7 +99,7 @@ class EloRatingService
     /**
      * Update ELO ratings for all matches of a specific type.
      *
-     * @param string $gameType The game type ('rps', 'svg', or 'chess')
+     * @param  string  $gameType  The game type ('rps', 'svg', or 'chess')
      * @return int Number of matches processed
      */
     protected function updateEloRatings(string $gameType): int
@@ -116,7 +116,7 @@ class EloRatingService
                 $player1 = $match->getPlayer1();
                 $player2 = $match->getPlayer2();
 
-                if (!$player1 || !$player2) {
+                if (! $player1 || ! $player2) {
                     continue;
                 }
 
@@ -148,20 +148,19 @@ class EloRatingService
     /**
      * Reset ELO ratings for all AI models for the specified game type.
      *
-     * @param string $gameType The game type ('rps', 'svg', or 'chess')
-     * @return void
+     * @param  string  $gameType  The game type ('rps', 'svg', or 'chess')
      */
     protected function resetEloRatings(string $gameType): void
     {
         AiModel::query()->update([
-            $this->getEloColumnName($gameType) => static::DEFAULT_ELO
+            $this->getEloColumnName($gameType) => static::DEFAULT_ELO,
         ]);
     }
 
     /**
      * Get the name of the ELO column in the AI models table for the specified game type.
      *
-     * @param string $gameType The game type ('rps', 'svg', or 'chess')
+     * @param  string  $gameType  The game type ('rps', 'svg', or 'chess')
      * @return string The ELO column name
      */
     protected function getEloColumnName(string $gameType): string
@@ -177,7 +176,7 @@ class EloRatingService
     /**
      * Get all matches of a specific type sorted by creation date.
      *
-     * @param string $gameType The game type ('rps', 'svg', or 'chess')
+     * @param  string  $gameType  The game type ('rps', 'svg', or 'chess')
      * @return \Illuminate\Database\Eloquent\Collection<RankedMatch> Collection of matches
      */
     protected function getMatchesByType(string $gameType): \Illuminate\Database\Eloquent\Collection
@@ -194,8 +193,7 @@ class EloRatingService
      * Update rankings for all AI models for a specific game type.
      * The ranking is based on ELO rating (higher ELO = better rank).
      *
-     * @param string $gameType The game type ('rps', 'svg', or 'chess')
-     * @return void
+     * @param  string  $gameType  The game type ('rps', 'svg', or 'chess')
      */
     protected function updateRankings(string $gameType): void
     {
@@ -211,7 +209,7 @@ class EloRatingService
         $rank = 1;
         foreach ($models as $model) {
             $model->update([
-                $rankColumn => $rank++
+                $rankColumn => $rank++,
             ]);
         }
     }
@@ -219,7 +217,7 @@ class EloRatingService
     /**
      * Get the name of the rank column in the AI models table for the specified game type.
      *
-     * @param string $gameType The game type ('rps', 'svg', or 'chess')
+     * @param  string  $gameType  The game type ('rps', 'svg', or 'chess')
      * @return string The rank column name
      */
     protected function getRankColumnName(string $gameType): string

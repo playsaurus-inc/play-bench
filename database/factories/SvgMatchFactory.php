@@ -48,8 +48,8 @@ class SvgMatchFactory extends Factory
                     : null;
             },
             'prompt' => $this->faker->randomElement($this->prompts),
-            'player1_svg_path' => "svg-match/{$matchId}-player1.svg",
-            'player2_svg_path' => "svg-match/{$matchId}-player2.svg",
+            'player1_svg_path' => "{$matchId}-player1.svg",
+            'player2_svg_path' => "{$matchId}-player2.svg",
             'judge_reasoning' => $this->faker->paragraph,
             'started_at' => $this->faker->dateTimeBetween('-1 month', '-1 day'),
             'ended_at' => $this->faker->dateTimeBetween('-1 day', 'now'),
@@ -73,8 +73,8 @@ class SvgMatchFactory extends Factory
     public function withRealSvgs(string $svgContent1, string $svgContent2): self
     {
         return $this->afterCreating(function ($svgMatch) use ($svgContent1, $svgContent2) {
-            Storage::disk('public')->put($svgMatch->player1_svg_path, $svgContent1);
-            Storage::disk('public')->put($svgMatch->player2_svg_path, $svgContent2);
+            Storage::disk('svg')->put($svgMatch->player1_svg_path, $svgContent1);
+            Storage::disk('svg')->put($svgMatch->player2_svg_path, $svgContent2);
         });
     }
 

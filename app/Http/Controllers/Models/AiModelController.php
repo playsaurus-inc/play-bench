@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Models;
 
 use App\Http\Controllers\Controller;
 use App\Models\AiModel;
-use App\Models\RpsMatch;
 use App\Models\ChessMatch;
+use App\Models\RpsMatch;
 use App\Models\SvgMatch;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class AiModelController extends Controller

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Rps;
 
 use App\Models\RpsMatch;
 use Illuminate\Support\HtmlString;

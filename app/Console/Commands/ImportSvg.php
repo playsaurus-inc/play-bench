@@ -47,7 +47,7 @@ class ImportSvg extends AbstractImport
      */
     protected function disk(): Filesystem
     {
-        return Storage::disk('public');
+        return Storage::disk('svg');
     }
 
     /**
@@ -60,8 +60,6 @@ class ImportSvg extends AbstractImport
         $this->info('Importing SVG matches...');
 
         // Create storage directory if it doesn't exist
-        $this->disk()->makeDirectory('svg-matches');
-
         $sourceMatches = $this->getSourceQuery('svg_results')->get();
         $importCount = 0;
 
@@ -90,12 +88,12 @@ class ImportSvg extends AbstractImport
             $svgPath2 = null;
 
             if ($svgs['player1'] ?? null) {
-                $svgPath1 = "svg-matches/match-{$sourceMatch->id}-player1.svg";
+                $svgPath1 = "match-{$sourceMatch->id}-player1.svg";
                 $this->disk()->put($svgPath1, $svgs['player1']);
             }
 
             if ($svgs['player2'] ?? null) {
-                $svgPath2 = "svg-matches/match-{$sourceMatch->id}-player2.svg";
+                $svgPath2 = "match-{$sourceMatch->id}-player2.svg";
                 $this->disk()->put($svgPath2, $svgs['player2']);
             }
 

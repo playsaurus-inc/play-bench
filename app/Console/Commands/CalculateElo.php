@@ -40,6 +40,7 @@ class CalculateElo extends Command
             $this->components->task('Calculating Rock-Paper-Scissors ELO ratings', function () use ($eloService) {
                 $count = $eloService->updateRpsEloRatings();
                 $this->info("Processed {$count} RPS matches.");
+
                 return true;
             });
         }
@@ -48,6 +49,7 @@ class CalculateElo extends Command
             $this->components->task('Calculating SVG drawing ELO ratings', function () use ($eloService) {
                 $count = $eloService->updateSvgEloRatings();
                 $this->info("Processed {$count} SVG matches.");
+
                 return true;
             });
         }
@@ -56,6 +58,7 @@ class CalculateElo extends Command
             $this->components->task('Calculating Chess ELO ratings', function () use ($eloService) {
                 $count = $eloService->updateChessEloRatings();
                 $this->info("Processed {$count} Chess matches.");
+
                 return true;
             });
         }
