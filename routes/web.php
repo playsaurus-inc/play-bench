@@ -1,20 +1,15 @@
 <?php
 
-use App\Http\Controllers\RpsMatchController;
 use App\Http\Controllers\Models\AiModelController;
-use App\Http\Controllers\Models\RpsController;
 use App\Http\Controllers\Models\ChessController;
+use App\Http\Controllers\Models\RpsController;
 use App\Http\Controllers\Models\SvgController;
+use App\Http\Controllers\RpsMatchController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/rock-paper-scissors');
 
-// About page
-Route::get('/about', function () {
-    return view('about');
-})->name('about');
+Route::view('/about', 'about')->name('about');
 
 // Cross-benchmark model routes
 Route::get('/models', [AiModelController::class, 'index'])->name('models.index');

@@ -2,11 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\AiModel;
-use App\Models\SvgMatch;
-use App\Services\AiClientService;
 use App\Services\EloRatingService;
-use App\Services\SvgBenchmarkService;
+use App\Services\Svg\SvgBenchmarkService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -43,6 +40,7 @@ class BenchmarkSvgCommand extends Command
 
         if ($aiModels->isEmpty()) {
             $this->error('No AI models found in the database. Please add some AI models first.');
+
             return Command::FAILURE;
         }
 
@@ -90,6 +88,7 @@ class BenchmarkSvgCommand extends Command
         $this->info(sprintf('Updated ELO ratings for %d matches', $matchesUpdated));
 
         $this->info(sprintf('Successfully completed %d/%d matches', $completedMatches, $matchCount));
+
         return Command::SUCCESS;
     }
 }

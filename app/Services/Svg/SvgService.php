@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Svg;
 
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
@@ -22,12 +22,12 @@ class SvgService
         $cleaned = preg_replace('/<([a-zA-Z0-9]+)\/>/', '<$1 />', $cleaned);
 
         // Ensure proper XML structure
-        if (!Str::contains($cleaned, 'xmlns="http://www.w3.org/2000/svg"') && Str::contains($cleaned, '<svg')) {
+        if (! Str::contains($cleaned, 'xmlns="http://www.w3.org/2000/svg"') && Str::contains($cleaned, '<svg')) {
             $cleaned = preg_replace('/<svg/', '<svg xmlns="http://www.w3.org/2000/svg"', $cleaned);
         }
 
         // Make sure viewBox is properly defined
-        if (!Str::contains($cleaned, 'viewBox') && Str::contains($cleaned, '<svg')) {
+        if (! Str::contains($cleaned, 'viewBox') && Str::contains($cleaned, '<svg')) {
             $cleaned = preg_replace('/<svg/', '<svg viewBox="0 0 300 300"', $cleaned);
         }
 
@@ -39,7 +39,7 @@ class SvgService
      */
     protected function toDataUrl(string $mime, string $contents): string
     {
-        return "data:$mime;base64," . base64_encode($contents);
+        return "data:$mime;base64,".base64_encode($contents);
     }
 
     /**
@@ -62,8 +62,8 @@ class SvgService
         $path = config('playbench.svg2png_path')
             ?? base_path('node_modules/.bin/svg2png');
 
-        $outputFile = storage_path('app/temp/' . Str::random(40) . '.png');
-        $inputFile = storage_path('app/temp/' . Str::random(40) . '.svg');
+        $outputFile = storage_path('app/temp/'.Str::random(40).'.png');
+        $inputFile = storage_path('app/temp/'.Str::random(40).'.svg');
         file_put_contents($inputFile, $svgString);
 
         try {
@@ -76,6 +76,7 @@ class SvgService
             ])->throw();
 
             $pngBinary = file_get_contents($outputFile);
+
             return $pngBinary;
         } finally {
             // Clean up temporary files

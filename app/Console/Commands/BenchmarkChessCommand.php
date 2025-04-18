@@ -2,10 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\AiModel;
-use App\Models\ChessMatch;
-use App\Services\AiClientService;
-use App\Services\ChessBenchmarkService;
+use App\Services\Chess\ChessBenchmarkService;
 use App\Services\EloRatingService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -42,6 +39,7 @@ class BenchmarkChessCommand extends Command
 
         if ($aiModels->isEmpty()) {
             $this->error('No AI models found in the database. Please add some AI models first.');
+
             return Command::FAILURE;
         }
 
@@ -67,10 +65,10 @@ class BenchmarkChessCommand extends Command
             try {
                 $match = $benchmarkService->runMatch($whitePlayer, $blackPlayer);
 
-                $result = match($match->result) {
+                $result = match ($match->result) {
                     'white' => "{$whitePlayer->name} (White)",
                     'black' => "{$blackPlayer->name} (Black)",
-                    default => "Draw"
+                    default => 'Draw'
                 };
 
                 $this->info(sprintf('Match completed: Result: %s, Moves: %d',
@@ -103,6 +101,7 @@ class BenchmarkChessCommand extends Command
         $this->info(sprintf('Updated ELO ratings for %d matches', $matchesUpdated));
 
         $this->info(sprintf('Successfully completed %d/%d matches', $completedMatches, $matchCount));
+
         return Command::SUCCESS;
     }
 }

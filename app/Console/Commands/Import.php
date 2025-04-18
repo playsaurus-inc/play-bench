@@ -54,7 +54,7 @@ class Import extends Command
             return $this->callSilently('import:svg', ['--fresh' => $this->option('fresh')]) === 0;
         });
 
-        if (!$this->option('skip-elo')) {
+        if (! $this->option('skip-elo')) {
             $this->components->task('Calculating ELO Ratings', function () {
                 return $this->callSilently('calculate:elo') === 0;
             });

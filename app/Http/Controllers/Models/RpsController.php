@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Models;
 use App\Http\Controllers\Controller;
 use App\Models\AiModel;
 use App\Models\RpsMatch;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class RpsController extends Controller

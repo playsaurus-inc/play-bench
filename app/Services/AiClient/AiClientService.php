@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\AiClient;
 
-use App\Services\Providers\AiProviderInterface;
-use App\Services\Providers\AnthropicProvider;
-use App\Services\Providers\GroqProvider;
-use App\Services\Providers\OpenAiProvider;
-use App\Services\Providers\RandomProvider;
-use App\Services\Providers\RedpillProvider;
-use Illuminate\Support\Facades\Log;
+use App\Services\AiClient\Concerns\AiProviderInterface;
+use App\Services\AiClient\Providers\AnthropicProvider;
+use App\Services\AiClient\Providers\GroqProvider;
+use App\Services\AiClient\Providers\OpenAiProvider;
+use App\Services\AiClient\Providers\RedpillProvider;
 use Illuminate\Support\Str;
 
 class AiClientService
@@ -152,10 +150,10 @@ class AiClientService
     protected function getProvider(string $providerName): AiProviderInterface
     {
         return match ($providerName) {
-            'openai' => new OpenAiProvider(),
-            'anthropic' => new AnthropicProvider(),
-            'groq' => new GroqProvider(),
-            'redpill' => new RedpillProvider(),
+            'openai' => new OpenAiProvider,
+            'anthropic' => new AnthropicProvider,
+            'groq' => new GroqProvider,
+            'redpill' => new RedpillProvider,
             default => throw new \Exception("No provider found for: {$providerName}"),
         };
     }

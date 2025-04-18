@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Chess;
 
 use App\Models\AiModel;
 use App\Models\ChessMatch;
+use App\Services\AiClient\AiClientService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
-use PChess\Chess\Board;
 use PChess\Chess\Chess;
 use PChess\Chess\Entry;
 use PChess\Chess\Move;
@@ -46,7 +46,7 @@ class ChessBenchmarkService
     public function runMatch(AiModel $whitePlayer, AiModel $blackPlayer): ChessMatch
     {
         // Create a new match record
-        $match = new ChessMatch();
+        $match = new ChessMatch;
         $match->white_id = $whitePlayer->id;
         $match->black_id = $blackPlayer->id;
         $match->started_at = Date::now();
@@ -63,7 +63,7 @@ class ChessBenchmarkService
 
         try {
             // Initialize a new chess game
-            $chess = new Chess();
+            $chess = new Chess;
             $isForced = false;
             $result = null;
             $moves = [];
@@ -77,7 +77,7 @@ class ChessBenchmarkService
 
             $moveCounter = 0;
 
-            while (!$chess->gameOver() && $moveCounter < self::MAX_MOVES) {
+            while (! $chess->gameOver() && $moveCounter < self::MAX_MOVES) {
                 $playerToMove = $chess->turn === Piece::WHITE ? $whitePlayer : $blackPlayer;
                 $systemPrompt = $chess->turn === Piece::WHITE ? $whiteSystemPrompt : $blackSystemPrompt;
                 $playerPrompt = $this->buildPlayerPrompt($chess, $illegalMoves);
@@ -97,7 +97,7 @@ class ChessBenchmarkService
                     $moveCounter++;
                     $moves[] = $validMove;
                     // Clear illegal moves for this player
-                    $illegalMoves = array_filter($illegalMoves, function($move) use ($chess) {
+                    $illegalMoves = array_filter($illegalMoves, function ($move) use ($chess) {
                         return $move['color'] !== $chess->turn;
                     });
                 } else {
@@ -135,7 +135,7 @@ class ChessBenchmarkService
             }
 
             // If we reached the move limit, declare a draw
-            if ($moveCounter >= self::MAX_MOVES && !$result) {
+            if ($moveCounter >= self::MAX_MOVES && ! $result) {
                 $result = 'draw';
                 $isForced = true;
             }
@@ -196,30 +196,30 @@ class ChessBenchmarkService
     protected function buildPlayerPrompt(Chess $chess, array $illegalMoves): string
     {
         $prompt = "Game: chess\n";
-        $prompt .= "FEN: " . $chess->fen() . "\n";
-        $prompt .= $this->boardToText($chess) . "\n";
+        $prompt .= 'FEN: '.$chess->fen()."\n";
+        $prompt .= $this->boardToText($chess)."\n";
 
         // Get legal moves in UCI format
         $legalMoves = $this->getLegalMovesUci($chess);
-        $prompt .= "Legal Moves (UCI): " . implode(', ', $legalMoves) . "\n";
+        $prompt .= 'Legal Moves (UCI): '.implode(', ', $legalMoves)."\n";
 
         // Include move history
         $moveHistory = collect($chess->getHistory()->getEntries())
             ->map(fn (Entry $entry) => $entry->move->san)
             ->toJson();
 
-        $prompt .= "Move History (SAN): " . $moveHistory . "\n";
+        $prompt .= 'Move History (SAN): '.$moveHistory."\n";
 
         // Include illegal moves if any
-        if (!empty($illegalMoves)) {
-            $illegalMovesText = array_map(function($m) {
-                return $m['move'] . ' (' . ($m['color'] === 'w' ? 'White' : 'Black') . ')';
+        if (! empty($illegalMoves)) {
+            $illegalMovesText = array_map(function ($m) {
+                return $m['move'].' ('.($m['color'] === 'w' ? 'White' : 'Black').')';
             }, $illegalMoves);
 
-            $prompt .= "Note: The following move(s) were illegal and must not be repeated: " . implode(', ', $illegalMovesText) . "\n";
+            $prompt .= 'Note: The following move(s) were illegal and must not be repeated: '.implode(', ', $illegalMovesText)."\n";
         }
 
-        $prompt .= "Please provide your next move in UCI format as valid JSON (e.g., {\"move\":\"e7e5\"}) select only from the list of legal moves.";
+        $prompt .= 'Please provide your next move in UCI format as valid JSON (e.g., {"move":"e7e5"}) select only from the list of legal moves.';
 
         return $prompt;
     }
@@ -234,7 +234,7 @@ class ChessBenchmarkService
 
         for ($i = 0; $i < 8; $i++) {  // i represents rank (0 = rank 8, 7 = rank 1)
             $rank = 8 - $i;
-            $text .= $rank . " | ";
+            $text .= $rank.' | ';
 
             for ($j = 0; $j < 8; $j++) {  // j represents file (0 = a, 7 = h)
                 $piece = $board[$i * 16 + $j]; // Calculate the correct square index
@@ -244,9 +244,9 @@ class ChessBenchmarkService
                     if ($piece->getColor() === 'w') {
                         $symbol = strtoupper($symbol);
                     }
-                    $text .= $symbol . "  ";
+                    $text .= $symbol.'  ';
                 } else {
-                    $text .= ".  ";
+                    $text .= '.  ';
                 }
             }
 
@@ -254,6 +254,7 @@ class ChessBenchmarkService
         }
 
         $text .= "    a  b  c  d  e  f  g  h\n";
+
         return $text;
     }
 
@@ -263,8 +264,9 @@ class ChessBenchmarkService
     protected function getLegalMovesUci(Chess $chess): array
     {
         $moves = $chess->moves();
-        return array_map(function(Move $move) {
-            return $move->from . $move->to . ($move->promotion ?? '');
+
+        return array_map(function (Move $move) {
+            return $move->from.$move->to.($move->promotion ?? '');
         }, $moves);
     }
 
@@ -310,6 +312,7 @@ class ChessBenchmarkService
         if ($aiModel->name === 'random') {
             // For random model, return a random move
             $legalMoves = $this->getLegalMovesUci($chess);
+
             return $legalMoves[array_rand($legalMoves)];
         }
 
@@ -325,7 +328,7 @@ class ChessBenchmarkService
             return $matches[1];
         }
 
-        throw new \Exception("Could not parse chess move from response: " . $response);
+        throw new \Exception('Could not parse chess move from response: '.$response);
     }
 
     /**
@@ -339,22 +342,22 @@ class ChessBenchmarkService
             'draw' => '1/2-1/2',
         ];
 
-        $pgn = "";
+        $pgn = '';
         $pgn .= "[Event \"AI Chess Benchmark\"]\n";
         $pgn .= "[Site \"PlayBench\"]\n";
-        $pgn .= "[Date \"" . date('Y.m.d') . "\"]\n";
+        $pgn .= '[Date "'.date('Y.m.d')."\"]\n";
         $pgn .= "[Round \"1\"]\n";
-        $pgn .= "[White \"" . $white . "\"]\n";
-        $pgn .= "[Black \"" . $black . "\"]\n";
-        $pgn .= "[Result \"" . ($resultMap[$result] ?? '*') . "\"]\n\n";
+        $pgn .= '[White "'.$white."\"]\n";
+        $pgn .= '[Black "'.$black."\"]\n";
+        $pgn .= '[Result "'.($resultMap[$result] ?? '*')."\"]\n\n";
 
         // Add the moves
         for ($i = 0; $i < count($moves); $i++) {
             if ($i % 2 === 0) {
-                $pgn .= (($i / 2) + 1) . ". ";
+                $pgn .= (($i / 2) + 1).'. ';
             }
 
-            $pgn .= $moves[$i] . " ";
+            $pgn .= $moves[$i].' ';
 
             // Line break every 5 full moves
             if ($i % 10 === 9) {

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Svg;
 
 use App\Models\AiModel;
 use App\Models\SvgMatch;
+use App\Services\AiClient\AiClientService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
@@ -15,12 +16,12 @@ class SvgBenchmarkService
     /**
      * System prompt for idea generation
      */
-    protected const IDEA_SYSTEM_PROMPT = "You are a highly creative art director generating brief, specific image prompts for an SVG drawing competition. Create imaginative, unusual ideas that would be interesting to draw. Keep your prompts under 100 characters. Be concise but vivid. Focus on a single clear concept rather than many details. Respond ONLY with the idea - no explanations or additional text.";
+    protected const IDEA_SYSTEM_PROMPT = 'You are a highly creative art director generating brief, specific image prompts for an SVG drawing competition. Create imaginative, unusual ideas that would be interesting to draw. Keep your prompts under 100 characters. Be concise but vivid. Focus on a single clear concept rather than many details. Respond ONLY with the idea - no explanations or additional text.';
 
     /**
      * User prompt for idea generation
      */
-    protected const IDEA_USER_PROMPT = "Generate a brief idea for a simple art scene that would be easy to determine who is the winner in a head to head drawing competition.";
+    protected const IDEA_USER_PROMPT = 'Generate a brief idea for a simple art scene that would be easy to determine who is the winner in a head to head drawing competition.';
 
     /**
      * System prompt for SVG creation
@@ -59,9 +60,9 @@ class SvgBenchmarkService
     protected function generateImageIdea(): string
     {
         $idea = $this->aiClient->getResponse('gpt-4o', self::IDEA_SYSTEM_PROMPT, self::IDEA_USER_PROMPT, config: [
-            "temperature" => 1.0,
-            "max_tokens" => 80,
-            "top_p" => 1.0,
+            'temperature' => 1.0,
+            'max_tokens' => 80,
+            'top_p' => 1.0,
         ]);
 
         $idea = Str::limit($idea, 100, end: '...', preserveWords: true);
@@ -106,7 +107,7 @@ Return ONLY valid SVG code in your response.";
         if (is_array($jsonResult) && isset($jsonResult['winner'])) {
             return [
                 'winner' => $jsonResult['winner'],
-                'reason' => $jsonResult['reason'] ?? 'No reason provided'
+                'reason' => $jsonResult['reason'] ?? 'No reason provided',
             ];
         }
 
@@ -124,7 +125,7 @@ Return ONLY valid SVG code in your response.";
 
         return [
             'winner' => $winner,
-            'reason' => $reason
+            'reason' => $reason,
         ];
     }
 
@@ -134,7 +135,7 @@ Return ONLY valid SVG code in your response.";
     public function runMatch(AiModel $player1, AiModel $player2): SvgMatch
     {
         // Create a new match record
-        $match = new SvgMatch();
+        $match = new SvgMatch;
         $match->player1_id = $player1->id;
         $match->player2_id = $player2->id;
         $match->started_at = Date::now();
@@ -250,6 +251,6 @@ Return ONLY valid SVG code in your response.";
             return $matches[0];
         }
 
-        throw new \Exception("Could not find SVG content in response");
+        throw new \Exception('Could not find SVG content in response');
     }
 }

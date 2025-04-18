@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\AiModel;
-use App\Services\AiClientService;
+use App\Services\AiClient\AiClientService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
@@ -39,6 +39,7 @@ class CreateAiModelsCommand extends Command
             if (AiModel::where('name', $model)->exists()) {
                 $existing++;
                 $this->line(sprintf('AI model <comment>%s</comment> already exists, skipping', $model));
+
                 continue;
             }
 
