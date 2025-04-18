@@ -13,42 +13,48 @@
 
         <div class="mt-4 flex justify-center gap-4">
             <div class="flex items-center">
-                <span class="block w-4 h-4 bg-rose-300 mr-2"></span>
-                <span class="text-sm text-gray-700">{{ $rpsMatch->player1->name }}</span>
+                <span class="block w-4 h-4 bg-red-400 rounded mr-2"></span>
+                <span class="text-xs font-bold text-gray-500">{{ ucfirst($rpsMatch->player1->name) }}</span>
             </div>
             <div class="flex items-center">
-                <span class="block w-4 h-4 bg-sky-300 mr-2"></span>
-                <span class="text-sm text-gray-700">{{ $rpsMatch->player2->name }}</span>
+                <span class="block w-4 h-4 bg-blue-400 rounded mr-2"></span>
+                <span class="text-xs font-bold text-gray-500">{{ ucfirst($rpsMatch->player2->name) }}</span>
             </div>
         </div>
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                const ctx = document.getElementById('{{ $chartId }}');
+                const el = document.getElementById('{{ $chartId }}');
 
-                new Chart(ctx, {
+                new Chart(el, {
                     type: 'line',
                     data: {
                         labels: @json($chartData['labels']),
                         datasets: [{
                             label: '{{ $chartData['player1Name'] }}',
                             data: @json($chartData['player1Data']),
-                            backgroundColor: 'rgb(253, 164, 175)', // rose-300
-                            borderWidth: 0,
-                            fill: true,
+                            backgroundColor: 'rgba(248, 113, 113, 0.10)', // red-400/15
+                            borderWidth: 2.5,
+                            borderColor: '#ef4444', // red-500
+                            pointBackgroundColor: '#ef4444', // red-500
+                            fill: 'stack',
                             tension: 0.3,
                             pointRadius: 0,
-                            pointHoverRadius: 0
-                        }, {
+                            pointHoverRadius: 5,
+                        },
+                        {
                             label: '{{ $chartData['player2Name'] }}',
                             data: @json($chartData['player2Data']),
-                            backgroundColor: 'rgb(125, 211, 252)', // sky-300
-                            borderWidth: 0,
-                            fill: true,
+                            backgroundColor: 'rgba(96, 165, 250, 0.10)', // blue-400/15
+                            borderWidth: 2.5,
+                            borderColor: '#3b82f6', // blue-500
+                            pointBackgroundColor: '#3b82f6', // blue-500
+                            fill: 'stack',
                             tension: 0.3,
                             pointRadius: 0,
-                            pointHoverRadius: 0
-                        }]
+                            pointHoverRadius: 5,
+                        }
+                    ]
                     },
                     options: {
                         responsive: true,
