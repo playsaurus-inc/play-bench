@@ -1,11 +1,12 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "playsaurus-inc/play-bench",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "PlayBench is a platform that evaluates AI models by having them compete in various games and creative tasks.",
     "keywords": [
-        "laravel",
-        "framework"
+        "ai",
+        "games",
+        "playbench"
     ],
     "license": "MIT",
     "require": {
