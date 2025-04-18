@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Models;
+namespace App\Http\Controllers\AiModels;
 
 use App\Http\Controllers\Controller;
 use App\Models\AiModel;

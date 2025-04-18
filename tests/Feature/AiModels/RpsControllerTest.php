@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Models;
+namespace Tests\Feature\AiModels;
 
 use App\Models\AiModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;

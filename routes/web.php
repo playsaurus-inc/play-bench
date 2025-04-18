@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\Models\AiModelController;
-use App\Http\Controllers\Models\ChessController;
-use App\Http\Controllers\Models\RpsController;
-use App\Http\Controllers\Models\SvgController;
+use App\Http\Controllers\AiModels\AiModelController;
+use App\Http\Controllers\AiModels\ChessController;
+use App\Http\Controllers\AiModels\RpsController;
+use App\Http\Controllers\AiModels\SvgController;
 use App\Http\Controllers\RpsMatchController;
 use Illuminate\Support\Facades\Route;
 
