@@ -56,7 +56,6 @@ class ChessBenchmarkService
         $match->is_forced_completion = false;
 
         Log::info('Starting chess match', [
-            'match_id' => $match->id,
             'white' => $whitePlayer->name,
             'black' => $blackPlayer->name,
         ]);
@@ -93,6 +92,12 @@ class ChessBenchmarkService
                 $validMove = $this->validateAndApplyMove($chess, $aiMove);
 
                 if ($validMove) {
+                    Log::info('Valid move made', [
+                        'player' => $playerToMove->name,
+                        'color' => $chess->turn,
+                        'move' => $validMove,
+                    ]);
+
                     // Move was valid, record it
                     $moveCounter++;
                     $moves[] = $validMove;
@@ -102,6 +107,12 @@ class ChessBenchmarkService
                     });
                 } else {
                     // Move was invalid, record it as illegal
+                    Log::warning('Illegal move attempted', [
+                        'player' => $playerToMove->name,
+                        'color' => $chess->turn,
+                        'move' => $aiMove,
+                    ]);
+
                     if ($chess->turn === Piece::WHITE) {
                         $illegalMovesWhite++;
                         if ($illegalMovesWhite >= self::MAX_ILLEGAL_MOVES) {
@@ -131,6 +142,11 @@ class ChessBenchmarkService
                     } else {
                         $result = 'draw';
                     }
+
+                    Log::info('Game over', [
+                        'result' => $result,
+                        'ply_count' => $moveCounter,
+                    ]);
                 }
             }
 
