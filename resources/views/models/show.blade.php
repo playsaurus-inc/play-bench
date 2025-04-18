@@ -71,35 +71,6 @@
         </section>
     @endif
 
-    <!-- Performance Across Categories -->
-    <section class="mb-10">
-        <h2 class="text-xl font-bold mb-6 text-gray-900 flex items-center">
-            <x-phosphor-chart-bar-fill class="w-5 h-5 mr-2 text-amber-500" />
-            Performance Across Categories
-        </h2>
-
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-            <div class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="col-span-1 md:col-span-3">
-                        <p class="text-gray-600 mb-6">
-                            This chart shows {{ $model->name }}'s performance across all benchmark categories.
-                            Currently, data is only available for Rock Paper Scissors.
-                        </p>
-                    </div>
-
-                    <div class="h-60 flex items-center justify-center bg-gray-50 rounded-lg col-span-1 md:col-span-3">
-                        <!-- Placeholder for visualization -->
-                        <div class="text-center">
-                            <x-phosphor-chart-line-fill class="w-12 h-12 text-amber-300 mx-auto mb-3" />
-                            <p class="text-sm text-gray-500">Performance visualization will appear here when more benchmark data is available</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Why Multiple Benchmarks Matter -->
     <section class="mt-12 mb-6">
         <h2 class="text-xl font-bold mb-6 text-gray-900 flex items-center">
