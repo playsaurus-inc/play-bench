@@ -24,9 +24,9 @@ If you want to run the project locally, you can follow the instructions in the [
 
 By issuing a PR, issue or comment, you agree to the [Code of Conduct](.github/CODE_OF_CONDUCT.md).
 
-## 📜 Security Vulnerabilities
+## 🛡️ Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Javier Mora via [javier@playsaurus.com](mailto:javier@playsaurus.com). **DO NOT** open a public issue. We will respond promptly and keep you updated as we investigate and resolve the issue. More information can be found in the [SECURITY.md](.github/SECURITY.md) file.
+If you discover a security vulnerability, please send an e-mail to Javier Mora via [javier@playsaurus.com](mailto:javier@playsaurus.com). **DO NOT** open a public issue. More information can be found in the [SECURITY.md](.github/SECURITY.md) file.
 
 ## 🔒 License
 
