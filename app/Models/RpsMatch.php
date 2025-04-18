@@ -462,7 +462,7 @@ class RpsMatch extends Model implements RankedMatch
 
     /**
      * Generate win percentage over time data for charting
-     * 
+     *
      * @return array{labels: array<int>, player1Data: array<float>, player2Data: array<float>, player1Name: string, player2Name: string}
      */
     public function getWinPercentageChartData(): array
@@ -471,20 +471,20 @@ class RpsMatch extends Model implements RankedMatch
         $labels = [];
         $player1WinPercentages = [];
         $player2WinPercentages = [];
-        
+
         $player1Wins = 0;
         $player2Wins = 0;
-        
+
         foreach ($rounds as $index => $round) {
             $roundNumber = $round['round_number'];
             $labels[] = $roundNumber;
-            
+
             if ($round['result'] === 'player1_win') {
                 $player1Wins++;
             } elseif ($round['result'] === 'player2_win') {
                 $player2Wins++;
             }
-            
+
             // Calculate percentages based only on decisive rounds (excluding ties)
             $totalDecisiveRounds = $player1Wins + $player2Wins;
             if ($totalDecisiveRounds > 0) {
@@ -496,7 +496,7 @@ class RpsMatch extends Model implements RankedMatch
                 $player2WinPercentages[] = 50;
             }
         }
-        
+
         return [
             'labels' => $labels,
             'player1Data' => $player1WinPercentages,
