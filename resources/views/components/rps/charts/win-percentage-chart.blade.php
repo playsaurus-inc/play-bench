@@ -13,16 +13,12 @@
 
         <div class="mt-4 flex justify-center gap-4">
             <div class="flex items-center">
-                <span class="block w-4 h-4 rounded-full bg-red-500 mr-2"></span>
+                <span class="block w-4 h-4 bg-rose-300 mr-2"></span>
                 <span class="text-sm text-gray-700">{{ $rpsMatch->player1->name }}</span>
             </div>
             <div class="flex items-center">
-                <span class="block w-4 h-4 rounded-full bg-blue-500 mr-2"></span>
+                <span class="block w-4 h-4 bg-sky-300 mr-2"></span>
                 <span class="text-sm text-gray-700">{{ $rpsMatch->player2->name }}</span>
-            </div>
-            <div class="flex items-center">
-                <span class="block w-4 h-4 border border-gray-300 mr-2"></span>
-                <span class="text-sm text-gray-700">50% line</span>
             </div>
         </div>
 
@@ -37,29 +33,19 @@
                         datasets: [{
                             label: '{{ $chartData['player1Name'] }}',
                             data: @json($chartData['player1Data']),
-                            borderColor: 'rgb(239, 68, 68)',
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.1,
+                            backgroundColor: 'rgb(253, 164, 175)', // rose-300
+                            borderWidth: 0,
+                            fill: true,
+                            tension: 0.3,
                             pointRadius: 0,
-                            pointHoverRadius: 4,
-                            pointBackgroundColor: 'rgb(239, 68, 68)'
+                            pointHoverRadius: 0
                         }, {
                             label: '{{ $chartData['player2Name'] }}',
                             data: @json($chartData['player2Data']),
-                            borderColor: 'rgb(59, 130, 246)',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.1,
-                            pointRadius: 0,
-                            pointHoverRadius: 4,
-                            pointBackgroundColor: 'rgb(59, 130, 246)'
-                        }, {
-                            label: '50% Line',
-                            data: Array({{ count($chartData['labels']) }}).fill(50),
-                            borderColor: 'rgba(156, 163, 175, 0.5)',
-                            borderWidth: 1,
-                            borderDash: [5, 5],
+                            backgroundColor: 'rgb(125, 211, 252)', // sky-300
+                            borderWidth: 0,
+                            fill: true,
+                            tension: 0.3,
                             pointRadius: 0,
                             pointHoverRadius: 0
                         }]
@@ -76,16 +62,18 @@
                                 display: false
                             },
                             tooltip: {
+                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                titleColor: '#334155', // slate-700
+                                bodyColor: '#334155', // slate-700
+                                borderColor: '#e2e8f0', // slate-200
+                                borderWidth: 1,
+                                padding: 10,
+                                cornerRadius: 8,
                                 callbacks: {
                                     title: function(context) {
                                         return 'Round ' + context[0].label;
                                     },
                                     label: function(context) {
-                                        // Don't show the 50% line in the tooltip
-                                        if (context.datasetIndex === 2) {
-                                            return null;
-                                        }
-
                                         let label = context.dataset.label || '';
                                         if (label) {
                                             label += ': ';
@@ -102,29 +90,49 @@
                                         return label;
                                     }
                                 }
+                            },
+                            filler: {
+                                propagate: false
                             }
                         },
                         scales: {
                             y: {
+                                stacked: true,
                                 min: 0,
                                 max: 100,
                                 title: {
                                     display: true,
-                                    text: 'Win %'
+                                    text: 'Win %',
+                                    font: {
+                                        size: 13,
+                                    },
+                                    color: '#64748b' // slate-500
                                 },
                                 ticks: {
                                     callback: function(value) {
                                         return value + '%';
-                                    }
+                                    },
+                                    color: '#94a3b8' // slate-400
+                                },
+                                grid: {
+                                    color: 'rgba(226, 232, 240, 0.6)' // slate-200
                                 }
                             },
                             x: {
                                 title: {
                                     display: true,
-                                    text: 'Round'
+                                    text: 'Round',
+                                    font: {
+                                        size: 13,
+                                    },
+                                    color: '#64748b' // slate-500
                                 },
                                 ticks: {
-                                    maxTicksLimit: 10
+                                    maxTicksLimit: 10,
+                                    color: '#94a3b8' // slate-400
+                                },
+                                grid: {
+                                    display: false
                                 }
                             }
                         }
