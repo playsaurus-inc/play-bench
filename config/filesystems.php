@@ -62,7 +62,7 @@ return [
 
         'svg' => [
             'driver' => 'local',
-            'root' => storage_path('app/svg-matches'),
+            'root' => storage_path('app/public/svg-matches'),
             'url' => env('APP_URL').'/storage/svg-matches',
             'visibility' => 'public',
             'throw' => false,
