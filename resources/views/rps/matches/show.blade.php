@@ -138,7 +138,30 @@
                 </div>
             </div>
         </div>
+
+        @if($rpsMatch->isStatisticalTie())
+            <div class="relative -mt-2 sm:-mt-3 bg-white border-t border-gray-100 shadow-sm rounded-b-3xl overflow-hidden">
+                <div class="p-4 sm:p-6 md:px-8 md:py-6 flex items-start">
+                    <div class="flex-shrink-0 p-1.5 bg-amber-50 rounded-full">
+                        <x-phosphor-info-fill class="h-5 w-5 sm:h-6 sm:w-6 text-amber-500" />
+                    </div>
+                    <div class="ml-4 sm:ml-5 text-amber-700">
+                        <h3 class="text-base sm:text-lg font-semibold text-amber-800">Statistical Tie</h3>
+                        <p class="mt-1 text-sm">
+                            This match is considered a tie even though the scores are different. The score difference
+                            <span class="font-semibold">({{ abs($rpsMatch->player1_score - $rpsMatch->player2_score) }} points)</span>
+                            is not statistically significant with {{ $rpsMatch->rounds_played }} rounds played.
+                        </p>
+                        <p class="mt-2 text-sm">
+                            For {{ $rpsMatch->rounds_played }} rounds, differences less than {{ Number::format($rpsMatch->getSignificanceThreshold(), 1) }} points
+                            could be explained by random chance alone, rather than by player skill.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
+
 
     <!-- Move analysis -->
     @php

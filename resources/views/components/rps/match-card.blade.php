@@ -86,6 +86,13 @@
                         <x-phosphor-equals-fill class="w-3 h-3 mr-1" />
                         Tie
                     </span>
+
+                    @if($match->isStatisticalTie())
+                        <span class="ml-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+                            <x-phosphor-info-fill class="w-3 h-3 mr-1" />
+                            Statistical
+                        </span>
+                    @endif
                 @else
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $match->winner_id === $match->player1_id ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' }}">
                         <x-phosphor-trophy-fill class="w-3 h-3 mr-1" />

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Contracts\RankedMatch;
 use App\Services\Rps\RpsMatchAnalysisService;
+use App\Support\Statistics;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,8 +47,11 @@ class RpsMatch extends Model implements RankedMatch
         static::saving(function (self $model) {
             if (! $model->winner_id) {
                 $model->winner_id = static::determineWinner(
-                    $model->player1, $model->player1_score,
-                    $model->player2, $model->player2_score,
+                    $model->player1,
+                    $model->player1_score,
+                    $model->player2,
+                    $model->player2_score,
+                    $model->rounds_played,
                 )?->id;
             }
 
@@ -80,15 +84,21 @@ class RpsMatch extends Model implements RankedMatch
         AiModel|int $player1,
         int $player1Score,
         AiModel|int $player2,
-        int $player2Score
+        int $player2Score,
+        int $totalRounds,
     ): AiModel|int|null {
-        if ($player1Score > $player2Score) {
-            return $player1;
-        } elseif ($player2Score > $player1Score) {
-            return $player2;
+        // If scores are identical, it's a definite tie
+        if ($player1Score === $player2Score) {
+            return null; // Tie
         }
 
-        return null; // Tie
+        // Check if the difference is statistically significant
+        if (!Statistics::isScoreDifferenceSignificant($player1Score, $player2Score, $totalRounds)) {
+            return null; // Statistical tie - difference not significant
+        }
+
+        // Return the model with the higher score
+        return $player1Score > $player2Score ? $player1 : $player2;
     }
 
     /**
@@ -113,6 +123,27 @@ class RpsMatch extends Model implements RankedMatch
         }
 
         return '2';
+    }
+
+    /**
+     * Check if this match is a statistical tie (different scores but not statistically significant).
+     */
+    public function isStatisticalTie(): bool
+    {
+        if (!$this->isTie()) {
+            return false;
+        }
+
+        // The match is a tie, but scores are different
+        return $this->player1_score !== $this->player2_score;
+    }
+
+    /**
+     * Get the statistical significance threshold for this match.
+     */
+    public function getSignificanceThreshold(): float
+    {
+        return Statistics::getSignificanceThreshold($this->rounds_played);
     }
 
     /**
@@ -396,13 +427,22 @@ class RpsMatch extends Model implements RankedMatch
      */
     public function getOutcome(): string
     {
-        if ($this->player1_score > $this->player2_score) {
-            return '1';
-        } elseif ($this->player2_score > $this->player1_score) {
-            return '2';
-        } else {
+        // If scores are identical, definite tie
+        if ($this->player1_score === $this->player2_score) {
             return 't';
         }
+
+        // Check if the difference is statistically significant
+        if (!Statistics::isScoreDifferenceSignificant(
+            $this->player1_score,
+            $this->player2_score,
+            $this->rounds_played
+        )) {
+            return 't'; // Statistical tie
+        }
+
+        // Otherwise, return winner based on score
+        return $this->player1_score > $this->player2_score ? '1' : '2';
     }
 
     /**

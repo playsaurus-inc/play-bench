@@ -51,31 +51,20 @@ class ImportRps extends AbstractImport
             $player1 = $this->aiModel($sourceMatch->player1);
             $player2 = $this->aiModel($sourceMatch->player2);
 
-            // Determine the winner
-            $winner = null;
-            if ($sourceMatch->winner === 'player1') {
-                $winner = $player1;
-            } elseif ($sourceMatch->winner === 'player2') {
-                $winner = $player2;
-            }
-
             // Calculate start and end times
             $timestamp = Carbon::createFromTimestamp($sourceMatch->time);
             $startedAt = $timestamp->copy()->subMinutes(rand(10, 60));
             $endedAt = $timestamp;
 
-            // Parse move history from JSON
-            $moveHistory = $this->parseMoveHistory($sourceMatch->moveHistory);
-
             // Create the RPS match
             RpsMatch::create([
                 'player1_id' => $player1->id,
                 'player2_id' => $player2->id,
-                'winner_id' => $winner?->id,
+                'winner_id' => null, // We'll pass null for the winner_id to let the model determine the winner on save
                 'rounds_played' => $sourceMatch->rounds,
                 'player1_score' => $sourceMatch->score1,
                 'player2_score' => $sourceMatch->score2,
-                'move_history' => $moveHistory,
+                'move_history' => $this->parseMoveHistory($sourceMatch->moveHistory),
                 'is_forced_completion' => $sourceMatch->forced === 'Y',
                 'started_at' => $startedAt,
                 'ended_at' => $endedAt,
