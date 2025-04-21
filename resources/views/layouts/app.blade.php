@@ -33,6 +33,8 @@
         </main>
 
         <x-layouts::footer />
+
+        <x-layouts::analytics />
     </div>
 </body>
 </html>

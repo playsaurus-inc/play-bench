@@ -35,6 +35,13 @@ return [
         ],
     ],
 
+    'statcounter' => [
+        'project_id' => env('STATCOUNTER_PROJECT_ID'),
+        'security' => env('STATCOUNTER_SECURITY'),
+        'invisible' => env('STATCOUNTER_INVISIBLE', true),
+        'remove_link' => env('STATCOUNTER_REMOVE_LINK', true),
+    ],
+
     'openai' => [
         'key' => env('OPENAI_KEY'),
     ],
