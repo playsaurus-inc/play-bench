@@ -16,10 +16,10 @@ class Statistics
      * Determines if the difference between two scores is statistically significant.
      * Uses a binomial distribution model to determine if score differences could be due to random chance.
      *
-     * @param int $score1 First player's score
-     * @param int $score2 Second player's score
-     * @param int $totalRounds Total number of rounds played
-     * @param float $confidenceLevel Number of standard deviations for significance (default: 2.0 for ~95% confidence)
+     * @param  int  $score1  First player's score
+     * @param  int  $score2  Second player's score
+     * @param  int  $totalRounds  Total number of rounds played
+     * @param  float  $confidenceLevel  Number of standard deviations for significance (default: 2.0 for ~95% confidence)
      * @return bool True if the difference is statistically significant
      */
     public static function isScoreDifferenceSignificant(
@@ -47,8 +47,8 @@ class Statistics
     /**
      * Calculate the maximum allowable difference for statistical tie based on rounds played
      *
-     * @param int $totalRounds Total number of rounds played
-     * @param float $confidenceLevel Number of standard deviations for significance
+     * @param  int  $totalRounds  Total number of rounds played
+     * @param  float  $confidenceLevel  Number of standard deviations for significance
      * @return float The maximum difference that would still be considered a tie
      */
     public static function getSignificanceThreshold(
@@ -60,6 +60,7 @@ class Statistics
         }
 
         $standardDeviation = sqrt($totalRounds * 0.5 * 0.5);
+
         return $confidenceLevel * $standardDeviation;
     }
 }

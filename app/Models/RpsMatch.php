@@ -93,7 +93,7 @@ class RpsMatch extends Model implements RankedMatch
         }
 
         // Check if the difference is statistically significant
-        if (!Statistics::isScoreDifferenceSignificant($player1Score, $player2Score, $totalRounds)) {
+        if (! Statistics::isScoreDifferenceSignificant($player1Score, $player2Score, $totalRounds)) {
             return null; // Statistical tie - difference not significant
         }
 
@@ -130,7 +130,7 @@ class RpsMatch extends Model implements RankedMatch
      */
     public function isStatisticalTie(): bool
     {
-        if (!$this->isTie()) {
+        if (! $this->isTie()) {
             return false;
         }
 
@@ -433,7 +433,7 @@ class RpsMatch extends Model implements RankedMatch
         }
 
         // Check if the difference is statistically significant
-        if (!Statistics::isScoreDifferenceSignificant(
+        if (! Statistics::isScoreDifferenceSignificant(
             $this->player1_score,
             $this->player2_score,
             $this->rounds_played
