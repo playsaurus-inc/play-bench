@@ -210,8 +210,7 @@ Return ONLY valid SVG code in your response.";
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            // Handle the error by marking the match as forced completion
-            $match->is_forced_completion = true;
+            throw $e; // Rethrow the exception to be handled by the caller
         }
 
         // Finalize match

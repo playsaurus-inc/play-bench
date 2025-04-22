@@ -4,6 +4,7 @@ namespace App\Services\Svg;
 
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 
 class SvgService
 {
@@ -12,26 +13,47 @@ class SvgService
      */
     public function cleanupSvg(string $svgString): string
     {
-        // Remove markdown code block syntax
-        $cleaned = preg_replace('/```svg\n?|```\n?/', '', $svgString);
+        return Str::of($svgString)
+            ->trim()
+            ->replaceMatches('/```svg\n?|```\n?/', '') // Remove markdown code block syntax (```svg ... ```)
+            ->replaceMatches('/< ([a-zA-Z])/', '<$1') // Fix spaces in tag names (e.g., "< defs>" to "<defs>")
+            ->replaceMatches('/<([a-zA-Z0-9]+)\/>/', '<$1 />') // Fix self-closing tags that might be malformed
+            ->pipe(fn ($string) => $this->ensureSvgNamespace($string))
+            ->pipe(fn ($string) => $this->ensureViewBox($string)) // Ensure a viewBox is present
+            // string concatenation to avoid IDE highlighting issues
+            ->replace('xmlns:'.'link="http://www.w3.org/1999/xlink"', '') // Remove deprecated xlink namespace if declared
+            ->replace('xlink:'.'href=', 'href=') // Replace xlink:href with href for modern compatibility
+            ->toString();
+    }
 
-        // Fix spaces in tag names (e.g., "< defs>" to "<defs>")
-        $cleaned = preg_replace('/< ([a-zA-Z])/', '<$1', $cleaned);
-
-        // Fix self-closing tags that might be malformed
-        $cleaned = preg_replace('/<([a-zA-Z0-9]+)\/>/', '<$1 />', $cleaned);
-
-        // Ensure proper XML structure
-        if (! Str::contains($cleaned, 'xmlns="http://www.w3.org/2000/svg"') && Str::contains($cleaned, '<svg')) {
-            $cleaned = preg_replace('/<svg/', '<svg xmlns="http://www.w3.org/2000/svg"', $cleaned);
+    /**
+     * Ensure the SVG namespace is present.
+     */
+    protected function ensureSvgNamespace(Stringable $string): Stringable
+    {
+        if (
+            $string->contains('<svg', ignoreCase: true)
+            && ! $string->contains('xmlns="http://www.w3.org/2000/svg"', ignoreCase: true)
+        ) {
+            return $string->replaceMatches('/<svg/', '<svg xmlns="http://www.w3.org/2000/svg"', 1);
         }
 
-        // Make sure viewBox is properly defined
-        if (! Str::contains($cleaned, 'viewBox') && Str::contains($cleaned, '<svg')) {
-            $cleaned = preg_replace('/<svg/', '<svg viewBox="0 0 300 300"', $cleaned);
+        return $string;
+    }
+
+    /**
+     * Ensure a viewBox is present in the SVG.
+     */
+    protected function ensureViewBox(Stringable $string): Stringable
+    {
+        if (
+            $string->contains('<svg', ignoreCase: true)
+            && ! $string->contains('viewBox', ignoreCase: true)
+        ) {
+            return $string->replaceMatches('/<svg/', '<svg viewBox="0 0 300 300"', 1);
         }
 
-        return $cleaned;
+        return $string;
     }
 
     /**
@@ -59,33 +81,28 @@ class SvgService
      */
     protected function convertSvgToPng(string $svgString, int $width, int $height): string
     {
-        $path = config('playbench.svg2png_path')
-            ?? base_path('node_modules/.bin/svg2png');
+        $resvgJs = config('playbench.resvg_js_cli_path')
+            ?? base_path('node_modules/.bin/resvg-js-cli');
 
-        $outputFile = storage_path('app/temp/'.Str::random(40).'.png');
-        $inputFile = storage_path('app/temp/'.Str::random(40).'.svg');
+        $inputFile = storage_path('app/temp/' . Str::random(40) . '.svg');
+        $outputFile = storage_path('app/temp/' . Str::random(40) . '.png');
+
         file_put_contents($inputFile, $svgString);
 
         try {
             Process::run([
-                $path,
+                $resvgJs,
+                '--fit-width', $width,
+                '--fit-height', $height,
+                '--background', 'transparent',
                 $inputFile,
-                "--output=$outputFile",
-                "--width=$width",
-                "--height=$height",
+                $outputFile
             ])->throw();
 
-            $pngBinary = file_get_contents($outputFile);
-
-            return $pngBinary;
+            return file_get_contents($outputFile);
         } finally {
-            // Clean up temporary files
-            if (file_exists($outputFile)) {
-                unlink($outputFile);
-            }
-            if (file_exists($inputFile)) {
-                unlink($inputFile);
-            }
+            if (file_exists($inputFile)) unlink($inputFile);
+            if (file_exists($outputFile)) unlink($outputFile);
         }
     }
 }

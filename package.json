@@ -15,8 +15,8 @@
         "vite": "^6.2.4"
     },
     "dependencies": {
+        "@resvg/resvg-js-cli": "^2.6.2-beta.1",
         "alpinejs": "^3.14.9",
-        "chart.js": "^4.4.9",
-        "svg2png": "^4.1.1"
+        "chart.js": "^4.4.9"
     }
 }

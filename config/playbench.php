@@ -15,16 +15,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | SVG2PNG Path
+    | Resvg-cli JS CLI Path
     |--------------------------------------------------------------------------
     |
-    | Svg2png is a Node.js package that converts SVG to PNG. It is used to
-    | convert SVG images to PNG format when running the SVG drawing
-    | competition. By default, the local installation of svg2png is used.
-    | Make sure you have run `npm install` in the root of the project before
-    | running the benchmark command.
+    | The SVG Benchmark uses `@resvg/resvg-js-cli` to convert SVG to PNG.
+    | This is a wrapper around the `resvg` library, which is a high-performance
+    | SVG rendering library written in Rust.
+    | By default, the local installation inside the `node_modules`
+    | folder is used.
     |
     */
 
-    'svg2png_path' => env('SVG2PNG_PATH'), // By default, the `node_modules` folder is used
+    'resvg_js_cli_path' => env('PLAYBENCH_RESVG_JS_CLI_PATH'),
 ];
