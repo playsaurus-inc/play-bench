@@ -24,7 +24,7 @@ return new class extends Migration
             // The third character is the result of the round.
             // - r=rock, p=paper, s=scissors
             // - 1=player1 win, 2=player2 win, t=tie
-            // - Example: `rrt ps2 r1s`
+            // - Example: `rrt ps2 rs1`
             // This means:
             // - Round 1: player 1 played rock, player 2 played rock, result is tie
             // - Round 2: player 1 played paper, player 2 played scissors, result is player 2 win
