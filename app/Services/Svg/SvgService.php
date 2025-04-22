@@ -84,8 +84,8 @@ class SvgService
         $resvgJs = config('playbench.resvg_js_cli_path')
             ?? base_path('node_modules/.bin/resvg-js-cli');
 
-        $inputFile = storage_path('app/temp/' . Str::random(40) . '.svg');
-        $outputFile = storage_path('app/temp/' . Str::random(40) . '.png');
+        $inputFile = storage_path('app/temp/'.Str::random(40).'.svg');
+        $outputFile = storage_path('app/temp/'.Str::random(40).'.png');
 
         file_put_contents($inputFile, $svgString);
 
@@ -96,13 +96,17 @@ class SvgService
                 '--fit-height', $height,
                 '--background', 'transparent',
                 $inputFile,
-                $outputFile
+                $outputFile,
             ])->throw();
 
             return file_get_contents($outputFile);
         } finally {
-            if (file_exists($inputFile)) unlink($inputFile);
-            if (file_exists($outputFile)) unlink($outputFile);
+            if (file_exists($inputFile)) {
+                unlink($inputFile);
+            }
+            if (file_exists($outputFile)) {
+                unlink($outputFile);
+            }
         }
     }
 }
