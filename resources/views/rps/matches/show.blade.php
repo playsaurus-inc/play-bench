@@ -148,13 +148,15 @@
                     <div class="ml-4 sm:ml-5 text-amber-700">
                         <h3 class="text-base sm:text-lg font-semibold text-amber-800">Statistical Tie</h3>
                         <p class="mt-1 text-sm">
-                            This match is considered a tie even though the scores are different. The score difference
-                            <span class="font-semibold">({{ abs($rpsMatch->player1_score - $rpsMatch->player2_score) }} points)</span>
-                            is not statistically significant with {{ $rpsMatch->rounds_played }} rounds played.
+                            This match is considered a tie even though the scores differ by
+                            <span class="font-semibold">{{ abs($rpsMatch->player1_score - $rpsMatch->player2_score) }} points</span>.
+                            With {{ $rpsMatch->getDecisiveRounds() }} decisive rounds (Rounds not ending in a tie), that gap is not large enough to be statistically significant
+                            at 95 % confidence.
                         </p>
                         <p class="mt-2 text-sm">
-                            For {{ $rpsMatch->rounds_played }} rounds, differences less than {{ Number::format($rpsMatch->getSignificanceThreshold(), 1) }} points
-                            could be explained by random chance alone, rather than by player skill.
+                            At this sample size, any difference below
+                            <span class="font-semibold">{{ Number::format($rpsMatch->getDifferenceThreshold(), 1) }} points</span>
+                            can still be explained by random chance rather than player skill.
                         </p>
                     </div>
                 </div>
