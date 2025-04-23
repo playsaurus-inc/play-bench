@@ -83,60 +83,145 @@
         </h3>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- 📣 Plain-English “How it works” -->
             <div>
                 <h4 class="text-base font-medium text-gray-800 mb-2 flex items-center">
                     <x-phosphor-hand-pointing-fill class="w-4 h-4 mr-2 text-amber-600" />
-                    How Winners Are Determined
+                    How We Pick The Winner
                 </h4>
+
                 <p class="text-gray-600 mb-4">
-                    In most cases, the AI with more winning rounds wins the match. However, when both AIs perform similarly,
-                    statistical analysis is used to determine if the difference is meaningful or just random chance.
+                    First bot to grab <strong>50 wins</strong> usually wins the match.
+                    But if both bots are neck-and-neck we run a quick “is this just luck?” check.
+                    If the gap is tiny, we call it a tie so nobody brags without proof.
                 </p>
 
                 <div class="bg-blue-50 border-l-4 border-blue-300 px-4 py-3 rounded-r mb-4">
                     <div class="flex">
-                        <div class="flex-shrink-0">
-                            <x-phosphor-info-fill class="h-5 w-5 text-blue-500" />
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-blue-700">
-                                <span class="font-semibold">Statistical Ties:</span> When score differences are small enough
-                                that they could be explained by random chance, matches are declared ties regardless of the
-                                numerical score difference.
-                            </p>
-                        </div>
+                        <x-phosphor-info-fill class="h-5 w-5 text-blue-500 flex-shrink-0" />
+                        <p class="ml-3 text-sm text-blue-700">
+                            <span class="font-semibold">Statistical Tie:</span>
+                            Scores different but difference is so small it could be pure coin-flip luck, not real skill.
+                        </p>
                     </div>
                 </div>
             </div>
 
+            <!-- 📏 Numbers people can feel -->
             <div>
                 <h4 class="text-base font-medium text-gray-800 mb-2 flex items-center">
                     <x-phosphor-sigma-fill class="w-4 h-4 mr-2 text-amber-600" />
-                    Statistical Significance
+                    How Big Is “Big Enough”?
                 </h4>
+
                 <p class="text-gray-600 mb-2">
-                    The statistical significance threshold scales with the number of rounds played:
+                    Rough guide (decisive rounds only, ties don’t count):
                 </p>
+
                 <ul class="space-y-1 list-inside text-gray-600 mb-4">
                     <li class="flex items-baseline">
                         <x-phosphor-dot class="size-4 text-amber-600 mr-1 flex-shrink-0" />
-                        <span><strong>50 rounds:</strong> ~7 point difference needed</span>
+                        <span><strong>50 rounds:</strong> need about <strong>14-point</strong> lead</span>
                     </li>
                     <li class="flex items-baseline">
                         <x-phosphor-dot class="size-4 text-amber-600 mr-1 flex-shrink-0" />
-                        <span><strong>100 rounds:</strong> ~10 point difference needed</span>
+                        <span><strong>100 rounds:</strong> need about <strong>20-point</strong> lead</span>
                     </li>
                     <li class="flex items-baseline">
                         <x-phosphor-dot class="size-4 text-amber-600 mr-1 flex-shrink-0" />
-                        <span><strong>150 rounds:</strong> ~12 point difference needed</span>
+                        <span><strong>150 rounds:</strong> need about <strong>24-point</strong> lead</span>
                     </li>
                 </ul>
+
                 <p class="text-sm text-gray-500 italic">
-                    This approach ensures that only meaningful skill differences affect rankings.
+                    Bigger match &rarr; we demand a bigger gap before yelling “Winner!”.
                 </p>
             </div>
         </div>
+
+        <!-- 🧑‍🔬 Optional nerd corner -->
+        <div x-data="{ open: false }" class="mt-6">
+            <button
+                @click="open = !open"
+                class="text-gray-600 hover:text-gray-800 flex items-center cursor-pointer"
+            >
+                <x-phosphor-flask-fill class="size-5 mr-2" />
+                Info for Nerds (don’t open if scared of math)
+                <x-phosphor-caret-down
+                    class="w-4 h-4 ml-1 transform transition-transform"
+                    x-bind:class="{ 'rotate-180': open }"
+                />
+            </button>
+
+            <div
+                x-show="open"
+                x-collapse
+                class="mt-4 text-gray-700 leading-relaxed rounded p-4 bg-gray-50"
+            >
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 📝 Short story version -->
+                    <div>
+                        <p>
+                            We run a <strong>95 % two-sided binomial z-test.</strong>
+                            It answers one question: “Is the score gap big enough that luck
+                            is an unlikely explanation?”
+                        </p>
+
+                        <ul class="list-disc list-inside mt-3 space-y-1">
+                            <li><em>Decisive rounds only.</em> Ties don’t help us judge skill.</li>
+                            <li>If the gap is below the cut-off, we say “statistical tie.”</li>
+                            <li>If the gap beats the cut-off, we say the leader showed real skill.</li>
+                        </ul>
+
+                        <a
+                            href="{{ config('playbench.github_repo_url') }}"
+                            target="_blank"
+                            class="mt-4 inline-flex items-center text-sm font-medium text-amber-600 hover:text-amber-500 hover:underline"
+                            rel="noopener noreferrer"
+                        >
+                            <x-phosphor-github-logo-fill class="w-4 h-4 mr-1" />
+                            Full implementation lives in the GitHub repo.
+                        </a>
+                    </div>
+
+                    <!-- 📐 Exact math, as compact as possible -->
+                    <div class="text-sm">
+                        <p><strong>Hypotheses</strong></p>
+                        <p>
+                            H₀: score₁ − score₂ = 0 (no skill)<br>
+                            H₁: score₁ − score₂ ≠ 0 (skill)
+                        </p>
+                        <p class="mt-3"><strong>Statistical Model</strong></p>
+                        <p>
+                            n = decisive rounds<br>
+                            X ~ Binomial(n, 0.5) &nbsp;(wins of Bot 1 under H₀)<br>
+                            D = score₁ − score₂ = 2X − n
+                        </p>
+
+                        <p class="mt-3"><strong>Under H₀</strong></p>
+                        <p>
+                            E[D] = 0  Var[D] = n → σ<sub>D</sub> = √n
+                        </p>
+
+                        <p class="mt-3"><strong>Test statistic</strong></p>
+                        <p>
+                            z = |D| / √n
+                        </p>
+
+                        <p class="mt-3"><strong>Decision rule (α = 0.05)</strong></p>
+                        <p>
+                            z &gt; 1.96 ⇔ |score₁ − score₂| &gt; 1.96 × √n
+                            → reject H₀ → call it “skill”
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
+
+
 
     <!-- ELO Ratings Explanation -->
     <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm mb-8">
