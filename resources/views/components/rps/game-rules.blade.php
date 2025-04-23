@@ -153,16 +153,12 @@
                 />
             </button>
 
-            <div
-                x-show="open"
-                x-collapse
-                class="mt-4 text-gray-700 leading-relaxed rounded p-4 bg-gray-50"
-            >
+            <div x-show="open" x-collapse class="mt-4 text-gray-700 leading-relaxed rounded p-4 bg-gray-50">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- 📝 Short story version -->
                     <div>
                         <p>
-                            We run a <strong>95 % two-sided binomial z-test.</strong>
+                            We run a <strong>90 % one-sided binomial z-test.</strong>
                             It answers one question: “Is the score gap big enough that luck
                             is an unlikely explanation?”
                         </p>
@@ -188,30 +184,21 @@
                     <div class="text-sm">
                         <p><strong>Hypotheses</strong></p>
                         <p>
-                            H₀: score₁ − score₂ = 0 (no skill)<br>
-                            H₁: score₁ − score₂ ≠ 0 (skill)
+                            H₀: winner win rate = 0.5 (no skill)<br>
+                            H₁: winner win rate > 0.5 (skill)
                         </p>
+
                         <p class="mt-3"><strong>Statistical Model</strong></p>
                         <p>
                             n = decisive rounds<br>
-                            X ~ Binomial(n, 0.5) &nbsp;(wins of Bot 1 under H₀)<br>
-                            D = score₁ − score₂ = 2X − n
+                            X ~ Binomial(n, 0.5) = winner's wins<br>
+                            z = (X / n − 0.5) / √(0.25 / n)
                         </p>
 
-                        <p class="mt-3"><strong>Under H₀</strong></p>
+                        <p class="mt-3"><strong>Decision rule (α = 0.05, one-sided)</strong></p>
                         <p>
-                            E[D] = 0  Var[D] = n → σ<sub>D</sub> = √n
-                        </p>
-
-                        <p class="mt-3"><strong>Test statistic</strong></p>
-                        <p>
-                            z = |D| / √n
-                        </p>
-
-                        <p class="mt-3"><strong>Decision rule (α = 0.05)</strong></p>
-                        <p>
-                            z &gt; 1.96 ⇔ |score₁ − score₂| &gt; 1.96 × √n
-                            → reject H₀ → call it “skill”
+                            z > 1.64 ⇒ we reject H₀ ⇒ declare skill<br>
+                            Otherwise ⇒ call it statistical tie
                         </p>
                     </div>
                 </div>

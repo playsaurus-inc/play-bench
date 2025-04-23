@@ -151,7 +151,7 @@
                             This match is considered a tie even though the scores differ by
                             <span class="font-semibold">{{ abs($rpsMatch->player1_score - $rpsMatch->player2_score) }} points</span>.
                             With {{ $rpsMatch->getDecisiveRounds() }} decisive rounds (Rounds not ending in a tie), that gap is not large enough to be statistically significant
-                            at 95 % confidence.
+                            at 90 % confidence.
                         </p>
                         <p class="mt-2 text-sm">
                             At this sample size, any difference below
