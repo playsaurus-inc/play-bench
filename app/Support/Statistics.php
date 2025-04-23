@@ -16,8 +16,8 @@ class Statistics
     /**
      * Determines if the difference in scores between two players is statistically significant.
      *
-     * @param  int  $score1         Player 1's number of wins
-     * @param  int  $score2         Player 2's number of wins
+     * @param  int  $score1  Player 1's number of wins
+     * @param  int  $score2  Player 2's number of wins
      * @param  float  $confidenceZ  Z-score threshold for significance (default: 1.96 for ≈95% confidence)
      * @return bool True if the difference is statistically significant
      */
@@ -63,10 +63,10 @@ class Statistics
      * considered a tie, if the observed difference is too small to be confidently
      * distinguished from random noise.
      *
-     * @param  int   $score1         Player 1's number of wins
-     * @param  int   $score2         Player 2's number of wins
-     * @param  float $confidenceZ    Z-score threshold (e.g. 1.96 for ≈95% confidence)
-     * @return float                 Maximum difference that would *not* be statistically significant
+     * @param  int  $score1  Player 1's number of wins
+     * @param  int  $score2  Player 2's number of wins
+     * @param  float  $confidenceZ  Z-score threshold (e.g. 1.96 for ≈95% confidence)
+     * @return float Maximum difference that would *not* be statistically significant
      */
     public static function getDifferenceThreshold(
         int $score1,
