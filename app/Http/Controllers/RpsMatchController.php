@@ -38,13 +38,15 @@ class RpsMatchController extends Controller
                 'rpsMatchesAsPlayer1',
                 'rpsMatchesAsPlayer2',
                 'rpsMatchesWon',
+                'rpsMatchesAsPlayer1 as rps_matches_as_player1_tied_count' => fn (Builder $query) => $query->whereNull('winner_id'),
+                'rpsMatchesAsPlayer2 as rps_matches_as_player2_tied_count' => fn (Builder $query) => $query->whereNull('winner_id'),
             ])
             ->get()
             ->map(function ($model) {
                 $model->total_rps_matches = $model->rps_matches_as_player1_count + $model->rps_matches_as_player2_count;
-                $model->win_rate = $model->total_rps_matches > 0
-                    ? $model->rps_matches_won_count / $model->total_rps_matches
-                    : 0;
+                $model->rps_matches_tied_count = $model->rps_matches_as_player1_tied_count + $model->rps_matches_as_player2_tied_count;
+                $model->rps_matches_lost_count = $model->total_rps_matches - $model->rps_matches_won_count - $model->rps_matches_tied_count;
+                $model->win_rate = $model->rps_matches_won_count / max(1, $model->total_rps_matches);
 
                 return $model;
             })

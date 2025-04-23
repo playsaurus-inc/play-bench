@@ -20,10 +20,10 @@
                     <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         RPS Matches
                     </th>
-                    <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        RPS Wins
+                    <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Wins / Ties / Losses
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="min-w-46 px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Win Rate
                     </th>
                     <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -64,17 +64,33 @@
                         <td class="px-6 py-3 text-right whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ $model->total_rps_matches }}</div>
                         </td>
-                        <td class="px-6 py-3 text-right whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ $model->rps_matches_won_count }}</div>
+                        <td class="px-6 py-3">
+                            <div class="text-sm text-gray-900 flex flex-row gap-2 justify-center">
+                                <span class="w-6 text-center font-bold text-green-600">{{ $model->rps_matches_won_count }}</span>
+                                <span class="text-sm text-gray-400">/</span>
+                                <span class="w-6 text-center font-bold text-slate-600">{{ $model->rps_matches_tied_count }}</span>
+                                <span class="text-sm text-gray-400">/</span>
+                                <span class="w-6 text-center font-bold text-red-600">{{ $model->rps_matches_lost_count }}</span>
+                            </div>
                         </td>
-                        <td class="px-6 py-3 whitespace-nowrap">
+                        <td class="min-w-46 px-6 py-3 whitespace-nowrap">
                             @if($model->total_rps_matches > 0)
-                                <div class="flex items-center">
-                                    <span class="mr-2 text-sm font-medium {{ $model->win_rate > 0.5 ? 'text-green-600' : ($model->win_rate == 0.5 ? 'text-amber-600' : 'text-red-600') }}">
+                                <div class="flex items-center w-full">
+                                    <span class="w-12 text-right mr-2 text-sm font-medium shrink-0 text-slate-600">
                                         {{ Number::percentage($model->win_rate * 100, precision: 1) }}
                                     </span>
-                                    <div class="grow relative w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                        <div class="absolute top-0 left-0 h-2 rounded-full {{ $model->win_rate > 0.5 ? 'bg-green-500' : ($model->win_rate == 0.5 ? 'bg-amber-500' : 'bg-red-500') }}" style="width: {{ $model->win_rate * 100 }}%"></div>
+                                    {{-- Show Win/Ties/Looses progress --}}
+                                    <div class="flex h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                                        @if($model->total_rps_matches > 0)
+                                            @php
+                                                $winPercent = $model->rps_matches_won_count / $model->total_rps_matches * 100;
+                                                $tiePercent = $model->rps_matches_tied_count / $model->total_rps_matches * 100;
+                                                $lossPercent = $model->rps_matches_lost_count / $model->total_rps_matches * 100;
+                                            @endphp
+                                            <div class="bg-green-500 h-full" style="width: {{ $winPercent }}%"></div>
+                                            <div class="bg-slate-300 h-full" style="width: {{ $tiePercent }}%"></div>
+                                            <div class="bg-red-500 h-full" style="width: {{ $lossPercent }}%"></div>
+                                        @endif
                                     </div>
                                 </div>
                             @else

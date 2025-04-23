@@ -8,18 +8,24 @@ namespace App\Support;
 class Statistics
 {
     /**
-     * The default Z-score for a 95% confidence level (two-tailed).
-     * This is the threshold for determining statistical significance.
+     * Z-score threshold for a 90% confidence level (one-sided test).
      */
-    public const DEFAULT_Z = 1.96;
+    public const DEFAULT_Z = 1.2816;
+
+    // 1.6449 => 95% confidence
+    // 1.2816 => 90% confidence
 
     /**
-     * Determines if the difference in scores between two players is statistically significant.
+     * Determines if the difference in scores between two players is statistically significant
+     * using a one-sided binomial z-test.
+     *
+     * This assumes one player already reached the win threshold (e.g., 50 wins),
+     * and we are testing whether their win rate was significantly better than random chance.
      *
      * @param  int  $score1  Player 1's number of wins
      * @param  int  $score2  Player 2's number of wins
-     * @param  float  $confidenceZ  Z-score threshold for significance (default: 1.96 for ≈95% confidence)
-     * @return bool True if the difference is statistically significant
+     * @param  float  $confidenceZ  Z-score threshold for significance (default: 1.28 for ≈90% confidence one-sided)
+     * @return bool True if the difference is statistically significant in favor of the winner
      */
     public static function isScoreDifferenceSignificant(
         int $score1,
@@ -29,30 +35,36 @@ class Statistics
         // Step 1: Compute how many rounds had an actual winner (i.e., not ties)
         $decisiveRounds = $score1 + $score2;
 
-        // Step 2: Edge case: If there are no decisive rounds, we cannot evaluate anything
+        // Step 2: Edge case — if there are no decisive rounds, we cannot evaluate anything
         if ($decisiveRounds === 0) {
             return false;
         }
 
-        // Step 3: Compute the observed win proportion of Player 1
-        $pHat = $score1 / $decisiveRounds;
+        // Step 3: Determine which player had more wins
+        // We only test in favor of the winner
+        if ($score1 === $score2) {
+            return false; // literal tie
+        }
 
-        // Step 4: Under the null hypothesis, we assume both players are equally good.
-        // That means the expected probability of Player 1 winning a round is 0.5
+        $winnerScore = max($score1, $score2);
+
+        // Step 4: Compute the observed win proportion of the winner
+        $pHat = $winnerScore / $decisiveRounds;
+
+        // Step 5: Under the null hypothesis, we assume both players are equally good.
+        // That means the expected probability of the winner winning any round is 0.5
         $pNull = 0.5;
 
-        // Step 5: Compute the standard deviation of the observed win proportion,
-        // assuming Player 1 has a true 50% win rate. This is based on binomial variance:
-        //     std dev = sqrt(p * (1 - p) / n)
+        // Step 6: Compute the standard deviation of the win proportion,
+        // under the assumption of no skill difference (H₀: p = 0.5)
+        // Formula: std dev = sqrt(p * (1 - p) / n)
         $stdDev = sqrt($pNull * (1 - $pNull) / $decisiveRounds);
 
-        // Step 6: Convert the difference between observed and expected win rates into a z-score.
-        // This tells us how many "standard deviations" the result is away from what we'd expect by chance.
+        // Step 7: Compute the one-sided z-score (keep sign)
         $zScore = ($pHat - $pNull) / $stdDev;
 
-        // Step 7: Compare the absolute z-score to our confidence threshold (default 1.96 for 95% two-sided).
-        // If it's greater, the win difference is unlikely due to chance, so we reject the null hypothesis.
-        return abs($zScore) > $confidenceZ;
+        // Step 8: Compare against one-sided critical value (default: 1.64)
+        return $zScore > $confidenceZ;
     }
 
     /**
@@ -65,7 +77,7 @@ class Statistics
      *
      * @param  int  $score1  Player 1's number of wins
      * @param  int  $score2  Player 2's number of wins
-     * @param  float  $confidenceZ  Z-score threshold (e.g. 1.96 for ≈95% confidence)
+     * @param  float  $confidenceZ  Z-score threshold (e.g. 1.28 for ≈90% confidence one-sided)
      * @return float Maximum difference that would *not* be statistically significant
      */
     public static function getDifferenceThreshold(
@@ -101,7 +113,7 @@ class Statistics
         // So the standard deviation of the score *difference* D is:
         $stdDevOfDifference = sqrt($decisiveRounds);
 
-        // Step 4: Convert the desired confidence level (e.g., z = 1.96 for 95%) into
+        // Step 4: Convert the desired confidence level into
         // a maximum allowable difference. Any observed difference smaller than this
         // is still plausible under the assumption of equal skill.
         return $confidenceZ * $stdDevOfDifference;
