@@ -449,22 +449,11 @@ class RpsMatch extends Model implements RankedMatch
      */
     public function getOutcome(): string
     {
-        // If scores are identical, definite tie
-        if ($this->player1_score === $this->player2_score) {
-            return 't';
-        }
-
-        // Check if the difference is statistically significant
-        if (! Statistics::isScoreDifferenceSignificant(
-            $this->player1_score,
-            $this->player2_score,
-            $this->rounds_played
-        )) {
-            return 't'; // Statistical tie
-        }
-
-        // Otherwise, return winner based on score
-        return $this->player1_score > $this->player2_score ? '1' : '2';
+        return match ($this->winner_id) {
+            $this->player1_id => '1',
+            $this->player2_id => '2',
+            default => 't',
+        };
     }
 
     /**

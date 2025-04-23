@@ -116,10 +116,6 @@ class EloRatingService
                 $player1 = $match->getPlayer1();
                 $player2 = $match->getPlayer2();
 
-                if (! $player1 || ! $player2) {
-                    continue;
-                }
-
                 $player1Elo = $player1->getAttribute($this->getEloColumnName($gameType));
                 $player2Elo = $player2->getAttribute($this->getEloColumnName($gameType));
 
