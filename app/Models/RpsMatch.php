@@ -51,7 +51,6 @@ class RpsMatch extends Model implements RankedMatch
                     $model->player1_score,
                     $model->player2,
                     $model->player2_score,
-                    $model->rounds_played,
                 )?->id;
             }
 
@@ -78,6 +77,22 @@ class RpsMatch extends Model implements RankedMatch
     }
 
     /**
+     * Recompute the match statistics.
+     */
+    public function recompute(): void
+    {
+        // Just null the values so they can be recomputed again in the `saving` event
+        $this->update([
+            'winner_id' => null,
+            'player1_win_streak' => null,
+            'player2_win_streak' => null,
+            'rounds_played' => null,
+            'player1_move_distribution' => null,
+            'player2_move_distribution' => null,
+        ]);
+    }
+
+    /**
      * Determine the winner of the match based on scores.
      */
     public static function determineWinner(
@@ -85,7 +100,6 @@ class RpsMatch extends Model implements RankedMatch
         int $player1Score,
         AiModel|int $player2,
         int $player2Score,
-        int $totalRounds,
     ): AiModel|int|null {
         // If scores are identical, it's a definite tie
         if ($player1Score === $player2Score) {
@@ -93,7 +107,7 @@ class RpsMatch extends Model implements RankedMatch
         }
 
         // Check if the difference is statistically significant
-        if (! Statistics::isScoreDifferenceSignificant($player1Score, $player2Score, $totalRounds)) {
+        if (! Statistics::isScoreDifferenceSignificant($player1Score, $player2Score)) {
             return null; // Statistical tie - difference not significant
         }
 
@@ -141,9 +155,9 @@ class RpsMatch extends Model implements RankedMatch
     /**
      * Get the statistical significance threshold for this match.
      */
-    public function getSignificanceThreshold(): float
+    public function getDifferenceThreshold(): float
     {
-        return Statistics::getSignificanceThreshold($this->rounds_played);
+        return Statistics::getDifferenceThreshold($this->player1_score, $this->player2_score);
     }
 
     /**
@@ -261,6 +275,14 @@ class RpsMatch extends Model implements RankedMatch
             't' => 'tie',
             default => 'unknown'
         };
+    }
+
+    /**
+     * Get the number of decisive rounds played
+     */
+    public function getDecisiveRounds(): int
+    {
+        return $this->player1_score + $this->player2_score;
     }
 
     /**
