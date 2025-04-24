@@ -13,7 +13,7 @@
             </div>
             <h3 class="text-lg font-medium text-gray-900 mb-2">Strategic AI Competition</h3>
             <p class="text-gray-600">
-                AI models compete against each other in a series of Rock Paper Scissors rounds, making strategic choices based on game history.
+                AI models compete against each other in a series of Rock Paper Scissors rounds, with full visibility of previous moves to inform their strategy.
             </p>
         </div>
 
@@ -23,7 +23,7 @@
             </div>
             <h3 class="text-lg font-medium text-gray-900 mb-2">Pattern Recognition</h3>
             <p class="text-gray-600">
-                Models analyze previous moves to detect patterns and predict their opponent's next choice, demonstrating learning capabilities.
+                Models analyze the complete match history to detect patterns and predict their opponent's next choice, showcasing adaptive learning capabilities.
             </p>
         </div>
 
@@ -33,7 +33,7 @@
             </div>
             <h3 class="text-lg font-medium text-gray-900 mb-2">Insightful Metrics</h3>
             <p class="text-gray-600">
-                Each match generates data on win rates, pattern predictability, and strategic adaptation, revealing AI capabilities.
+                Each match generates data on win rates, pattern predictability, and strategic adaptation, revealing AI capabilities over time.
             </p>
         </div>
     </div>
@@ -75,6 +75,106 @@
         </p>
     </div>
 
+    <!-- How AI Models Play Section -->
+    <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm mb-8">
+        <h3 class="text-xl font-semibold mb-4 text-gray-900 flex items-center">
+            <x-phosphor-brain-fill class="w-5 h-5 mr-2 text-amber-500" />
+            How AI Models Play
+        </h3>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Left column: Description -->
+            <div>
+                <h4 class="text-base font-medium text-gray-800 mb-3 flex items-center">
+                    <x-phosphor-hand-pointing-fill class="w-4 h-4 mr-2 text-amber-600" />
+                    Complete Match Visibility
+                </h4>
+
+                <p class="text-gray-600 mb-4">
+                    Models have <strong>full access to all previous rounds</strong> when making each decision. This gives them the opportunity to:
+                </p>
+
+                <ul class="list-inside space-y-2 text-gray-600 mb-5">
+                    <li class="flex items-start">
+                        <span class="inline-flex items-center justify-center w-5 h-5 bg-amber-100 rounded-full mr-2 mt-0.5 flex-shrink-0">
+                            <x-phosphor-check class="w-3 h-3 text-amber-800" />
+                        </span>
+                        <span>
+                            <strong>Analyze opponent patterns</strong> from previous moves
+                        </span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="inline-flex items-center justify-center w-5 h-5 bg-amber-100 rounded-full mr-2 mt-0.5 flex-shrink-0">
+                            <x-phosphor-check class="w-3 h-3 text-amber-800" />
+                        </span>
+                        <span>
+                            <strong>Adapt strategies</strong> based on the current score
+                        </span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="inline-flex items-center justify-center w-5 h-5 bg-amber-100 rounded-full mr-2 mt-0.5 flex-shrink-0">
+                            <x-phosphor-check class="w-3 h-3 text-amber-800" />
+                        </span>
+                        <span>
+                            <strong>Employ counter-strategies</strong> when opponents show predictable behavior
+                        </span>
+                    </li>
+                </ul>
+
+                <p class="text-gray-600 mb-4">
+                    Models can detect when opponents have patterns like "always playing rock after scissors" and adapt accordingly.
+                </p>
+
+                <div class="bg-blue-50 border-l-4 border-blue-300 px-4 py-3 rounded-r mb-4">
+                    <div class="flex">
+                        <x-phosphor-info-fill class="h-5 w-5 text-blue-500 flex-shrink-0" />
+                        <p class="ml-3 text-sm text-blue-700">
+                            <span class="font-semibold">Strategic Depth:</span>
+                            Models that effectively learn from game history consistently outperform random strategies.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right column: Example Prompt -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="text-base font-medium text-gray-800 mb-3 flex items-center">
+                    <x-phosphor-code-fill class="w-4 h-4 mr-2 text-amber-600" />
+                    Real World Example Prompt for an AI Player
+                </h4>
+
+                <div class="bg-gray-800 text-gray-200 p-4 rounded-md font-mono text-xs md:text-sm leading-relaxed overflow-auto max-h-40">
+                    <span class="text-pink-400">Game:</span> Rock-Paper-Scissors<br>
+                    <span class="text-pink-400">You are:</span> player1<br>
+                    <span class="text-pink-400">Current Score -</span> Player1: 13, Player2: 7<br>
+                    <span class="text-pink-400">Condensed History:</span> 1rs1 2pr2 3sp1 4rs1 5pr2 6sp1 7rs1 8pr2 9sp1 10rs1 11pr2 12sp1 13rs1 14pr2 15sp1 16rs1 17pr2 18sp1 19rs1 20pr2<br>
+                    <span class="text-pink-400">Interpretation:</span> Each history token is of the form [round][P1 move][P2 move][result]. 'r' = rock, 'p' = paper, 's' = scissors; result '1' means Player1 wins, '2' means Player2 wins, 'T' means tie.<br>
+                    <span class="text-pink-400">Legal moves:</span> rock, paper, scissors<br>
+                    <span class="text-pink-400">Please provide your move in JSON format (e.g., {"move":"rock"}).</span>
+                </div>
+
+                <p class="text-sm text-gray-600 mt-3">
+                    Each AI model receives this information before making its next move, allowing for strategic analysis of previous rounds.
+                </p>
+
+                <!-- Example JSON response -->
+                <div class="flex flex-row items-center gap-x-6 bg-gray-50 rounded-lg mt-4">
+                    <!-- AI model avatar -->
+                    <div class="flex items-center">
+                        <div class="size-10 rounded-full bg-amber-100 flex items-center justify-center mr-2">
+                            <x-phosphor-robot-fill class="size-5 text-amber-500" />
+                        </div>
+                        <span class="text-gray-800 font-semibold text-base">AI Model Response:</span>
+                    </div>
+                    <!-- JSON response -->
+                    <div class="grow bg-gray-800 text-gray-200 p-2 rounded-md font-mono text-xs md:text-sm leading-relaxed overflow-auto max-h-20">
+                        <span class="text-pink-400">{"move":"rock"}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Match Scoring Section -->
     <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm mb-8">
         <h3 class="text-xl font-semibold mb-4 text-gray-900 flex items-center">
@@ -83,7 +183,7 @@
         </h3>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- 📣 Plain-English “How it works” -->
+            <!-- 📣 Plain-English "How it works" -->
             <div>
                 <h4 class="text-base font-medium text-gray-800 mb-2 flex items-center">
                     <x-phosphor-hand-pointing-fill class="w-4 h-4 mr-2 text-amber-600" />
@@ -92,7 +192,7 @@
 
                 <p class="text-gray-600 mb-4">
                     First bot to grab <strong>50 wins</strong> usually wins the match.
-                    But if both bots are neck-and-neck we run a quick “is this just luck?” check.
+                    But if both bots are neck-and-neck we run a quick "is this just luck?" check.
                     If the gap is tiny, we call it a tie so nobody brags without proof.
                 </p>
 
@@ -111,11 +211,11 @@
             <div>
                 <h4 class="text-base font-medium text-gray-800 mb-2 flex items-center">
                     <x-phosphor-sigma-fill class="w-4 h-4 mr-2 text-amber-600" />
-                    How Big Is “Big Enough”?
+                    How Big Is "Big Enough"?
                 </h4>
 
                 <p class="text-gray-600 mb-2">
-                    Rough guide (decisive rounds only, ties don’t count):
+                    Rough guide (decisive rounds only, ties don't count):
                 </p>
 
                 <ul class="space-y-1 list-inside text-gray-600 mb-4">
@@ -134,7 +234,7 @@
                 </ul>
 
                 <p class="text-sm text-gray-500 italic">
-                    Bigger match &rarr; we demand a bigger gap before yelling “Winner!”.
+                    Bigger match &rarr; we demand a bigger gap before yelling "Winner!".
                 </p>
             </div>
         </div>
@@ -146,7 +246,7 @@
                 class="text-gray-600 hover:text-gray-800 flex items-center cursor-pointer"
             >
                 <x-phosphor-flask-fill class="size-5 mr-2" />
-                Info for Nerds (don’t open if scared of math)
+                Info for Nerds (don't open if scared of math)
                 <x-phosphor-caret-down
                     class="w-4 h-4 ml-1 transform transition-transform"
                     x-bind:class="{ 'rotate-180': open }"
@@ -159,13 +259,13 @@
                     <div>
                         <p>
                             We run a <strong>90 % one-sided binomial z-test.</strong>
-                            It answers one question: “Is the score gap big enough that luck
-                            is an unlikely explanation?”
+                            It answers one question: "Is the score gap big enough that luck
+                            is an unlikely explanation?"
                         </p>
 
                         <ul class="list-disc list-inside mt-3 space-y-1">
-                            <li><em>Decisive rounds only.</em> Ties don’t help us judge skill.</li>
-                            <li>If the gap is below the cut-off, we say “statistical tie.”</li>
+                            <li><em>Decisive rounds only.</em> Ties don't help us judge skill.</li>
+                            <li>If the gap is below the cut-off, we say "statistical tie."</li>
                             <li>If the gap beats the cut-off, we say the leader showed real skill.</li>
                         </ul>
 
@@ -203,16 +303,11 @@
                     </div>
                 </div>
             </div>
-
         </div>
-
     </div>
-
-
 
     <!-- ELO Ratings Explanation -->
     <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm mb-8">
-
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="col-span-1">
                 <h3 class="text-xl font-semibold mb-4 text-gray-900 flex items-center">
