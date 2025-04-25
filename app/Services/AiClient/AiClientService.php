@@ -12,6 +12,16 @@ use Illuminate\Support\Str;
 class AiClientService
 {
     /**
+     * The number of times to retry a failed request
+     */
+    protected int $retryCount = 3;
+
+    /**
+     * The milliseconds to wait between retries
+     */
+    protected int $retryDelay = 1000;
+
+    /**
      * Mapping of AI model families to API endpoints and methods
      */
     protected array $providerMapping = [
@@ -111,9 +121,11 @@ class AiClientService
 
         $provider = $this->getProvider($config['provider']);
 
-        return $this->normalizeResponse(
-            $provider->handle($config, $systemPrompt, $userPrompt)
-        );
+        return $this->normalizeResponse(retry(
+            times: $this->retryCount,
+            callback: fn () => $provider->handle($config, $systemPrompt, $userPrompt),
+            sleepMilliseconds: $this->retryDelay,
+        ));
     }
 
     /**
@@ -125,9 +137,11 @@ class AiClientService
 
         $provider = $this->getProvider($config['provider']);
 
-        return $this->normalizeResponse(
-            $provider->handleWithImages($config, $systemPrompt, $userPrompt, $images)
-        );
+        return $this->normalizeResponse(retry(
+            times: $this->retryCount,
+            callback: fn () => $provider->handleWithImages($config, $systemPrompt, $userPrompt, $images),
+            sleepMilliseconds: $this->retryDelay,
+        ));
     }
 
     /**
