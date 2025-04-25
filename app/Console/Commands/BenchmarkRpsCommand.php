@@ -2,8 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Models\RpsMatch;
 use App\Services\EloRatingService;
 use App\Services\Rps\RpsBenchmarkService;
+use App\Services\Rps\RpsGame;
+use App\Services\Rps\RpsRound;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\TableStyle;
@@ -15,7 +19,7 @@ class BenchmarkRpsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'benchmark:rps {--rounds=50 : Number of rounds to play in each match} {--matches=10 : Number of matches to run}';
+    protected $signature = 'benchmark:rps {--matches=10 : Number of matches to run}';
 
     /**
      * The console command description.
@@ -23,6 +27,11 @@ class BenchmarkRpsCommand extends Command
      * @var string
      */
     protected $description = 'Run Rock Paper Scissors benchmarks between AI models';
+
+    /**
+     * The number of completed matches.
+     */
+    protected int $completedMatches = 0;
 
     /**
      * Execute the console command.
@@ -33,7 +42,6 @@ class BenchmarkRpsCommand extends Command
     ): int {
         $this->info('Starting Rock Paper Scissors benchmarks');
 
-        $rounds = (int) $this->option('rounds');
         $matchCount = (int) $this->option('matches');
 
         // Get all available AI models
@@ -45,43 +53,36 @@ class BenchmarkRpsCommand extends Command
             return Command::FAILURE;
         }
 
-        $this->info(sprintf('Found %d AI models. Planning to run %d matches with %d rounds each.',
-            $aiModels->count(),
-            $matchCount,
-            $rounds
-        ));
+        $this->completedMatches = 0;
 
-        $completedMatches = 0;
-
-        for ($i = 0; $i < $matchCount; $i++) {
+        while ($matchCount == 0 || $this->completedMatches < $matchCount) {
             // Randomly select two different models
             $player1 = $aiModels->random();
             $player2 = $aiModels->whereNotIn('id', [$player1->id])->random();
 
-            $this->info(sprintf('Match %d/%d: %s vs %s', $i + 1, $matchCount, $player1->name, $player2->name));
+            $game = new RpsGame($player1, $player2);
+
+            $this->reportGameStarted($game);
 
             try {
-                $match = $benchmarkService->runMatch($player1, $player2);
-
-                $this->info('Match completed');
-                $this->table(
-                    headers: ['Player', 'Score'],
-                    rows: [
-                        [$player1->name, $match->player1_score],
-                        [$player2->name, $match->player2_score],
-                    ],
+                $benchmarkService->runGame(
+                    game: $game,
+                    onRoundComplete: fn(RpsRound $round) => $this->reportRound($game, $round),
                 );
-
-                $completedMatches++;
             } catch (\Exception $e) {
-                $this->error(sprintf('Error running match: %s', $e->getMessage()));
-                Log::error('RPS benchmark error', [
-                    'exception' => $e->getMessage(),
-                    'player1' => $player1->name,
-                    'player2' => $player2->name,
-                ]);
-                report($e);
+                $this->reportError($e);
+                continue;
             }
+
+            $this->reportGameEnded($game);
+
+            $this->createMatch($game);
+
+            if ($matchCount === 0) {
+                $eloService->updateRpsEloRatings();
+            }
+
+            $this->completedMatches++;
         }
 
         // Update ELO ratings
@@ -89,8 +90,81 @@ class BenchmarkRpsCommand extends Command
         $matchesUpdated = $eloService->updateRpsEloRatings();
         $this->info(sprintf('Updated ELO ratings for %d matches', $matchesUpdated));
 
-        $this->info(sprintf('Successfully completed %d/%d matches', $completedMatches, $matchCount));
+        $this->info(sprintf('Successfully completed %d/%d matches', $this->completedMatches, $matchCount));
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * Report the result of a round
+     */
+    protected function reportRound(RpsGame $game, RpsRound $round): void
+    {
+        $this->info(sprintf(
+            'Round %d: %s vs %s (%s)',
+            $game->getRoundCount(),
+            $round->player1Move->name(),
+            $round->player2Move->name(),
+            $round->result->name(),
+        ));
+    }
+
+    /**
+     * Report an error while running the match
+     */
+    protected function reportError(Exception $exception): void
+    {
+        report($exception);
+
+        $this->error('Error occurred while running the match:');
+        $this->error($exception->getMessage());
+        $this->error('Please check the logs for more details.');
+
+        Log::error('RPS benchmark error', [
+            'exception' => $exception->getMessage(),
+        ]);
+    }
+
+    /**
+     * Report the start of a game.
+     */
+    protected function reportGameStarted(RpsGame $game): void
+    {
+        $this->info(sprintf(
+            'Game started between %s and %s',
+            $game->getPlayer1()->name,
+            $game->getPlayer2()->name,
+        ));
+    }
+
+    /**
+     * Report the end of a game.
+     */
+    protected function reportGameEnded(RpsGame $game): void
+    {
+        $this->info('Match completed');
+        $this->table(
+            ['Player', 'Score'],
+            [
+                [$game->getPlayer1()->name, $game->getPlayer1Score()],
+                [$game->getPlayer2()->name, $game->getPlayer2Score()],
+            ],
+        );
+    }
+
+    /**
+     * Creates a new RPS match instance from the game state
+     */
+    protected function createMatch(RpsGame $game): RpsMatch
+    {
+        // Remaining properties will be inferred automatically by the model's saving logic
+        return RpsMatch::create([
+            'player1_id' => $game->getPlayer1()->id,
+            'player2_id' => $game->getPlayer2()->id,
+            'started_at' => $game->getStartedAt(),
+            'ended_at' => $game->getEndedAt(),
+            'move_history' => $game->getRoundHistory(),
+            'is_forced_completion' => !$game->isOver(),
+        ]);
     }
 }

@@ -7,7 +7,6 @@ use App\Models\RpsMatch;
 use App\Services\AiClient\AiClientService;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Log;
 
 class RpsBenchmarkService
 {
@@ -33,60 +32,21 @@ class RpsBenchmarkService
 
     /**
      * Run a single RPS match between two AI models
+     *
+     * @param null|callable<RpsRound> onRoundComplete Callback to be called after each round
      */
-    public function runMatch(AiModel $player1, AiModel $player2): RpsMatch
+    public function runGame(RpsGame $game, ?callable $onRoundComplete = null): void
     {
-        $game = new RpsGame($player1, $player2, targetScore: 50);
-        $startedAt = now();
+        $onRoundComplete = $onRoundComplete ?? fn() => null;
 
-        while (true) {
-            try {
-                $player1Move = $this->getMove($game, forPlayer: RpsPlayer::Player1);
-                $player2Move = $this->getMove($game, forPlayer: RpsPlayer::Player2);
-            } catch (\Exception $e) {
-                Log::error('Error getting move from AI', [
-                    'player1' => $player1->name,
-                    'player2' => $player2->name,
-                    'error' => $e->getMessage(),
-                ]);
+        while (! $game->isOver()) {
+            $player1Move = $this->getMove($game, forPlayer: RpsPlayer::Player1);
+            $player2Move = $this->getMove($game, forPlayer: RpsPlayer::Player2);
 
-                break; // If we can't get a move, we assume the game is over
-            }
+            $round = $game->addRound(new RpsRound($player1Move, $player2Move));
 
-            $round = $game->addRound($player1Move, $player2Move);
-
-            Log::debug('RPS round completed', [
-                'round' => $game->getRoundCount(),
-                'round' => $round->long(),
-                'player1_score' => $game->getPlayer1Score(),
-                'player2_score' => $game->getPlayer2Score(),
-            ]);
-
-            if ($game->isOver()) {
-                break;
-            }
+            $onRoundComplete($round);
         }
-
-        return $this->createMatch($game, $startedAt);
-    }
-
-    /**
-     * Creates a new RPS match instance from the game state
-     */
-    protected function createMatch(RpsGame $game, CarbonInterface $startedAt): RpsMatch
-    {
-        // Winner and remaining properties will be determined automatically by the model's saving logic
-        return RpsMatch::create([
-            'player1_id' => $game->getPlayer1()->id,
-            'player2_id' => $game->getPlayer2()->id,
-            'started_at' => $startedAt,
-            'ended_at' => now(),
-            'move_history' => $game->getRoundHistory(),
-            'rounds_played' => count($game->getRounds()),
-            'player1_score' => $game->getPlayer1Score(),
-            'player2_score' => $game->getPlayer2Score(),
-            'is_forced_completion' => !$game->isOver(),
-        ]);
     }
 
     /**

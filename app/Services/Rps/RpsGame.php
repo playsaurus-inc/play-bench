@@ -3,6 +3,7 @@
 namespace App\Services\Rps;
 
 use App\Models\AiModel;
+use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use JsonSerializable;
 
@@ -46,36 +47,57 @@ class RpsGame implements JsonSerializable
     protected CarbonInterface $startedAt;
 
     /**
+     * The time the game ended.
+     */
+    protected ?CarbonInterface $endedAt = null;
+
+    /**
      * Create a new game state instance.
      */
-    public function __construct(AiModel $player1, AiModel $player2, int $targetScore = 50, string $rounds = '')
+    public function __construct(
+        AiModel $player1,
+        AiModel $player2,
+        int $targetScore = 50,
+        string $rounds = '',
+        CarbonInterface $startedAt = null,
+    )
     {
         $this->targetScore = $targetScore;
         $this->player1 = $player1;
         $this->player2 = $player2;
-        $this->startedAt = now();
+        $this->startedAt = $startedAt ?? now();
 
         if ($rounds) {
-            $this->rounds = str($rounds)
+            $rounds = str($rounds)
                 ->explode(' ')
                 ->map(fn (string $round) => RpsRound::fromString($round))
                 ->all();
+
+            foreach ($rounds as $round) {
+                $this->addRound($round);
+            }
         }
     }
 
     /**
      * Adds a round to the game state.
      */
-    public function addRound(RpsMove $player1Move, RpsMove $player2Move): RpsRound
+    public function addRound(RpsRound $round): RpsRound
     {
-        $round = new RpsRound($player1Move, $player2Move);
-        $this->rounds[] = $round;
+        if ($this->endedAt) {
+            throw new \RuntimeException('Game is already over');
+        }
 
+        $this->rounds[] = $round;
 
         if ($round->result === RpsRoundResult::Player1Win) {
             $this->player1Score++;
         } elseif ($round->result === RpsRoundResult::Player2Win) {
             $this->player2Score++;
+        }
+
+        if ($this->player1Score >= $this->targetScore || $this->player2Score >= $this->targetScore) {
+            $this->endedAt = now();
         }
 
         return $round;
@@ -159,8 +181,7 @@ class RpsGame implements JsonSerializable
      */
     public function isOver(): bool
     {
-        return $this->player1Score >= $this->targetScore
-            || $this->player2Score >= $this->targetScore;
+        return $this->endedAt !== null;
     }
 
     /**
@@ -172,18 +193,37 @@ class RpsGame implements JsonSerializable
     }
 
     /**
+     * Returns the time the game ended.
+     */
+    public function getEndedAt(): ?CarbonInterface
+    {
+        return $this->endedAt;
+    }
+
+    /**
+     * Returns the target score.
+     */
+    public function getTargetScore(): int
+    {
+        return $this->targetScore;
+    }
+
+    /**
      * Specifies the data that should be serialized to JSON.
      */
     public function jsonSerialize(): array
     {
         return [
-            'player1' => $this->player1,
-            'player2' => $this->player2,
+            'player1_id' => $this->player1->id,
+            'player2_id' => $this->player2->id,
             'rounds' => $this->getRoundHistory(),
             'round_count' => $this->getRoundCount(),
             'player1_score' => $this->getPlayer1Score(),
             'player2_score' => $this->getPlayer2Score(),
             'is_over' => $this->isOver(),
+            'target_score' => $this->targetScore,
+            'started_at' => $this->startedAt->toDateTimeString(),
+            'ended_at' => $this->endedAt?->toDateTimeString(),
         ];
     }
 
@@ -192,11 +232,18 @@ class RpsGame implements JsonSerializable
      */
     public static function fromJson(array $data): self
     {
+        $player1 = AiModel::find($data['player1_id']);
+        $player2 = AiModel::find($data['player2_id']);
+
+        if (!$player1 || !$player2) {
+            throw new \InvalidArgumentException('Invalid player IDs');
+        }
+
         return new self(
-            player1: AiModel::find($data['player1']['id']),
-            player2: AiModel::find($data['player2']['id']),
-            targetScore: $data['target_score'] ?? 50,
-            rounds: $data['rounds'] ?? '',
+            player1: $player1,
+            player2: $player2,
+            targetScore: $data['target_score'],
+            rounds: $data['rounds']
         );
     }
 }
