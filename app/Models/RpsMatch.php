@@ -45,32 +45,38 @@ class RpsMatch extends Model implements RankedMatch
     protected static function booting()
     {
         static::saving(function (self $model) {
-            if (! $model->winner_id) {
+            if (! isset($model->player1_score)) {
+                $model->player1_score = Str::substrCount($model->move_history, '1');
+            }
+
+            if (! isset($model->player2_score)) {
+                $model->player2_score = Str::substrCount($model->move_history, '2');
+            }
+
+            if (! isset($model->winner_id)) {
                 $model->winner_id = static::determineWinner(
-                    $model->player1,
-                    $model->player1_score,
-                    $model->player2,
-                    $model->player2_score,
+                    $model->player1, $model->player1_score,
+                    $model->player2, $model->player2_score,
                 )?->id;
             }
 
-            if (! $model->player1_win_streak) {
+            if (! isset($model->player1_win_streak)) {
                 $model->player1_win_streak = static::calculateWinStreak($model->move_history, player: 1);
             }
 
-            if (! $model->player2_win_streak) {
+            if (! isset($model->player2_win_streak)) {
                 $model->player2_win_streak = static::calculateWinStreak($model->move_history, player: 2);
             }
 
-            if (! $model->rounds_played) {
+            if (! isset($model->rounds_played)) {
                 $model->rounds_played = Str::of($model->move_history)->explode(' ')->count() + 1;
             }
 
-            if (! $model->player1_move_distribution) {
+            if (! isset($model->player1_move_distribution)) {
                 $model->player1_move_distribution = static::calculateMoveDistribution($model->move_history, player: 1);
             }
 
-            if (! $model->player2_move_distribution) {
+            if (! isset($model->player2_move_distribution)) {
                 $model->player2_move_distribution = static::calculateMoveDistribution($model->move_history, player: 2);
             }
         });
@@ -116,30 +122,6 @@ class RpsMatch extends Model implements RankedMatch
     }
 
     /**
-     * Determine the result of a round based on the two moves
-     *
-     * @param  string  $p1Move  Player 1's move (r, p, or s)
-     * @param  string  $p2Move  Player 2's move (r, p, or s)
-     * @return string Result code (1, 2, or t)
-     */
-    public static function determineRoundResult(string $p1Move, string $p2Move): string
-    {
-        if ($p1Move === $p2Move) {
-            return 't';
-        }
-
-        if (
-            ($p1Move === 'r' && $p2Move === 's') ||
-            ($p1Move === 'p' && $p2Move === 'r') ||
-            ($p1Move === 's' && $p2Move === 'p')
-        ) {
-            return '1';
-        }
-
-        return '2';
-    }
-
-    /**
      * Check if this match is a statistical tie (different scores but not statistically significant).
      */
     public function isStatisticalTie(): bool
@@ -158,20 +140,6 @@ class RpsMatch extends Model implements RankedMatch
     public function getDifferenceThreshold(): float
     {
         return Statistics::getDifferenceThreshold($this->player1_score, $this->player2_score);
-    }
-
-    /**
-     * Determine the scores of the players based on the move history
-     *
-     * @param  string  $moveHistory  The move history string
-     * @return [int, int] An array containing the scores of player 1 and player 2
-     */
-    public static function determineScoresFromMoveHistory(string $moveHistory): array
-    {
-        return [
-            Str::substrCount($moveHistory, '1'),
-            Str::substrCount($moveHistory, '2'),
-        ];
     }
 
     /**

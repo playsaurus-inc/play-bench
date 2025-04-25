@@ -3,20 +3,15 @@
 namespace App\Services\Rps;
 
 use App\Models\AiModel;
-use App\Models\RpsMatch;
 use App\Services\AiClient\AiClientService;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Concurrency;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class RpsBenchmarkService
 {
     /**
      * The number of times to retry a failed request
      */
-    protected int $retryCount = 1;
+    protected int $retryCount = 3;
 
     /**
      * Create a new service instance.
@@ -35,144 +30,90 @@ class RpsBenchmarkService
 
     /**
      * Run a single RPS match between two AI models
+     *
+     * @param null|callable<RpsRound> onRoundComplete Callback to be called after each round
      */
-    public function runMatch(AiModel $player1, AiModel $player2, int $maxRounds = 50): RpsMatch
+    public function runGame(RpsGame $game, ?callable $onRoundComplete = null): void
     {
-        // Create a new match record
-        $match = new RpsMatch;
-        $match->player1_id = $player1->id;
-        $match->player2_id = $player2->id;
-        $match->started_at = Date::now();
-        $match->move_history = '';
-        $match->rounds_played = 0;
-        $match->player1_score = 0;
-        $match->player2_score = 0;
+        $onRoundComplete = $onRoundComplete ?? fn () => null;
 
-        Log::info('Starting RPS match', [
-            'match_id' => $match->id,
-            'player1' => $player1->name,
-            'player2' => $player2->name,
-            'max_rounds' => $maxRounds,
-        ]);
+        while (! $game->isOver()) {
+            $player1Move = $this->getMove($game, forPlayer: RpsPlayer::Player1);
+            $player2Move = $this->getMove($game, forPlayer: RpsPlayer::Player2);
 
-        // System prompts for each player
-        $player1SystemPrompt = $this->buildSystemPrompt('player1');
-        $player2SystemPrompt = $this->buildSystemPrompt('player2');
+            $round = $game->addRound(new RpsRound($player1Move, $player2Move));
 
-        $p1Score = 0;
-        $p2Score = 0;
-        $moveHistory = [];
+            $onRoundComplete($round);
+        }
+    }
 
-        // Run the match
-        $isForced = false;
+    /**
+     * Get the response from the AI model
+     */
+    protected function getMove(RpsGame $game, RpsPlayer $forPlayer): RpsMove
+    {
+        return retry(
+            times: $this->retryCount,
+            callback: fn () => $this->requestMove($game, $forPlayer),
+            sleepMilliseconds: 1000
+        );
+    }
 
-        for ($round = 1; $round <= $maxRounds; $round++) {
-            // Build the player prompts with current game state
-            $player1Prompt = $this->buildPlayerPrompt('player1', $p1Score, $p2Score, $moveHistory);
-            $player2Prompt = $this->buildPlayerPrompt('player2', $p1Score, $p2Score, $moveHistory);
+    /**
+     * Request a move from the AI model
+     */
+    protected function requestMove(RpsGame $game, RpsPlayer $player): RpsMove
+    {
+        $aiModel = $game->getPlayer($player);
 
-            // [$player1Answer, $player2Answer] = Concurrency::run([
-            //    fn () => app(AiClientService::class)->getResponse($player1->name, $player1SystemPrompt, $player1Prompt, 'rps'),
-            //    fn() => app(AiClientService::class)->getResponse($player2->name, $player2SystemPrompt, $player2Prompt, 'rps'),
-            // ]);
-            $player1Answer = $this->getResponse($player1, $player1SystemPrompt, $player1Prompt);
-            $player2Answer = $this->getResponse($player2, $player2SystemPrompt, $player2Prompt);
-
-            // Get the player moves
-            $player1Move = $this->getNormalizedMove($player1Answer);
-            $player2Move = $this->getNormalizedMove($player2Answer);
-
-            // Determine the winner
-            $roundResult = RpsMatch::determineRoundResult(
-                $this->abbreviateMove($player1Move),
-                $this->abbreviateMove($player2Move)
-            );
-
-            // Update scores
-            if ($roundResult === '1') {
-                $p1Score++;
-            } elseif ($roundResult === '2') {
-                $p2Score++;
-            }
-
-            // Add to move history
-            $moveHistory[] = sprintf('%d%s%s%s',
-                $round,
-                $this->abbreviateMove($player1Move),
-                $this->abbreviateMove($player2Move),
-                $roundResult
-            );
-
-            Log::debug('RPS round completed', [
-                'round' => $round,
-                'match_id' => $match->id,
-                'player1_move' => $player1Move,
-                'player2_move' => $player2Move,
-                'result' => $roundResult,
-                'player1_score' => $p1Score,
-                'player2_score' => $p2Score,
-            ]);
-
-            // Check if we have a clear winner (more than half the max rounds)
-            if ($p1Score > $maxRounds / 2 || $p2Score > $maxRounds / 2) {
-                Log::info('RPS match has a clear winner before completing all rounds', [
-                    'match_id' => $match->id,
-                    'completed_rounds' => $round,
-                    'max_rounds' => $maxRounds,
-                    'player1_score' => $p1Score,
-                    'player2_score' => $p2Score,
-                ]);
-                break;
-            }
+        if ($aiModel->name === 'random') {
+            return RpsMove::random();
         }
 
-        // Update the match with final results
-        $match->move_history = implode(' ', $moveHistory);
-        $match->rounds_played = count($moveHistory);
-        $match->player1_score = $p1Score;
-        $match->player2_score = $p2Score;
-        $match->ended_at = Date::now();
-        $match->is_forced_completion = $isForced;
+        $response = $this->aiClient->getResponse(
+            modelName: $aiModel->name,
+            systemPrompt: $this->buildSystemPrompt($player),
+            userPrompt: $this->buildUserPrompt($game, $player),
+        );
 
-        // Winner will be determined automatically by the model's saving logic
-        $match->save();
+        return $this->extractMoveFromResponse($response);
+    }
 
-        Log::info('RPS match completed', [
-            'match_id' => $match->id,
-            'rounds_played' => $match->rounds_played,
-            'player1_score' => $p1Score,
-            'player2_score' => $p2Score,
-            'winner' => $match->winner?->name ?? 'Tie',
-            'duration_seconds' => $match->getDuration(),
-        ]);
+    /**
+     * Extract the move from the AI response
+     */
+    protected function extractMoveFromResponse(string $response): RpsMove
+    {
+        if (
+            preg_match('/"move"\s*:\s*"([^"]+)"/', $response, $matches) ||
+            preg_match('/\b(rock|paper|scissors)\b/i', $response, $matches) ||
+            preg_match('/\b(r|p|s)\b/i', $response, $matches)
+        ) {
+            return RpsMove::parse($matches[1]);
+        }
 
-        return $match;
+        throw new \Exception('Could not parse RPS move from response: '.$response);
     }
 
     /**
      * Build the system prompt for a player
      */
-    protected function buildSystemPrompt(string $player): string
+    public function buildSystemPrompt(RpsPlayer $player): string
     {
-        return "You are an expert Rock-Paper-Scissors AI for {$player}. Respond ONLY with valid JSON containing a key 'move' with your move: rock, paper, or scissors.";
+        return "You are an expert Rock-Paper-Scissors AI for {$player->name()}. Respond ONLY with valid JSON containing a key 'move' with your move: rock, paper, or scissors.";
     }
 
     /**
      * Build the player prompt with current game state
-     *
-     * @param  string  $player  The player identifier ('player1' or 'player2')
-     * @param  int  $player1Score  Current score for player 1
-     * @param  int  $player2Score  Current score for player 2
-     * @param  array  $moveHistory  Array of move history entries
      */
-    protected function buildPlayerPrompt(string $player, int $player1Score, int $player2Score, array $moveHistory): string
+    public function buildUserPrompt(RpsGame $game, RpsPlayer $player): string
     {
         $prompt = "Game: Rock-Paper-Scissors\n";
-        $prompt .= "You are: {$player}\n";
-        $prompt .= "Current Score - Player1: {$player1Score}, Player2: {$player2Score}\n";
+        $prompt .= "You are: {$player->name()}\n";
+        $prompt .= "Current Score - Player1: {$game->getPlayer1Score()}, Player2: {$game->getPlayer2Score()}\n";
 
-        if (! empty($moveHistory)) {
-            $prompt .= 'Condensed History: '.implode(' ', $moveHistory)."\n";
+        if ($history = $game->getRoundHistory(withRoundNumbers: true)) {
+            $prompt .= "Condensed History: {$history}\n";
             $prompt .= "Interpretation: Each history token is of the form [round][P1 move][P2 move][result]. 'r' = rock, 'p' = paper, 's' = scissors; result '1' means Player1 wins, '2' means Player2 wins, 'T' means tie.\n";
         } else {
             $prompt .= "Condensed History: None\n";
@@ -182,75 +123,5 @@ class RpsBenchmarkService
         $prompt .= 'Please provide your move in JSON format (e.g., {"move":"rock"}).';
 
         return $prompt;
-    }
-
-    /**
-     * Get the response from the AI model
-     */
-    protected function getResponse(AiModel $aiModel, string $systemPrompt, string $playerPrompt): string
-    {
-        if ($aiModel->name === 'random') {
-            return ['rock', 'paper', 'scissors'][random_int(0, 2)];
-        }
-
-        $response = $this->aiClient->getResponse($aiModel->name, $systemPrompt, $playerPrompt);
-
-        // Extract the move from a JSON response
-        if (preg_match('/"move"\s*:\s*"([^"]+)"/', $response, $matches)) {
-            return strtolower($matches[1]);
-        }
-
-        // If not in JSON format, look for "rock", "paper", or "scissors" keywords
-        if (preg_match('/\b(rock|paper|scissors)\b/i', $response, $matches)) {
-            return strtolower($matches[1]);
-        }
-
-        throw new \Exception('Could not parse RPS move from response: '.$response);
-    }
-
-    /**
-     * Convert a move to its abbreviated form
-     */
-    protected function abbreviateMove(string $move): string
-    {
-        return substr(strtolower($move), 0, 1);
-    }
-
-    /**
-     * Normalize a move response
-     */
-    protected function getNormalizedMove(string $move): string
-    {
-        $move = strtolower(trim($move));
-
-        // Handle abbreviated moves
-        if ($move === 'r') {
-            return 'rock';
-        } elseif ($move === 'p') {
-            return 'paper';
-        } elseif ($move === 's') {
-            return 'scissors';
-        }
-
-        // If it's already a valid move, return it
-        if (in_array($move, ['rock', 'paper', 'scissors'])) {
-            return $move;
-        }
-
-        // Otherwise, try to find the move in the response
-        if (Str::contains($move, 'rock')) {
-            return 'rock';
-        }
-
-        if (Str::contains($move, 'paper')) {
-            return 'paper';
-        }
-
-        if (Str::contains($move, 'scissors')) {
-            return 'scissors';
-        }
-
-        // If all else fails, return a random move
-        return ['rock', 'paper', 'scissors'][random_int(0, 2)];
     }
 }
