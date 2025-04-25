@@ -60,6 +60,14 @@ class RpsMatch extends Model implements RankedMatch
                 )?->id;
             }
 
+            if (! isset($model->loser_id)) {
+                $model->loser_id = match ($model->winner_id) {
+                    $model->player1_id => $model->player2_id,
+                    $model->player2_id => $model->player1_id,
+                    default => null,
+                };
+            }
+
             if (! isset($model->player1_win_streak)) {
                 $model->player1_win_streak = static::calculateWinStreak($model->move_history, player: 1);
             }
@@ -89,7 +97,10 @@ class RpsMatch extends Model implements RankedMatch
     {
         // Just null the values so they can be recomputed again in the `saving` event
         $this->update([
+            'player1_score' => null,
+            'player2_score' => null,
             'winner_id' => null,
+            'loser_id' => null,
             'player1_win_streak' => null,
             'player2_win_streak' => null,
             'rounds_played' => null,
@@ -164,6 +175,14 @@ class RpsMatch extends Model implements RankedMatch
     public function winner(): BelongsTo
     {
         return $this->belongsTo(AiModel::class, 'winner_id');
+    }
+
+    /**
+     * Get the AI model that lost the match
+     */
+    public function loser(): BelongsTo
+    {
+        return $this->belongsTo(AiModel::class, 'loser_id');
     }
 
     /**
