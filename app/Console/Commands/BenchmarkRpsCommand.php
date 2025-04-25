@@ -6,6 +6,7 @@ use App\Services\EloRatingService;
 use App\Services\Rps\RpsBenchmarkService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Console\Helper\TableStyle;
 
 class BenchmarkRpsCommand extends Command
 {
@@ -60,14 +61,16 @@ class BenchmarkRpsCommand extends Command
             $this->info(sprintf('Match %d/%d: %s vs %s', $i + 1, $matchCount, $player1->name, $player2->name));
 
             try {
-                $match = $benchmarkService->runMatch($player1, $player2, $rounds);
+                $match = $benchmarkService->runMatch($player1, $player2);
 
-                $this->info(sprintf('Match completed: Player 1 (%s): %d - Player 2 (%s): %d',
-                    $player1->name,
-                    $match->player1_score,
-                    $player2->name,
-                    $match->player2_score
-                ));
+                $this->info('Match completed');
+                $this->table(
+                    headers: ['Player', 'Score'],
+                    rows: [
+                        [$player1->name, $match->player1_score],
+                        [$player2->name, $match->player2_score],
+                    ],
+                );
 
                 $completedMatches++;
             } catch (\Exception $e) {

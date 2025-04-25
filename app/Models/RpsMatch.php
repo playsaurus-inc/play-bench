@@ -4,6 +4,9 @@ namespace App\Models;
 
 use App\Models\Contracts\RankedMatch;
 use App\Services\Rps\RpsMatchAnalysisService;
+use App\Services\Rps\RpsMove;
+use App\Services\Rps\RpsRound;
+use App\Services\Rps\RpsRoundResult;
 use App\Support\Statistics;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -113,30 +116,6 @@ class RpsMatch extends Model implements RankedMatch
 
         // Return the model with the higher score
         return $player1Score > $player2Score ? $player1 : $player2;
-    }
-
-    /**
-     * Determine the result of a round based on the two moves
-     *
-     * @param  string  $p1Move  Player 1's move (r, p, or s)
-     * @param  string  $p2Move  Player 2's move (r, p, or s)
-     * @return string Result code (1, 2, or t)
-     */
-    public static function determineRoundResult(string $p1Move, string $p2Move): string
-    {
-        if ($p1Move === $p2Move) {
-            return 't';
-        }
-
-        if (
-            ($p1Move === 'r' && $p2Move === 's') ||
-            ($p1Move === 'p' && $p2Move === 'r') ||
-            ($p1Move === 's' && $p2Move === 'p')
-        ) {
-            return '1';
-        }
-
-        return '2';
     }
 
     /**

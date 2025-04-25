@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\AiModel;
-use App\Models\RpsMatch;
+use App\Services\Rps\RpsRound;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -49,7 +49,7 @@ class RpsMatchFactory extends Factory
 
         return Collection::times($rounds)
             ->map(fn () => [$moves->random(), $moves->random()])
-            ->map(fn ($move) => $move[0].$move[1].RpsMatch::determineRoundResult($move[0], $move[1]))
+            ->map(fn ($move) => (string) new RpsRound($move[0], $move[1]))
             ->implode(' ');
     }
 
