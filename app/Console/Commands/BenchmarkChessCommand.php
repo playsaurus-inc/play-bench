@@ -2,8 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Models\ChessMatch;
 use App\Services\Chess\ChessBenchmarkService;
+use App\Services\Chess\ChessGame;
+use App\Services\Chess\ChessPlayer;
 use App\Services\EloRatingService;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -24,84 +28,166 @@ class BenchmarkChessCommand extends Command
     protected $description = 'Run chess benchmarks between AI models';
 
     /**
+     * The number of completed matches.
+     */
+    protected int $completedMatches = 0;
+
+    /**
      * Execute the console command.
      */
     public function handle(
         ChessBenchmarkService $benchmarkService,
         EloRatingService $eloService,
     ): int {
-        $this->info('Starting Chess benchmark tests');
-
         $matchCount = (int) $this->option('matches');
+        $matchCount = $matchCount > 0 ? $matchCount : PHP_INT_MAX;
 
         // Get all available AI models
         $aiModels = $benchmarkService->getAvailableModels();
 
         if ($aiModels->isEmpty()) {
             $this->error('No AI models found in the database. Please add some AI models first.');
-
             return Command::FAILURE;
         }
 
-        $this->info(sprintf('Found %d AI models. Planning to run %d chess matches.',
-            $aiModels->count(),
-            $matchCount
-        ));
+        $this->info('Starting Chess benchmark tests');
 
-        $completedMatches = 0;
+        $this->completedMatches = 0;
 
-        for ($i = 0; $i < $matchCount; $i++) {
+        while ($this->completedMatches < $matchCount) {
             // Randomly select two different models
             $whitePlayer = $aiModels->random();
             $blackPlayer = $aiModels->whereNotIn('id', [$whitePlayer->id])->random();
 
-            $this->info(sprintf('Match %d/%d: %s (White) vs %s (Black)',
-                $i + 1,
-                $matchCount,
-                $whitePlayer->name,
-                $blackPlayer->name
-            ));
+            $game = new ChessGame($whitePlayer, $blackPlayer);
+
+            $this->reportGameStarted($game);
 
             try {
-                $match = $benchmarkService->runMatch($whitePlayer, $blackPlayer);
-
-                $result = match ($match->result) {
-                    'white' => "{$whitePlayer->name} (White)",
-                    'black' => "{$blackPlayer->name} (Black)",
-                    default => 'Draw'
-                };
-
-                $this->info(sprintf('Match completed: Result: %s, Moves: %d',
-                    $result,
-                    $match->getMoveCount()
-                ));
-
-                if ($match->illegal_moves_white > 0 || $match->illegal_moves_black > 0) {
-                    $this->info(sprintf('Illegal moves: White: %d, Black: %d',
-                        $match->illegal_moves_white,
-                        $match->illegal_moves_black
-                    ));
-                }
-
-                $completedMatches++;
-            } catch (\Exception $e) {
-                $this->error(sprintf('Error running match: %s', $e->getMessage()));
-                Log::error('Chess benchmark error', [
-                    'exception' => $e->getMessage(),
-                    'white' => $whitePlayer->name,
-                    'black' => $blackPlayer->name,
-                ]);
-                report($e);
+                $benchmarkService->runGame(
+                    game: $game,
+                    onMoveMade: fn (ChessGame $game, ChessPlayer $player, string $move) =>
+                        $this->reportMove($game, $player, $move),
+                    onIllegalMove: fn (ChessGame $game, ChessPlayer $player, string $move) =>
+                        $this->reportIllegalMove($game, $player, $move)
+                );
+            } catch (Exception $e) {
+                $this->reportError($e);
+                continue;
             }
+
+            $this->reportGameEnded($game);
+
+            $this->createMatch($game);
+
+            $eloService->updateChessEloRatings();
+
+            $this->completedMatches++;
         }
 
-        // Update ELO ratings
-        $this->info('Updating ELO ratings...');
-        $matchesUpdated = $eloService->updateChessEloRatings();
-        $this->info(sprintf('Updated ELO ratings for %d matches', $matchesUpdated));
-
-        $this->info(sprintf('Successfully completed %d/%d matches', $completedMatches, $matchCount));
-
+        $this->info('All matches completed');
         return Command::SUCCESS;
+    }
+
+    /**
+     * Report the start of a game.
+     */
+    protected function reportGameStarted(ChessGame $game): void
+    {
+        $this->info(sprintf(
+            'Chess game started: %s (White) vs %s (Black)',
+            $game->getWhitePlayer()->name,
+            $game->getBlackPlayer()->name
+        ));
+    }
+
+    /**
+     * Report a move.
+     */
+    protected function reportMove(ChessGame $game, ChessPlayer $player, string $move): void
+    {
+        $this->info(sprintf(
+            'Move %d: %s (%s) played %s',
+            intval($game->getMoveCount() / 2) + 1,
+            $game->getPlayer($player)->name,
+            $player->name(),
+            $move
+        ));
+    }
+
+    /**
+     * Report an illegal move.
+     */
+    protected function reportIllegalMove(ChessGame $game, ChessPlayer $player, string $move): void
+    {
+        $this->warn(sprintf(
+            'Illegal move: %s (%s) attempted %s',
+            $game->getPlayer($player)->name,
+            $player->name(),
+            $move
+        ));
+    }
+
+    /**
+     * Report the end of a game.
+     */
+    protected function reportGameEnded(ChessGame $game): void
+    {
+        $result = match ($game->getResult()) {
+            'white' => "{$game->getWhitePlayer()->name} (White)",
+            'black' => "{$game->getBlackPlayer()->name} (Black)",
+            default => 'Draw'
+        };
+
+        $this->info('Game completed');
+        $this->info(sprintf('Result: %s, Moves: %d', $result, $game->getMoveCount()));
+
+        if ($game->getIllegalMovesWhite() > 0 || $game->getIllegalMovesBlack() > 0) {
+            $this->info(sprintf('Illegal moves: White: %d, Black: %d',
+                $game->getIllegalMovesWhite(),
+                $game->getIllegalMovesBlack()
+            ));
+        }
+
+        if ($game->isForced()) {
+            $this->warn('Game was forced to completion');
+        }
+    }
+
+    /**
+     * Report an error.
+     */
+    protected function reportError(Exception $exception): void
+    {
+        report($exception);
+
+        $this->error('Error occurred while running the match:');
+        $this->error($exception->getMessage());
+        $this->error('Please check the logs for more details.');
+
+        Log::error('Chess benchmark error', [
+            'exception' => $exception->getMessage(),
+        ]);
+    }
+
+    /**
+     * Create a chess match from the game state.
+     */
+    protected function createMatch(ChessGame $game): ChessMatch
+    {
+        return ChessMatch::create([
+            'white_id' => $game->getWhitePlayer()->id,
+            'black_id' => $game->getBlackPlayer()->id,
+            'winner_id' => null, // Will be set automatically by the model's saving logic
+            'ply_count' => $game->getPlyCount(),
+            'result' => $game->getResult(),
+            'pgn' => $game->generatePgn(),
+            'final_fen' => $game->getFen(),
+            'illegal_moves_white' => $game->getIllegalMovesWhite(),
+            'illegal_moves_black' => $game->getIllegalMovesBlack(),
+            'is_forced_completion' => $game->isForced(),
+            'started_at' => $game->getStartedAt(),
+            'ended_at' => $game->getEndedAt(),
+        ]);
     }
 }
