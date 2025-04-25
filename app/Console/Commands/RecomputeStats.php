@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Models\ChessMatch;
 use App\Models\RpsMatch;
+use App\Models\SvgMatch;
 use Illuminate\Console\Command;
 
 class RecomputeStats extends Command
@@ -29,6 +31,16 @@ class RecomputeStats extends Command
         $this->components->task(
             'Recomputing Rock-Paper-Scissors Matches',
             fn () => RpsMatch::with('player1', 'player2')->get()->each->recompute(),
+        );
+
+        $this->components->task(
+            'Recomputing SVG Matches',
+            fn () => SvgMatch::with('player1', 'player2')->get()->each->recompute(),
+        );
+
+        $this->components->task(
+            'Recomputing Chess Matches',
+            fn () => ChessMatch::with('white', 'black')->get()->each->recompute(),
         );
 
         $this->components->task(

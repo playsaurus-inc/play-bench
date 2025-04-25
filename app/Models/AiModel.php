@@ -68,6 +68,14 @@ class AiModel extends Model
     }
 
     /**
+     * Get all RPS matches where this AI model lost
+     */
+    public function rpsMatchesLost(): HasMany
+    {
+        return $this->hasMany(RpsMatch::class, 'loser_id');
+    }
+
+    /**
      * Get all SVG matches where this AI model is player 1
      */
     public function svgMatchesAsPlayer1(): HasMany
@@ -92,6 +100,14 @@ class AiModel extends Model
     }
 
     /**
+     * Get all SVG matches where this AI model lost
+     */
+    public function svgMatchesLost(): HasMany
+    {
+        return $this->hasMany(SvgMatch::class, 'loser_id');
+    }
+
+    /**
      * Get all chess matches where this AI model plays as white
      */
     public function chessMatchesAsWhite(): HasMany
@@ -113,6 +129,14 @@ class AiModel extends Model
     public function chessMatchesWon(): HasMany
     {
         return $this->hasMany(ChessMatch::class, 'winner_id');
+    }
+
+    /**
+     * Get all chess matches where this AI model lost
+     */
+    public function chessMatchesLost(): HasMany
+    {
+        return $this->hasMany(ChessMatch::class, 'loser_id');
     }
 
     /**

@@ -25,6 +25,35 @@ class SvgMatch extends Model implements RankedMatch
     ];
 
     /**
+     * Perform any actions required before the model boots.
+     *
+     * @return void
+     */
+    protected static function booting()
+    {
+        static::saving(function (self $model) {
+            if (! isset($model->loser_id)) {
+                $model->loser_id = match ($model->winner_id) {
+                    $model->player1_id => $model->player2_id,
+                    $model->player2_id => $model->player1_id,
+                    default => null, // Should not happen if everything works ok
+                };
+            }
+        });
+    }
+
+    /**
+     * Recompute the match statistics.
+     */
+    public function recompute(): void
+    {
+        // Just null the values so they can be recomputed again in the `saving` event
+        $this->update([
+            'loser_id' => null,
+        ]);
+    }
+
+    /**
      * Get the AI model that played as player 1
      */
     public function player1(): BelongsTo
@@ -46,6 +75,14 @@ class SvgMatch extends Model implements RankedMatch
     public function winner(): BelongsTo
     {
         return $this->belongsTo(AiModel::class, 'winner_id');
+    }
+
+    /**
+     * Get the AI model that lost the match
+     */
+    public function loser(): BelongsTo
+    {
+        return $this->belongsTo(AiModel::class, 'loser_id');
     }
 
     /**
