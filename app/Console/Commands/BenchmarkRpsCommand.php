@@ -10,7 +10,6 @@ use App\Services\Rps\RpsRound;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\Console\Helper\TableStyle;
 
 class BenchmarkRpsCommand extends Command
 {
@@ -40,9 +39,8 @@ class BenchmarkRpsCommand extends Command
         RpsBenchmarkService $benchmarkService,
         EloRatingService $eloService,
     ): int {
-        $this->info('Starting Rock Paper Scissors benchmarks');
-
         $matchCount = (int) $this->option('matches');
+        $matchCount = $matchCount > 0 ? $matchCount : PHP_INT_MAX;
 
         // Get all available AI models
         $aiModels = $benchmarkService->getAvailableModels();
@@ -53,9 +51,11 @@ class BenchmarkRpsCommand extends Command
             return Command::FAILURE;
         }
 
+        $this->info('Starting Rock Paper Scissors benchmarks');
+
         $this->completedMatches = 0;
 
-        while ($matchCount == 0 || $this->completedMatches < $matchCount) {
+        while ($this->completedMatches < $matchCount) {
             // Randomly select two different models
             $player1 = $aiModels->random();
             $player2 = $aiModels->whereNotIn('id', [$player1->id])->random();
@@ -78,19 +78,12 @@ class BenchmarkRpsCommand extends Command
 
             $this->createMatch($game);
 
-            if ($matchCount === 0) {
-                $eloService->updateRpsEloRatings();
-            }
+            $eloService->updateRpsEloRatings();
 
             $this->completedMatches++;
         }
 
-        // Update ELO ratings
-        $this->info('Updating ELO ratings...');
-        $matchesUpdated = $eloService->updateRpsEloRatings();
-        $this->info(sprintf('Updated ELO ratings for %d matches', $matchesUpdated));
-
-        $this->info(sprintf('Successfully completed %d/%d matches', $this->completedMatches, $matchCount));
+        $this->info('All matches completed');
 
         return Command::SUCCESS;
     }
