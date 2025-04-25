@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\AiModel;
+use App\Services\Rps\RpsMove;
 use App\Services\Rps\RpsRound;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Collection;
@@ -45,12 +46,9 @@ class RpsMatchFactory extends Factory
      */
     protected function generateMoveHistory(int $rounds): string
     {
-        $moves = collect(['r', 'p', 's']);
-
-        return Collection::times($rounds)
-            ->map(fn () => [$moves->random(), $moves->random()])
-            ->map(fn ($move) => (string) new RpsRound($move[0], $move[1]))
-            ->implode(' ');
+        return Collection::times($rounds,
+            fn () => (string) new RpsRound(RpsMove::random(), RpsMove::random())
+        )->implode(' ');
     }
 
     /**
