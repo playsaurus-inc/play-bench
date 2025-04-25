@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 
-class SvgService
+class SvgImageService
 {
     /**
      * Clean up SVG content to ensure it's valid.
@@ -57,23 +57,13 @@ class SvgService
     }
 
     /**
-     * Converts a file to a data URL string.
+     * Convert SVG to a PNG. Returns the PNG as a binary string.
      */
-    protected function toDataUrl(string $mime, string $contents): string
-    {
-        return "data:$mime;base64,".base64_encode($contents);
-    }
-
-    /**
-     * Convert SVG to a PNG data URL.
-     */
-    public function svgToPngDataUrl(string $svgString, int $width, int $height): string
+    public function svgToPng(string $svgString, int $width, int $height): string
     {
         $svgString = $this->cleanupSvg($svgString);
 
-        $pngBinary = $this->convertSvgToPng($svgString, $width, $height);
-
-        return $this->toDataUrl('image/png', $pngBinary);
+        return $this->convertSvgToPng($svgString, $width, $height);
     }
 
     /**

@@ -3,12 +3,8 @@
 namespace App\Services\Svg;
 
 use App\Models\AiModel;
-use App\Models\SvgMatch;
 use App\Services\AiClient\AiClientService;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class SvgBenchmarkService
@@ -43,7 +39,7 @@ class SvgBenchmarkService
      */
     public function __construct(
         protected AiClientService $aiClient,
-        protected SvgService $svgService
+        protected SvgImageService $svgService
     ) {}
 
     /**
@@ -55,7 +51,50 @@ class SvgBenchmarkService
     }
 
     /**
-     * Generate a creative image idea using GPT-4o
+     * Run an SVG game
+     *
+     * @param  callable|null  $onPromptGenerated  Callback after prompt is generated
+     * @param  callable|null  $onSvgSubmitted  Callback after each SVG is submitted
+     * @param  callable|null  $onJudgingComplete  Callback after judging is complete
+     */
+    public function runGame(
+        SvgGame $game,
+        ?callable $onPromptGenerated = null,
+        ?callable $onSvgSubmitted = null,
+    ): void {
+        $onPromptGenerated ??= fn () => null;
+        $onSvgSubmitted ??= fn () => null;
+        $onJudgingComplete ??= fn () => null;
+
+        // Generate creative prompt
+        $prompt = $this->generateImageIdea();
+        $game->setPrompt($prompt);
+
+        $onPromptGenerated($game);
+
+        // Get SVG from Player 1
+        $svg1 = $this->getPlayerSvg($game, SvgPlayer::Player1);
+        $game->setSvg(SvgPlayer::Player1, $svg1);
+        $png1Bytes = $this->svgService->svgToPng($svg1, width: 300, height: 300);
+
+        $onSvgSubmitted($game, SvgPlayer::Player1);
+
+        // Get SVG from Player 2
+        $svg2 = $this->getPlayerSvg($game, SvgPlayer::Player2);
+        $game->setSvg(SvgPlayer::Player2, $svg2);
+        $png2Bytes = $this->svgService->svgToPng($svg2, width: 300, height: 300);
+
+        $onSvgSubmitted($game, SvgPlayer::Player2);
+
+        // Judge the SVGs
+        $judgmentResult = $this->judgeSvgs($prompt, $png1Bytes, $png2Bytes);
+
+        $winner = $judgmentResult['winner'] === 'player1' ? SvgPlayer::Player1 : SvgPlayer::Player2;
+        $game->setJudgment($winner, $judgmentResult['reason']);
+    }
+
+    /**
+     * Generate a creative image idea
      */
     protected function generateImageIdea(): string
     {
@@ -65,9 +104,7 @@ class SvgBenchmarkService
             'top_p' => 1.0,
         ]);
 
-        $idea = Str::limit($idea, 100, end: '...', preserveWords: true);
-
-        return $idea;
+        return Str::limit($idea, 100, end: '...', preserveWords: true);
     }
 
     /**
@@ -91,15 +128,49 @@ Return ONLY valid SVG code in your response.";
     }
 
     /**
+     * Get SVG from a player
+     */
+    protected function getPlayerSvg(SvgGame $game, SvgPlayer $player): string
+    {
+        $model = $game->getPlayer($player);
+
+        if ($model->name === 'random') {
+            return $this->defaultSvg();
+        }
+
+        $prompt = $this->buildSvgPrompt($game->getPrompt());
+
+        $response = $this->aiClient->getResponse($model->name, self::SVG_SYSTEM_PROMPT, $prompt);
+
+        // Look for SVG content
+        if (preg_match('/<svg.*<\/svg>/s', $response, $matches)) {
+            return $this->svgService->cleanupSvg($matches[0]);
+        }
+
+        throw new \Exception('Could not find SVG content in response');
+    }
+
+    /**
+     * Converts a file to a data URL string.
+     */
+    protected function toDataUrl(string $mime, string $contents): string
+    {
+        return "data:$mime;base64,".base64_encode($contents);
+    }
+
+    /**
      * Judge the SVGs using GPT-4o
      */
-    protected function judgeSvgs(string $imagePrompt, string $svg1DataUrl, string $svg2DataUrl): array
+    protected function judgeSvgs(string $imagePrompt, string $png1Bytes, string $png2Bytes): array
     {
         $response = $this->aiClient->getResponseWithImages(
             'gpt-4o',
             self::JUDGE_SYSTEM_PROMPT,
             Str::replaceArray('[IDEA_TEXT]', [$imagePrompt], self::JUDGE_USER_PROMPT),
-            images: [$svg1DataUrl, $svg2DataUrl],
+            images: [
+                $this->toDataUrl('image/png', $png1Bytes),
+                $this->toDataUrl('image/png', $png2Bytes),
+            ],
         );
 
         // Process the response to extract winner and reason
@@ -111,117 +182,11 @@ Return ONLY valid SVG code in your response.";
             ];
         }
 
-        // If JSON parsing fails, try regex extraction
-        $winner = 'player1'; // Default
-        $reason = 'Default judgment: Player 1 demonstrated better creativity and technical execution.';
-
-        if (preg_match('/"winner"\s*:\s*"(player[12])"/', $response, $matches)) {
-            $winner = $matches[1];
-        }
-
-        if (preg_match('/"reason"\s*:\s*"([^"]*)"/', $response, $matches)) {
-            $reason = $matches[1];
-        }
-
-        return [
-            'winner' => $winner,
-            'reason' => $reason,
-        ];
+        throw new \Exception('Invalid response from judge');
     }
 
     /**
-     * Run a single SVG creation match between two AI models
-     */
-    public function runMatch(AiModel $player1, AiModel $player2): SvgMatch
-    {
-        // Create a new match record
-        $match = new SvgMatch;
-        $match->player1_id = $player1->id;
-        $match->player2_id = $player2->id;
-        $match->started_at = Date::now();
-
-        Log::info('Starting SVG match', [
-            'match_id' => $match->id,
-            'player1' => $player1->name,
-            'player2' => $player2->name,
-        ]);
-
-        try {
-            // Step 1: Generate a creative image prompt
-            $match->prompt = $this->generateImageIdea();
-
-            Log::info('Generated SVG prompt', [
-                'match_id' => $match->id,
-                'prompt' => $match->prompt,
-            ]);
-
-            // Step 2: Build the SVG creation prompt
-            $svgPrompt = $this->buildSvgPrompt($match->prompt);
-
-            // Get SVGs from both models
-            $svg1 = $this->getResponse($player1, self::SVG_SYSTEM_PROMPT, $svgPrompt);
-            $svg2 = $this->getResponse($player2, self::SVG_SYSTEM_PROMPT, $svgPrompt);
-
-            // Clean SVGs
-            $svg1 = $this->svgService->cleanupSvg($svg1);
-            $svg2 = $this->svgService->cleanupSvg($svg2);
-
-            // Store SVGs
-            $player1SvgPath = "svg/{$match->id}_player1.svg";
-            $player2SvgPath = "svg/{$match->id}_player2.svg";
-
-            Storage::put($player1SvgPath, $svg1);
-            Storage::put($player2SvgPath, $svg2);
-
-            // Update the match with SVG paths
-            $match->player1_svg_path = $player1SvgPath;
-            $match->player2_svg_path = $player2SvgPath;
-
-            Log::info('Generated SVGs', [
-                'match_id' => $match->id,
-                'player1_svg_size' => strlen($svg1),
-                'player2_svg_size' => strlen($svg2),
-            ]);
-
-            // Step 3: Prepare SVGs for judging
-            $svg1DataUrl = $this->svgService->svgToPngDataUrl($svg1, width: 300, height: 300);
-            $svg2DataUrl = $this->svgService->svgToPngDataUrl($svg2, width: 300, height: 300);
-
-            // Step 4: Judge the SVGs
-            $judgmentResult = $this->judgeSvgs(
-                $match->prompt,
-                $svg1DataUrl,
-                $svg2DataUrl
-            );
-
-            // Update the match with winner and reasoning
-            $match->judge_reasoning = $judgmentResult['reason'];
-            $match->winner_id = $judgmentResult['winner'] === 'player1' ? $player1->id : $player2->id;
-
-            Log::info('Judgment complete', [
-                'match_id' => $match->id,
-                'winner' => $judgmentResult['winner'],
-                'reasoning' => $judgmentResult['reason'],
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error during SVG match', [
-                'match_id' => $match->id,
-                'exception' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-
-            throw $e; // Rethrow the exception to be handled by the caller
-        }
-
-        // Finalize match
-        $match->ended_at = Date::now();
-        $match->save();
-
-        return $match;
-    }
-
-    /**
-     * Generate a random SVG using the random provider
+     * Generate a random SVG
      */
     protected function defaultSvg(): string
     {
@@ -232,24 +197,5 @@ Return ONLY valid SVG code in your response.";
         $cy = random_int(100, 200);
 
         return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><circle cx="'.$cx.'" cy="'.$cy.'" r="'.$r.'" fill="#'.$color.'"/></svg>';
-    }
-
-    /**
-     * Get the response from the AI model
-     */
-    protected function getResponse(AiModel $model, string $systemPrompt, string $userPrompt): string
-    {
-        if ($model->name === 'random') {
-            return $this->defaultSvg();
-        }
-
-        $response = $this->aiClient->getResponse($model->name, $systemPrompt, $userPrompt);
-
-        // Look for SVG content
-        if (preg_match('/<svg.*<\/svg>/s', $response, $matches)) {
-            return $matches[0];
-        }
-
-        throw new \Exception('Could not find SVG content in response');
     }
 }

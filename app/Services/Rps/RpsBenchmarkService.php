@@ -9,11 +9,6 @@ use Illuminate\Database\Eloquent\Collection;
 class RpsBenchmarkService
 {
     /**
-     * The number of times to retry a failed request
-     */
-    protected int $retryCount = 3;
-
-    /**
      * Create a new service instance.
      */
     public function __construct(
@@ -38,8 +33,8 @@ class RpsBenchmarkService
         $onRoundComplete = $onRoundComplete ?? fn () => null;
 
         while (! $game->isOver()) {
-            $player1Move = $this->getMove($game, forPlayer: RpsPlayer::Player1);
-            $player2Move = $this->getMove($game, forPlayer: RpsPlayer::Player2);
+            $player1Move = $this->getMove($game, RpsPlayer::Player1);
+            $player2Move = $this->getMove($game, RpsPlayer::Player2);
 
             $round = $game->addRound(new RpsRound($player1Move, $player2Move));
 
@@ -48,21 +43,9 @@ class RpsBenchmarkService
     }
 
     /**
-     * Get the response from the AI model
-     */
-    protected function getMove(RpsGame $game, RpsPlayer $forPlayer): RpsMove
-    {
-        return retry(
-            times: $this->retryCount,
-            callback: fn () => $this->requestMove($game, $forPlayer),
-            sleepMilliseconds: 1000
-        );
-    }
-
-    /**
      * Request a move from the AI model
      */
-    protected function requestMove(RpsGame $game, RpsPlayer $player): RpsMove
+    protected function getMove(RpsGame $game, RpsPlayer $player): RpsMove
     {
         $aiModel = $game->getPlayer($player);
 
