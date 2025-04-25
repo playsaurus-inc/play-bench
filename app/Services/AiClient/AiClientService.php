@@ -181,8 +181,8 @@ class AiClientService
         $response = preg_replace('/```(?:json|svg)?\s*(.+?)\s*```/s', '$1', $response);
 
         // Some models might include a <think>...</think> block, remove it
-        if (Str::contains($response, '<think>')) {
-            $response = preg_replace('/<think>.*?<\/think>/', '', $response);
+        if (preg_match('/<think>(.*?)<\/think>/s', $response, $matches)) {
+            $response = str_replace($matches[0], '', $response);
         }
 
         return $response;

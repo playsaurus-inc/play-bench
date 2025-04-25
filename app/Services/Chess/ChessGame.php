@@ -3,11 +3,13 @@
 namespace App\Services\Chess;
 
 use App\Models\AiModel;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use JsonSerializable;
 use PChess\Chess\Chess;
 use PChess\Chess\Entry;
 use PChess\Chess\Move;
+use PChess\Chess\Output\AsciiOutput;
 use PChess\Chess\Piece;
 
 class ChessGame implements JsonSerializable
@@ -28,21 +30,11 @@ class ChessGame implements JsonSerializable
     protected AiModel $blackPlayer;
 
     /**
-     * The history of illegal moves.
+     * The list of valid moves available to play in the next turn.
      *
-     * @var array<array{move: string, color: string}>
+     * @var Collection<ChessMove>
      */
-    protected array $illegalMoves = [];
-
-    /**
-     * The number of illegal moves by white.
-     */
-    protected int $illegalMovesWhite = 0;
-
-    /**
-     * The number of illegal moves by black.
-     */
-    protected int $illegalMovesBlack = 0;
+    protected Collection $validMoves;
 
     /**
      * Whether the game was forced to end (e.g., due to move limit or illegal moves).
@@ -82,10 +74,11 @@ class ChessGame implements JsonSerializable
         AiModel $blackPlayer,
         ?\DateTimeInterface $startedAt = null
     ) {
-        $this->chess = new Chess();
+        $this->chess = new Chess;
         $this->whitePlayer = $whitePlayer;
         $this->blackPlayer = $blackPlayer;
         $this->startedAt = $startedAt ?? Date::now();
+        $this->validMoves = $this->computeValidMoves();
     }
 
     /**
@@ -127,64 +120,104 @@ class ChessGame implements JsonSerializable
     }
 
     /**
-     * Apply a move in UCI format.
+     * Returns an array of valid moves.
+     *
+     * @return array<ChessMove>
      */
-    public function applyMove(string $move): ?string
+    public function getValidMoves(): array
     {
-        // Clean up the move string
-        $move = trim($move);
-
-        $chessMove = $this->chess->move(
-            $this->convertToSanOrArray($move)
-        );
-
-        if (! $chessMove) {
-            // Move was invalid, record it as illegal
-            $this->recordIllegalMove($move);
-            return null;
-        }
-
-        if ($this->chess->gameOver() && !$this->isOver()) {
-            if ($this->chess->inCheckmate()) {
-                $this->endGame(
-                    $this->chess->turn === Piece::WHITE ? 'black' : 'white',
-                    false
-                );
-            } else {
-                $this->endGame('draw', false);
-            }
-        }
-
-        if (count($this->chess->getHistory()->getEntries()) >= self::MAX_MOVES && !$this->isOver()) {
-            $this->endGame('draw', true);
-        }
-
-        return $chessMove->san;
+        return $this->validMoves->all();
     }
 
     /**
-     * Record an illegal move attempt.
+     * Finds a valid move by its ID.
      */
-    protected function recordIllegalMove(string $moveUci): void
+    public function findValidMoveById(int $id): ?ChessMove
     {
-        $currentPlayer = $this->getCurrentPlayer();
+        return $this->validMoves->firstWhere('id', $id);
+    }
 
-        $this->illegalMoves[] = [
-            'move' => $moveUci,
-            'color' => $currentPlayer->value,
-        ];
+    /**
+     * Find a valid move by its SAN representation.
+     */
+    public function findValidMoveBySan(string $san): ?ChessMove
+    {
+        return $this->validMoves->firstWhere('san', $san);
+    }
 
-        if ($currentPlayer === ChessPlayer::White) {
-            $this->illegalMovesWhite++;
-            if ($this->illegalMovesWhite >= self::MAX_ILLEGAL_MOVES) {
-                $this->endGame('black', true); // White forfeits due to too many illegal moves
-            }
-        } else {
-            $this->illegalMovesBlack++;
-            if ($this->illegalMovesBlack >= self::MAX_ILLEGAL_MOVES) {
-                $this->endGame('white', true); // Black forfeits due to too many illegal moves
-            }
+    /**
+     * Find a valid move by its UCI representation.
+     */
+    public function findValidMoveByUci(string $uci): ?ChessMove
+    {
+        return $this->validMoves->firstWhere('uci', $uci);
+    }
+
+    /**
+     * Make a move in the game.
+     */
+    public function move(ChessMove $move): void
+    {
+        if ($this->isEnded()) {
+            throw new \Exception('Game is already over.');
         }
+
+        if ($this->findValidMoveById($move->id) !== $move) {
+            // Move was not valid, this should only happen if the move was outdated for some reason.
+            throw new \Exception('Invalid move: '.$move->uci);
+        }
+
+        $chessMove = $this->chess->move($move->uciArray);
+
+        if (! $chessMove) {
+            // Move was invalid, this should only happen if the move was outdated for some reason.
+            throw new \Exception('Invalid move: '.$move->uci);
+        }
+
+        // Check game over conditions
+
+        if ($this->chess->gameOver()) {
+            if ($this->chess->inCheckmate()) {
+                $winner = $this->chess->turn === Piece::WHITE ? 'black' : 'white';
+                $this->endGame($winner, isForced: false);
+            } else {
+                $this->endGame('draw', isForced: false);
+            }
+
+            return;
+        }
+
+        if (count($this->chess->getHistory()->getEntries()) >= self::MAX_MOVES) {
+            $this->endGame('draw', isForced: true);
+
+            return;
+        }
+
+        // Prepare for next turn
+        $this->validMoves = $this->computeValidMoves();
+    }
+
+    /**
+     * Compute the valid moves for the current player.
+     *
+     * @return Collection<ChessMove>
+     */
+    protected function computeValidMoves(): Collection
+    {
+        return collect($this->chess->moves())
+            ->map(function (Move $move, int $index) {
+                return new ChessMove(
+                    id: $index,
+                    san: $move->san,
+                    uci: "{$move->from}{$move->to}".($move->promotion ?? ''),
+                    piece: $move->piece->getType(),
+                    uciArray: [
+                        'from' => $move->from,
+                        'to' => $move->to,
+                        'promotion' => $move->promotion,
+                    ],
+                );
+            });
     }
 
     /**
@@ -195,6 +228,7 @@ class ChessGame implements JsonSerializable
         $this->result = $result;
         $this->isForced = $isForced;
         $this->endedAt = Date::now();
+        $this->validMoves = collect();
     }
 
     /**
@@ -210,45 +244,7 @@ class ChessGame implements JsonSerializable
      */
     public function getBoardText(): string
     {
-        $board = $this->chess->board;
-        $text = "Chess Board State:\n";
-
-        for ($i = 0; $i < 8; $i++) {  // i represents rank (0 = rank 8, 7 = rank 1)
-            $rank = 8 - $i;
-            $text .= $rank.' | ';
-
-            for ($j = 0; $j < 8; $j++) {  // j represents file (0 = a, 7 = h)
-                $piece = $board[$i * 16 + $j]; // Calculate the correct square index
-
-                if ($piece !== null) {
-                    $symbol = $piece->getType();
-                    if ($piece->getColor() === 'w') {
-                        $symbol = strtoupper($symbol);
-                    }
-                    $text .= $symbol.'  ';
-                } else {
-                    $text .= '.  ';
-                }
-            }
-
-            $text .= "\n";
-        }
-
-        $text .= "    a  b  c  d  e  f  g  h\n";
-
-        return $text;
-    }
-
-    /**
-     * Get legal moves in UCI format.
-     */
-    public function getLegalMovesUci(): array
-    {
-        $moves = $this->chess->moves();
-
-        return array_map(function (Move $move) {
-            return $move->from.$move->to.($move->promotion ?? '');
-        }, $moves);
+        return (new AsciiOutput)->render($this->chess);
     }
 
     /**
@@ -269,14 +265,6 @@ class ChessGame implements JsonSerializable
     public function getMoveCount(): int
     {
         return count($this->chess->getHistory()->getEntries());
-    }
-
-    /**
-     * Get the illegal moves history.
-     */
-    public function getIllegalMoves(): array
-    {
-        return $this->illegalMoves;
     }
 
     /**
@@ -306,25 +294,9 @@ class ChessGame implements JsonSerializable
     }
 
     /**
-     * Get the number of illegal moves by white.
-     */
-    public function getIllegalMovesWhite(): int
-    {
-        return $this->illegalMovesWhite;
-    }
-
-    /**
-     * Get the number of illegal moves by black.
-     */
-    public function getIllegalMovesBlack(): int
-    {
-        return $this->illegalMovesBlack;
-    }
-
-    /**
      * Check if the game is over.
      */
-    public function isOver(): bool
+    public function isEnded(): bool
     {
         return $this->endedAt !== null;
     }
@@ -427,12 +399,10 @@ class ChessGame implements JsonSerializable
             'white_id' => $this->whitePlayer->id,
             'black_id' => $this->blackPlayer->id,
             'moves' => $this->getMovesHistory(),
-            'illegal_moves_white' => $this->illegalMovesWhite,
-            'illegal_moves_black' => $this->illegalMovesBlack,
             'is_forced' => $this->isForced,
             'result' => $this->result,
             'ply_count' => $this->getPlyCount(),
-            'is_over' => $this->isOver(),
+            'is_over' => $this->isEnded(),
             'started_at' => $this->startedAt->format('Y-m-d H:i:s'),
             'ended_at' => $this->endedAt?->format('Y-m-d H:i:s'),
         ];

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\ChessMatch;
 use App\Services\Chess\ChessBenchmarkService;
 use App\Services\Chess\ChessGame;
+use App\Services\Chess\ChessMove;
 use App\Services\Chess\ChessPlayer;
 use App\Services\EloRatingService;
 use Exception;
@@ -47,6 +48,7 @@ class BenchmarkChessCommand extends Command
 
         if ($aiModels->isEmpty()) {
             $this->error('No AI models found in the database. Please add some AI models first.');
+
             return Command::FAILURE;
         }
 
@@ -66,13 +68,12 @@ class BenchmarkChessCommand extends Command
             try {
                 $benchmarkService->runGame(
                     game: $game,
-                    onMoveMade: fn (ChessGame $game, ChessPlayer $player, string $move) =>
-                        $this->reportMove($game, $player, $move),
-                    onIllegalMove: fn (ChessGame $game, ChessPlayer $player, string $move) =>
-                        $this->reportIllegalMove($game, $player, $move)
+                    onMoveMade: fn (ChessGame $game, ChessPlayer $player, ChessMove $move) => $this->reportMove($game, $player, $move),
+                    onIllegalMove: fn (ChessGame $game, ChessPlayer $player, ChessMove $move) => $this->reportIllegalMove($game, $player, $move)
                 );
             } catch (Exception $e) {
                 $this->reportError($e);
+
                 continue;
             }
 
@@ -86,6 +87,7 @@ class BenchmarkChessCommand extends Command
         }
 
         $this->info('All matches completed');
+
         return Command::SUCCESS;
     }
 
@@ -104,11 +106,11 @@ class BenchmarkChessCommand extends Command
     /**
      * Report a move.
      */
-    protected function reportMove(ChessGame $game, ChessPlayer $player, string $move): void
+    protected function reportMove(ChessGame $game, ChessPlayer $player, ChessMove $move): void
     {
         $this->info(sprintf(
             'Move %d: %s (%s) played %s',
-            intval($game->getMoveCount() / 2) + 1,
+            $game->getMoveCount(),
             $game->getPlayer($player)->name,
             $player->name(),
             $move
@@ -118,7 +120,7 @@ class BenchmarkChessCommand extends Command
     /**
      * Report an illegal move.
      */
-    protected function reportIllegalMove(ChessGame $game, ChessPlayer $player, string $move): void
+    protected function reportIllegalMove(ChessGame $game, ChessPlayer $player, ChessMove $move): void
     {
         $this->warn(sprintf(
             'Illegal move: %s (%s) attempted %s',
@@ -141,13 +143,6 @@ class BenchmarkChessCommand extends Command
 
         $this->info('Game completed');
         $this->info(sprintf('Result: %s, Moves: %d', $result, $game->getMoveCount()));
-
-        if ($game->getIllegalMovesWhite() > 0 || $game->getIllegalMovesBlack() > 0) {
-            $this->info(sprintf('Illegal moves: White: %d, Black: %d',
-                $game->getIllegalMovesWhite(),
-                $game->getIllegalMovesBlack()
-            ));
-        }
 
         if ($game->isForced()) {
             $this->warn('Game was forced to completion');
@@ -183,8 +178,6 @@ class BenchmarkChessCommand extends Command
             'result' => $game->getResult(),
             'pgn' => $game->generatePgn(),
             'final_fen' => $game->getFen(),
-            'illegal_moves_white' => $game->getIllegalMovesWhite(),
-            'illegal_moves_black' => $game->getIllegalMovesBlack(),
             'is_forced_completion' => $game->isForced(),
             'started_at' => $game->getStartedAt(),
             'ended_at' => $game->getEndedAt(),
