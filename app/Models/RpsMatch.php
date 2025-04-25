@@ -4,9 +4,6 @@ namespace App\Models;
 
 use App\Models\Contracts\RankedMatch;
 use App\Services\Rps\RpsMatchAnalysisService;
-use App\Services\Rps\RpsMove;
-use App\Services\Rps\RpsRound;
-use App\Services\Rps\RpsRoundResult;
 use App\Support\Statistics;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;

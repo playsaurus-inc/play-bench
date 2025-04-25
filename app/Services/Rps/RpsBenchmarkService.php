@@ -3,9 +3,7 @@
 namespace App\Services\Rps;
 
 use App\Models\AiModel;
-use App\Models\RpsMatch;
 use App\Services\AiClient\AiClientService;
-use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection;
 
 class RpsBenchmarkService
@@ -37,7 +35,7 @@ class RpsBenchmarkService
      */
     public function runGame(RpsGame $game, ?callable $onRoundComplete = null): void
     {
-        $onRoundComplete = $onRoundComplete ?? fn() => null;
+        $onRoundComplete = $onRoundComplete ?? fn () => null;
 
         while (! $game->isOver()) {
             $player1Move = $this->getMove($game, forPlayer: RpsPlayer::Player1);
@@ -56,7 +54,7 @@ class RpsBenchmarkService
     {
         return retry(
             times: $this->retryCount,
-            callback: fn() => $this->requestMove($game, $forPlayer),
+            callback: fn () => $this->requestMove($game, $forPlayer),
             sleepMilliseconds: 1000
         );
     }

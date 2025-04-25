@@ -67,10 +67,11 @@ class BenchmarkRpsCommand extends Command
             try {
                 $benchmarkService->runGame(
                     game: $game,
-                    onRoundComplete: fn(RpsRound $round) => $this->reportRound($game, $round),
+                    onRoundComplete: fn (RpsRound $round) => $this->reportRound($game, $round),
                 );
             } catch (\Exception $e) {
                 $this->reportError($e);
+
                 continue;
             }
 
@@ -157,7 +158,7 @@ class BenchmarkRpsCommand extends Command
             'started_at' => $game->getStartedAt(),
             'ended_at' => $game->getEndedAt(),
             'move_history' => $game->getRoundHistory(),
-            'is_forced_completion' => !$game->isOver(),
+            'is_forced_completion' => ! $game->isOver(),
         ]);
     }
 }

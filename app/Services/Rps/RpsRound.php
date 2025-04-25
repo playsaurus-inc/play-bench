@@ -5,7 +5,7 @@ namespace App\Services\Rps;
 use JsonSerializable;
 use Stringable;
 
-class RpsRound implements Stringable, JsonSerializable
+class RpsRound implements JsonSerializable, Stringable
 {
     /**
      * The player 1's move.

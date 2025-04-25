@@ -3,7 +3,6 @@
 namespace App\Services\Rps;
 
 use App\Models\AiModel;
-use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use JsonSerializable;
 
@@ -59,9 +58,8 @@ class RpsGame implements JsonSerializable
         AiModel $player2,
         int $targetScore = 50,
         string $rounds = '',
-        CarbonInterface $startedAt = null,
-    )
-    {
+        ?CarbonInterface $startedAt = null,
+    ) {
         $this->targetScore = $targetScore;
         $this->player1 = $player1;
         $this->player2 = $player2;
@@ -135,7 +133,7 @@ class RpsGame implements JsonSerializable
      */
     public function getRoundHistory(bool $withRoundNumbers = false): string
     {
-        if (!$withRoundNumbers) {
+        if (! $withRoundNumbers) {
             return implode(' ', $this->rounds);
         }
 
@@ -235,7 +233,7 @@ class RpsGame implements JsonSerializable
         $player1 = AiModel::find($data['player1_id']);
         $player2 = AiModel::find($data['player2_id']);
 
-        if (!$player1 || !$player2) {
+        if (! $player1 || ! $player2) {
             throw new \InvalidArgumentException('Invalid player IDs');
         }
 
@@ -247,5 +245,3 @@ class RpsGame implements JsonSerializable
         );
     }
 }
-
-
