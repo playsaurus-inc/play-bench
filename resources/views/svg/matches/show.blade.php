@@ -44,15 +44,15 @@
         </div>
 
         <!-- 1. Prompt card (full width) -->
-        <div class="bg-white rounded-lg shadow-sm border border-purple-100 mb-6 overflow-hidden">
+        <div class="bg-white rounded-lg shadow-sm border border-amber-100 mb-6 overflow-hidden">
             <div class="flex flex-col md:flex-row">
                 <!-- Left: GPT-4o avatar -->
-                <div class="p-4 md:w-64 bg-gradient-to-b from-purple-50 to-white flex flex-row items-center justify-center border-b md:border-b-0 md:border-r border-purple-100 gap-4">
-                    <div class="size-16 rounded-full bg-purple-100 border-2 border-white shadow flex items-center justify-center">
-                        <x-phosphor-robot-fill class="size-8 text-purple-600" />
+                <div class="p-4 md:w-64 bg-gradient-to-b from-amber-50 to-white flex flex-row items-center justify-center border-b md:border-b-0 md:border-r border-amber-100 gap-4">
+                    <div class="size-16 rounded-full bg-amber-100 border-2 border-white shadow flex items-center justify-center">
+                        <x-phosphor-robot-fill class="size-8 text-amber-600" />
                     </div>
                     <div class="text-left">
-                        <div class="text-base font-bold text-purple-800">GPT-4o</div>
+                        <div class="text-base font-bold text-amber-800">GPT-4o</div>
                         <div class="text-sm text-gray-500">Challenge Creator</div>
                     </div>
                 </div>
@@ -60,10 +60,10 @@
                 <!-- Right: Creative challenge prompt -->
                 <div class="p-3 sm:p-6 flex flex-col gap-2">
                     <div class="flex text-base items-center align-middle">
-                        <x-phosphor-paint-brush-fill class="size-5 mr-2 text-purple-500" />
+                        <x-phosphor-paint-brush-fill class="size-5 mr-2 text-amber-500" />
                         <h2 class="text-gray-700 font-medium">Creative Challenge</h2>
                     </div>
-                    <p class="text-base sm:text-xl text-purple-800 font-bold tracking-wide italic text-left">
+                    <p class="text-base sm:text-xl text-amber-800 font-bold tracking-wide italic text-left">
                         "{{ $svgMatch->prompt }}"
                     </p>
                 </div>
@@ -211,12 +211,12 @@
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 mb-6 overflow-hidden">
             <div class="flex flex-col md:flex-row">
                 <!-- Left: Judge avatar -->
-                <div class="p-4 md:w-64 bg-gradient-to-r md:bg-gradient-to-b from-purple-50 to-white flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-100">
-                    <div class="size-16 rounded-full bg-purple-100 border-2 border-white shadow flex items-center justify-center mb-3">
-                        <x-phosphor-robot-fill class="size-8 text-purple-600" />
+                <div class="p-4 md:w-64 bg-gradient-to-r md:bg-gradient-to-b from-amber-50 to-white flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-100">
+                    <div class="size-16 rounded-full bg-amber-100 border-2 border-white shadow flex items-center justify-center mb-3">
+                        <x-phosphor-robot-fill class="size-8 text-amber-600" />
                     </div>
                     <div class="text-center">
-                        <div class="text-base font-bold text-purple-800">GPT-4o</div>
+                        <div class="text-base font-bold text-amber-800">GPT-4o</div>
                         <div class="text-sm text-gray-500">Judge & Evaluator</div>
                     </div>
                 </div>
@@ -252,7 +252,7 @@
                 </div>
                 <div class="p-4 sm:p-6 flex-2/3">
                     <h3 class="text-base font-semibold text-gray-700 mb-3 flex items-center">
-                        <x-phosphor-note-pencil-fill class="size-5 mr-2 text-purple-500" />
+                        <x-phosphor-note-pencil-fill class="size-5 mr-2 text-amber-500" />
                         Judge's Analysis
                     </h3>
                     @php
@@ -274,8 +274,8 @@
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 mb-6 overflow-hidden">
             <div class="p-3 sm:p-4">
                 <div class="flex items-center mb-4">
-                    <div class="size-7 rounded-full bg-purple-100 flex items-center justify-center mr-2">
-                        <x-phosphor-brain-fill class="size-4 text-purple-600" />
+                    <div class="size-7 rounded-full bg-amber-100 flex items-center justify-center mr-2">
+                        <x-phosphor-brain-fill class="size-4 text-amber-600" />
                     </div>
                     <h3 class="text-base font-medium text-gray-800">AI Judging Process</h3>
                 </div>
@@ -284,8 +284,8 @@
                     <!-- Creativity -->
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <div class="flex items-center mb-1">
-                            <div class="size-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
-                                <x-phosphor-palette-fill class="size-4 text-purple-600" />
+                            <div class="size-8 rounded-full bg-amber-100 flex items-center justify-center mr-3">
+                                <x-phosphor-palette-fill class="size-4 text-amber-600" />
                             </div>
                             <h4 class="text-base font-medium text-gray-800">Creativity</h4>
                         </div>
@@ -297,8 +297,8 @@
                     <!-- Prompt Adherence -->
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <div class="flex items-center mb-1">
-                            <div class="size-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
-                                <x-phosphor-target-fill class="size-4 text-purple-600" />
+                            <div class="size-8 rounded-full bg-amber-100 flex items-center justify-center mr-3">
+                                <x-phosphor-target-fill class="size-4 text-amber-600" />
                             </div>
                             <h4 class="text-base font-medium text-gray-800">Prompt Adherence</h4>
                         </div>
@@ -310,8 +310,8 @@
                     <!-- Visual Appeal -->
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <div class="flex items-center mb-1">
-                            <div class="size-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
-                                <x-phosphor-sparkle-fill class="size-4 text-purple-600" />
+                            <div class="size-8 rounded-full bg-amber-100 flex items-center justify-center mr-3">
+                                <x-phosphor-sparkle-fill class="size-4 text-amber-600" />
                             </div>
                             <h4 class="text-base font-medium text-gray-800">Visual Appeal</h4>
                         </div>
@@ -323,8 +323,8 @@
 
                 <div class="mt-4 text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
                     <div class="items-center align-middle inline-flex">
-                        <div class="size-8 rounded-full bg-purple-100 flex items-center justify-center mr-2">
-                            <x-phosphor-question-fill class="size-4 text-purple-600" />
+                        <div class="size-8 rounded-full bg-amber-100 flex items-center justify-center mr-2">
+                            <x-phosphor-question-fill class="size-4 text-amber-600" />
                         </div>
                         <h4 class="text-base font-medium text-gray-800">How does judging work?</h4>
                     </div>
@@ -342,7 +342,7 @@
         @if($similarMatches->count() > 0)
             <section class="mb-6">
                 <h2 class="text-lg font-bold mb-3 text-gray-900 flex items-center">
-                    <x-phosphor-arrows-in-line-horizontal-fill class="size-5 mr-2 text-purple-500" />
+                    <x-phosphor-arrows-in-line-horizontal-fill class="size-5 mr-2 text-amber-500" />
                     Similar Challenges
                 </h2>
 
@@ -379,11 +379,11 @@
 
                                 <div class="flex items-center justify-between text-xs">
                                     <div class="flex items-center">
-                                        <x-phosphor-trophy-fill class="size-3.5 mr-1 text-purple-500" />
+                                        <x-phosphor-trophy-fill class="size-3.5 mr-1 text-amber-500" />
                                         <span class="truncate">{{ $match->winner ? $match->winner->name : 'No winner' }}</span>
                                     </div>
 
-                                    <span class="text-purple-600 flex items-center">
+                                    <span class="text-amber-600 flex items-center">
                                         View
                                         <x-phosphor-arrow-right class="size-3.5 ml-1" />
                                     </span>
