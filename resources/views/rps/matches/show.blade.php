@@ -40,16 +40,16 @@
                                 <div class="text-xs sm:text-sm text-gray-500">Player 1</div>
 
                                 @if($rpsMatch->player1_elo_before && $rpsMatch->player1_elo_after)
-                                <div class="text-xs mt-1 flex items-center justify-center sm:justify-start whitespace-nowrap">
-                                    <span class="font-mono">ELO: {{ number_format($rpsMatch->player1_elo_before) }}</span>
-                                    <x-phosphor-arrow-right class="w-3 h-3 mx-1 text-gray-400" />
-                                    <span class="font-mono {{ $rpsMatch->player1_elo_after > $rpsMatch->player1_elo_before ? 'text-green-600' : ($rpsMatch->player1_elo_after < $rpsMatch->player1_elo_before ? 'text-red-600' : 'text-gray-600') }}">
-                                        {{ number_format($rpsMatch->player1_elo_after) }}
-                                        @if($rpsMatch->player1_elo_after != $rpsMatch->player1_elo_before)
-                                            ({{ $rpsMatch->player1_elo_after > $rpsMatch->player1_elo_before ? '+' : '' }}{{ number_format($rpsMatch->player1_elo_after - $rpsMatch->player1_elo_before, 1) }})
-                                        @endif
-                                    </span>
-                                </div>
+                                    <div class="text-xs mt-1 flex items-center justify-center sm:justify-start whitespace-nowrap">
+                                        <span class="font-mono">ELO: {{ Number::format($rpsMatch->player1_elo_before) }}</span>
+                                        <x-phosphor-arrow-right class="w-3 h-3 mx-1 text-gray-400" />
+                                        <span class="font-mono {{ $rpsMatch->player1_elo_after > $rpsMatch->player1_elo_before ? 'text-green-600' : ($rpsMatch->player1_elo_after < $rpsMatch->player1_elo_before ? 'text-red-600' : 'text-gray-600') }}">
+                                            {{ Number::format($rpsMatch->player1_elo_after) }}
+                                            @if($rpsMatch->player1_elo_after != $rpsMatch->player1_elo_before)
+                                                ({{ $rpsMatch->player1_elo_after > $rpsMatch->player1_elo_before ? '+' : '' }}{{ Number::format($rpsMatch->player1_elo_after - $rpsMatch->player1_elo_before, 1) }})
+                                            @endif
+                                        </span>
+                                    </div>
                                 @endif
                             </div>
                         </div>
