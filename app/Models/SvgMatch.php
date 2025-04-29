@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Contracts\RankedMatch;
+use Illuminate\Contracts\Filesystem\Cloud;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -86,15 +87,23 @@ class SvgMatch extends Model implements RankedMatch
     }
 
     /**
+     * Get the disk used to store the SVG files.
+     */
+    public function disk(): Cloud
+    {
+        return Storage::disk('svg');
+    }
+
+    /**
      * Get Player 1's SVG content
      */
     public function getPlayer1SvgContent(): ?string
     {
-        if (! $this->player1_svg_path || ! Storage::exists($this->player1_svg_path)) {
+        if (! $this->player1_svg_path || ! $this->disk()->exists($this->player1_svg_path)) {
             return null;
         }
 
-        return Storage::get($this->player1_svg_path);
+        return $this->disk()->get($this->player1_svg_path);
     }
 
     /**
@@ -102,11 +111,11 @@ class SvgMatch extends Model implements RankedMatch
      */
     public function getPlayer2SvgContent(): ?string
     {
-        if (! $this->player2_svg_path || ! Storage::exists($this->player2_svg_path)) {
+        if (! $this->player2_svg_path || ! $this->disk()->exists($this->player2_svg_path)) {
             return null;
         }
 
-        return Storage::get($this->player2_svg_path);
+        return $this->disk()->get($this->player2_svg_path);
     }
 
     /**
@@ -118,7 +127,7 @@ class SvgMatch extends Model implements RankedMatch
             return null;
         }
 
-        return Storage::url($this->player1_svg_path);
+        return $this->disk()->url($this->player1_svg_path);
     }
 
     /**
@@ -130,7 +139,7 @@ class SvgMatch extends Model implements RankedMatch
             return null;
         }
 
-        return Storage::url($this->player2_svg_path);
+        return $this->disk()->url($this->player2_svg_path);
     }
 
     /**
