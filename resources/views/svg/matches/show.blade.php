@@ -211,11 +211,11 @@
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 mb-6 overflow-hidden">
             <div class="flex flex-col md:flex-row">
                 <!-- Left: Judge avatar -->
-                <div class="p-4 md:w-64 bg-gradient-to-r md:bg-gradient-to-b from-amber-50 to-white flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-100">
-                    <div class="size-16 rounded-full bg-amber-100 border-2 border-white shadow flex items-center justify-center mb-3">
+                <div class="p-4 md:w-64 bg-gradient-to-r md:bg-gradient-to-b from-amber-50 to-white flex flex-row md:flex-col gap-3 items-center justify-center border-b md:border-b-0 md:border-r border-gray-100">
+                    <div class="size-16 rounded-full bg-amber-100 border-2 border-white shadow flex items-center justify-center">
                         <x-phosphor-robot-fill class="size-8 text-amber-600" />
                     </div>
-                    <div class="text-center">
+                    <div class="text-left md:text-center">
                         <div class="text-base font-bold text-amber-800">GPT-4o</div>
                         <div class="text-sm text-gray-500">Judge & Evaluator</div>
                     </div>
