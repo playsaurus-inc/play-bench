@@ -2,7 +2,7 @@
     <!-- Entire page with shared Alpine state -->
     <div x-data="{ showCode: false }">
         <!-- Header section with integrated view toggle -->
-        <div class="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div class="mb-4 flex flex-col sm:items-start md:flex-row md:items-center justify-between gap-2">
             <div class="flex items-center">
                 <x-ui.button :href="route('svg.index')" variant="secondary" class="text-xs sm:text-sm mr-3">
                     <x-phosphor-arrow-left class="size-4 mr-1 sm:mr-2" />
@@ -20,13 +20,13 @@
                 </span>
             </div>
 
-            <!-- View toggle moved to top right -->
-            <div class="flex justify-end">
-                <div class="inline-flex rounded-lg border border-gray-200 p-1 bg-white shadow-sm">
+            <!-- View toggle -->
+            <div class="w-full md:w-auto mt-3 md:mt-0">
+                <div class="flex rounded-lg border border-gray-200 p-1 bg-white shadow-sm">
                     <button
                         @click="showCode = false"
                         x-bind:class="{'bg-gray-100 text-gray-900': !showCode, 'text-gray-500 hover:text-gray-700 cursor-pointer': showCode}"
-                        class="px-3 py-1 text-sm font-medium rounded-md flex items-center transition-colors"
+                        class="flex-1 md:flex-none px-3 py-1.5 md:py-1 text-sm font-medium rounded-md flex items-center justify-center md:justify-start transition-colors"
                     >
                         <x-phosphor-image-fill class="size-4 mr-1.5" />
                         View Images
@@ -34,7 +34,7 @@
                     <button
                         @click="showCode = true"
                         x-bind:class="{'bg-gray-100 text-gray-900': showCode, 'text-gray-500 hover:text-gray-700 cursor-pointer': !showCode}"
-                        class="px-3 py-1 text-sm font-medium rounded-md flex items-center transition-colors"
+                        class="flex-1 md:flex-none px-3 py-1.5 md:py-1 text-sm font-medium rounded-md flex items-center justify-center md:justify-start transition-colors"
                     >
                         <x-phosphor-code-fill class="size-4 mr-1.5" />
                         View Code
