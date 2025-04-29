@@ -17,6 +17,7 @@
     "dependencies": {
         "@resvg/resvg-js-cli": "^2.6.2-beta.1",
         "alpinejs": "^3.14.9",
-        "chart.js": "^4.4.9"
+        "chart.js": "^4.4.9",
+        "highlight.js": "^11.11.1"
     }
 }

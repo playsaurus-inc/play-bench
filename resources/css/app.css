@@ -6,6 +6,8 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+@import '../../node_modules/highlight.js/styles/vs2015.css';
+
 @theme {
     --font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }

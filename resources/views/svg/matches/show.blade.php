@@ -127,13 +127,11 @@
                     </div>
                 </div>
 
-                <div x-show="showCode" x-cloak class="p-1">
+                <div x-show="showCode" x-cloak class="overflow-auto max-h-[60vh]">
                     @if($svgMatch->getPlayer1SvgContent())
-                        <div class="bg-gray-900 text-gray-100 rounded p-3 overflow-x-auto text-xs font-mono max-h-[60vh] overflow-y-auto">
-                            <pre>{{ $svgMatch->getPlayer1SvgContent() }}</pre>
-                        </div>
+                        <pre class="bg-gray-900 text-gray-100 rounded text-xs font-mono size-full"><code class="language-xml w-max">{{ $svgMatch->getPlayer1SvgContent() }}</code></pre>
                     @else
-                        <div class="text-center p-8 text-gray-400 max-h-[60vh] flex flex-col items-center justify-center">
+                        <div class="text-center p-8 text-gray-400 size-full flex flex-col items-center justify-center">
                             <x-phosphor-code-fill class="size-12 mx-auto mb-2" />
                             <p class="text-sm">SVG code not available</p>
                         </div>
@@ -196,13 +194,11 @@
                     </div>
                 </div>
 
-                <div x-show="showCode" x-cloak class="p-1">
+                <div x-show="showCode" x-cloak class="max-h-[60vh] overflow-auto">
                     @if($svgMatch->getPlayer2SvgContent())
-                        <div class="bg-gray-900 text-gray-100 rounded p-3 overflow-x-auto text-xs font-mono max-h-[60vh] overflow-y-auto">
-                            <pre>{{ $svgMatch->getPlayer2SvgContent() }}</pre>
-                        </div>
+                        <pre class="bg-gray-900 text-gray-100 rounded text-xs font-mono size-full"><code class="language-xml w-max">{{ $svgMatch->getPlayer2SvgContent() }}</code></pre>
                     @else
-                        <div class="text-center p-8 text-gray-400 max-h-[60vh] flex flex-col items-center justify-center">
+                        <div class="text-center p-8 text-gray-400 size-full flex flex-col items-center justify-center">
                             <x-phosphor-code-fill class="size-12 mx-auto mb-2" />
                             <p class="text-sm">SVG code not available</p>
                         </div>
@@ -323,6 +319,21 @@
                             Aesthetic quality including composition, color usage and overall visual impact.
                         </p>
                     </div>
+                </div>
+
+                <div class="mt-4 text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
+                    <div class="items-center align-middle inline-flex">
+                        <div class="size-8 rounded-full bg-purple-100 flex items-center justify-center mr-2">
+                            <x-phosphor-question-fill class="size-4 text-purple-600" />
+                        </div>
+                        <h4 class="text-base font-medium text-gray-800">How does judging work?</h4>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">
+                        SVG drawings are converted to static PNG images for evaluation.
+                        The AI judge receives the original prompt and both images,
+                        then determines which drawing better fulfills the evaluation
+                        criteria without seeing animations, interactivity, or SVG code.
+                    </p>
                 </div>
             </div>
         </div>
