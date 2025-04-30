@@ -90,7 +90,7 @@
                                                 $lossPercent = $model->rps_matches_lost_count / $model->total_rps_matches * 100;
                                             @endphp
                                             <div class="bg-green-500 h-full" style="width: {{ $winPercent }}%"></div>
-                                            <div class="bg-slate-300 h-full" style="width: {{ $tiePercent }}%"></div>
+                                            <div class="bg-slate-300 border-l-2 border-r-2 border-white h-full" style="width: {{ $tiePercent }}%"></div>
                                             <div class="bg-red-500 h-full" style="width: {{ $lossPercent }}%"></div>
                                         @endif
                                     </div>
