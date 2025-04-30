@@ -10,7 +10,7 @@
     <!-- Header with match ID, date and prompt (with padding) -->
     <div class="p-6 pb-3">
         <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-medium text-indigo-700">Match #{{ $match->id }}</span>
+            <span class="text-sm font-medium text-amber-700">Match #{{ $match->id }}</span>
             <span class="text-xs text-gray-500">{{ $match->created_at->format('M d, Y') }}</span>
         </div>
 
@@ -85,7 +85,7 @@
         </div>
 
         <!-- View details button -->
-        <span class="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors inline-flex items-center" :class="{'translate-x-0.5': hover}">
+        <span class="text-xs font-medium text-amber-600 hover:text-amber-700 transition-colors inline-flex items-center" :class="{'translate-x-0.5': hover}">
             View
             <x-phosphor-arrow-right class="size-3.5 ml-1 transition-transform" x-bind:class="{'transform translate-x-0.5': hover}" />
         </span>

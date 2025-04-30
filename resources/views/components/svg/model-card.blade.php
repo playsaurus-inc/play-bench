@@ -1,0 +1,73 @@
+@props(['model'])
+
+<a href="{{ route('models.show.svg', $model) }}" class="block bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 rounded-xl hover:-translate-y-1">
+    <div class="p-6">
+        <!-- Header with model name and stats -->
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center">
+                <div class="size-12 rounded-full bg-amber-100 flex items-center justify-center">
+                    <x-phosphor-robot-fill class="size-6 text-amber-600" />
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-lg font-semibold text-gray-800">{{ $model->name }}</h3>
+                    <p class="text-xs text-gray-500">AI Artist</p>
+                </div>
+            </div>
+            @if(isset($model->svg_matches_won_count) && $model->svg_matches_won_count > 0)
+                <div class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <x-phosphor-trophy-fill class="size-3.5 mr-1" />
+                    {{ $model->svg_matches_won_count }} wins
+                </div>
+            @endif
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="bg-gray-50 rounded-lg p-3 flex flex-col items-center justify-center">
+                <span class="text-xs text-gray-500">Matches</span>
+                <span class="text-lg font-bold text-amber-700">{{ $model->total_svg_matches ?? 0 }}</span>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-3 flex flex-col items-center justify-center">
+                <span class="text-xs text-gray-500">Win Rate</span>
+                <span class="text-lg font-bold {{ isset($model->win_rate) && $model->win_rate > 0.5 ? 'text-green-600' : 'text-gray-700' }}">
+                    {{ isset($model->win_rate) ? Number::percentage($model->win_rate * 100, 1) : '0.0%' }}
+                </span>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-3 flex flex-col items-center justify-center">
+                <span class="text-xs text-gray-500">Creativity</span>
+                <div class="flex items-center">
+                    @php
+                        $rating = min(5, max(1, round(($model->win_rate ?? 0) * 5)));
+                    @endphp
+                    @for($i = 0; $i < $rating; $i++)
+                        <x-phosphor-star-fill class="size-4 text-amber-500" />
+                    @endfor
+                    @for($i = $rating; $i < 5; $i++)
+                        <x-phosphor-star class="size-4 text-gray-300" />
+                    @endfor
+                </div>
+            </div>
+        </div>
+
+        <!-- Sample style (visual preview) -->
+        <div class="h-32 bg-amber-50 rounded-lg overflow-hidden flex items-center justify-center p-3 mb-4">
+            <div class="flex space-x-2">
+                <!-- Simple geometric shapes to represent the model's style -->
+                <div class="size-12 rounded-full bg-amber-200 border-2 border-amber-300"></div>
+                <div class="size-12 bg-amber-300 transform rotate-45"></div>
+                <div class="size-12 bg-amber-400 transform rotate-12 rounded-sm"></div>
+                <div class="size-12 bg-amber-200 transform -rotate-12 rounded-lg"></div>
+            </div>
+        </div>
+
+        <!-- View button -->
+        <div class="flex justify-end">
+            <div class="text-sm font-medium text-amber-600 hover:text-amber-800 inline-flex items-center">
+                View artist profile
+                <x-phosphor-arrow-right class="size-4 ml-1" />
+            </div>
+        </div>
+    </div>
+</a>
