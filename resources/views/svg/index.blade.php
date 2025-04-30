@@ -74,10 +74,10 @@
                         style="transition: all 0.5s ease"
                     >
                         <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="100" cy="100" r="80" fill="#eef2ff" />
-                            <circle cx="100" cy="100" r="60" fill="#c7d2fe" />
-                            <circle cx="100" cy="100" r="40" fill="#a5b4fc" />
-                            <circle cx="100" cy="100" r="20" fill="#6366f1" />
+                            <circle cx="100" cy="100" r="80" fill="#fff7ed" />
+                            <circle cx="100" cy="100" r="60" fill="#fed7aa" />
+                            <circle cx="100" cy="100" r="40" fill="#fb923c" />
+                            <circle cx="100" cy="100" r="20" fill="#f59e0b" />
                         </svg>
                     </div>
 
@@ -88,10 +88,10 @@
                         style="transition: all 0.5s ease"
                     >
                         <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="40" y="40" width="120" height="120" fill="#eef2ff" />
-                            <rect x="60" y="60" width="80" height="80" fill="#c7d2fe" />
-                            <rect x="80" y="80" width="40" height="40" fill="#a5b4fc" />
-                            <rect x="90" y="90" width="20" height="20" fill="#6366f1" />
+                            <rect x="40" y="40" width="120" height="120" fill="#fff7ed" />
+                            <rect x="60" y="60" width="80" height="80" fill="#fed7aa" />
+                            <rect x="80" y="80" width="40" height="40" fill="#fb923c" />
+                            <rect x="90" y="90" width="20" height="20" fill="#f59e0b" />
                         </svg>
                     </div>
 
@@ -102,10 +102,10 @@
                         style="transition: all 0.5s ease"
                     >
                         <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                            <polygon points="100,20 180,180 20,180" fill="#eef2ff" />
-                            <polygon points="100,50 150,150 50,150" fill="#c7d2fe" />
-                            <polygon points="100,80 130,130 70,130" fill="#a5b4fc" />
-                            <polygon points="100,100 115,115 85,115" fill="#6366f1" />
+                            <polygon points="100,20 180,180 20,180" fill="#fff7ed" />
+                            <polygon points="100,50 150,150 50,150" fill="#fed7aa" />
+                            <polygon points="100,80 130,130 70,130" fill="#fb923c" />
+                            <polygon points="100,100 115,115 85,115" fill="#f59e0b" />
                         </svg>
                     </div>
                 </div>
