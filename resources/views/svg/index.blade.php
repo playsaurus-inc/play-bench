@@ -64,50 +64,64 @@
                 </div>
             </div>
 
-            <!-- SVG Art Display -->
+            <!-- Enhanced SVG Art Display -->
             <div class="md:w-1/3 flex justify-center">
-                <div class="relative" x-data="{ current: 0 }" x-init="setInterval(() => current = (current + 1) % 3, 2500)">
-                    <!-- SVG sample 1 -->
+                <div class="relative h-48 w-48" x-data="{ current: 0 }" x-init="setInterval(() => current = (current + 1) % 5, 2000)">
+                    <!-- Creative Icon 1: Palette -->
                     <div
-                        class="size-36 md:size-48 rounded-2xl bg-white border-4 border-amber-100 shadow-lg flex items-center justify-center absolute left-0 -rotate-6 overflow-hidden"
-                        :class="{'scale-110 shadow-xl z-10': current === 0, 'z-0': current !== 0}"
-                        style="transition: all 0.5s ease"
+                        class="absolute inset-0 flex items-center justify-center transform transition-all duration-700 ease-in-out"
+                        :class="{'scale-110 opacity-100 z-20': current === 0, 'scale-75 opacity-0 rotate-45': current !== 0}"
                     >
-                        <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="100" cy="100" r="80" fill="#fff7ed" />
-                            <circle cx="100" cy="100" r="60" fill="#fed7aa" />
-                            <circle cx="100" cy="100" r="40" fill="#fb923c" />
-                            <circle cx="100" cy="100" r="20" fill="#f59e0b" />
-                        </svg>
+                        <div class="size-40 rounded-xl bg-gradient-to-br from-amber-100 to-white border-4 border-amber-200 shadow-lg p-3">
+                            <x-phosphor-palette-fill class="size-full text-amber-500" />
+                        </div>
                     </div>
 
-                    <!-- SVG sample 2 -->
+                    <!-- Creative Icon 2: Planet -->
                     <div
-                        class="size-36 md:size-48 rounded-2xl bg-white border-4 border-amber-100 shadow-lg flex items-center justify-center rotate-3 overflow-hidden"
-                        :class="{'scale-110 shadow-xl z-10': current === 1, 'z-0': current !== 1}"
-                        style="transition: all 0.5s ease"
+                        class="absolute inset-0 flex items-center justify-center transform transition-all duration-700 ease-in-out"
+                        :class="{'scale-110 opacity-100 z-20': current === 1, 'scale-75 opacity-0 -rotate-45': current !== 1}"
                     >
-                        <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="40" y="40" width="120" height="120" fill="#fff7ed" />
-                            <rect x="60" y="60" width="80" height="80" fill="#fed7aa" />
-                            <rect x="80" y="80" width="40" height="40" fill="#fb923c" />
-                            <rect x="90" y="90" width="20" height="20" fill="#f59e0b" />
-                        </svg>
+                        <div class="size-40 rounded-xl bg-gradient-to-br from-blue-100 to-white border-4 border-blue-200 shadow-lg p-3">
+                            <x-phosphor-planet-fill class="size-full text-blue-500" />
+                        </div>
                     </div>
 
-                    <!-- SVG sample 3 -->
+                    <!-- Creative Icon 3: Mountains -->
                     <div
-                        class="size-36 md:size-48 rounded-2xl bg-white border-4 border-amber-100 shadow-lg flex items-center justify-center absolute right-0 rotate-12 overflow-hidden"
-                        :class="{'scale-110 shadow-xl z-10': current === 2, 'z-0': current !== 2}"
-                        style="transition: all 0.5s ease"
+                        class="absolute inset-0 flex items-center justify-center transform transition-all duration-700 ease-in-out"
+                        :class="{'scale-110 opacity-100 z-20': current === 2, 'scale-75 opacity-0 rotate-90': current !== 2}"
                     >
-                        <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                            <polygon points="100,20 180,180 20,180" fill="#fff7ed" />
-                            <polygon points="100,50 150,150 50,150" fill="#fed7aa" />
-                            <polygon points="100,80 130,130 70,130" fill="#fb923c" />
-                            <polygon points="100,100 115,115 85,115" fill="#f59e0b" />
-                        </svg>
+                        <div class="size-40 rounded-xl bg-gradient-to-br from-green-100 to-white border-4 border-green-200 shadow-lg p-3">
+                            <x-phosphor-mountains-fill class="size-full text-green-500" />
+                        </div>
                     </div>
+
+                    <!-- Creative Icon 4: Flying Saucer -->
+                    <div
+                        class="absolute inset-0 flex items-center justify-center transform transition-all duration-700 ease-in-out"
+                        :class="{'scale-110 opacity-100 z-20': current === 3, 'scale-75 opacity-0 -rotate-90': current !== 3}"
+                    >
+                        <div class="size-40 rounded-xl bg-gradient-to-br from-purple-100 to-white border-4 border-purple-200 shadow-lg p-3">
+                            <x-phosphor-flying-saucer-fill class="size-full text-purple-500" />
+                        </div>
+                    </div>
+
+                    <!-- Creative Icon 5: Rabbit -->
+                    <div
+                        class="absolute inset-0 flex items-center justify-center transform transition-all duration-700 ease-in-out"
+                        :class="{'scale-110 opacity-100 z-20': current === 4, 'scale-75 opacity-0 rotate-180': current !== 4}"
+                    >
+                        <div class="size-40 rounded-xl bg-gradient-to-br from-pink-100 to-white border-4 border-pink-200 shadow-lg p-3">
+                            <x-phosphor-rabbit-fill class="size-full text-pink-500" />
+                        </div>
+                    </div>
+
+                    <!-- Decorative floating circles -->
+                    <div class="absolute -top-4 -right-4 size-12 bg-amber-200 rounded-full opacity-50 animate-pulse"></div>
+                    <div class="absolute -bottom-6 -left-3 size-8 bg-blue-200 rounded-full opacity-60 animate-bounce"></div>
+                    <div class="absolute top-1/2 -right-5 size-6 bg-green-200 rounded-full opacity-40"
+                         style="animation: float 4s ease-in-out infinite alternate;"></div>
                 </div>
             </div>
         </div>
@@ -212,6 +226,12 @@
         }
         .hover-scale:hover {
             transform: translateY(-4px) scale(1.01);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-10px) rotate(10deg); }
+            100% { transform: translateY(5px) rotate(-5deg); }
         }
     </style>
 </x-layouts::app>
