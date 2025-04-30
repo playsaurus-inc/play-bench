@@ -39,7 +39,7 @@ class SvgMatchController extends Controller
             ->where('id', '!=', $svgMatch->id)
             ->with(['player1', 'player2', 'winner'])
             ->latest()
-            ->take(4)
+            ->take(6)
             ->get();
 
         // Get models by most SVG matches

@@ -118,7 +118,7 @@
                             <img
                                 src="{{ $svgMatch->getPlayer1SvgUrl() }}"
                                 alt="SVG by {{ $svgMatch->player1->name }}"
-                                class="max-w-full max-h-[60vh] object-contain"
+                                class="size-full max-w-full max-h-[60vh] object-contain"
                             >
                         @else
                             <div class="text-center p-4 text-gray-400">
@@ -185,7 +185,7 @@
                             <img
                                 src="{{ $svgMatch->getPlayer2SvgUrl() }}"
                                 alt="SVG by {{ $svgMatch->player2->name }}"
-                                class="max-w-full max-h-[60vh] object-contain"
+                                class="size-full max-w-full max-h-[60vh] object-contain"
                             >
                         @else
                             <div class="text-center p-4 text-gray-400">
@@ -346,50 +346,9 @@
                     Similar Challenges
                 </h2>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
                     @foreach($similarMatches as $match)
-                        <a href="{{ route('svg.matches.show', $match) }}" class="block bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all overflow-hidden">
-                            <div class="p-3">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="font-medium text-xs text-gray-900">#{{ $match->id }}</span>
-                                    <span class="text-xs text-gray-500">{{ $match->created_at->format('M d') }}</span>
-                                </div>
-
-                                <div class="text-xs text-gray-600 mb-3 line-clamp-2 h-8">{{ $match->prompt }}</div>
-
-                                <div class="grid grid-cols-2 gap-1 mb-2">
-                                    <div class="aspect-square bg-gray-50 rounded p-1 flex items-center justify-center overflow-hidden">
-                                        @if($match->getPlayer1SvgUrl())
-                                            <img src="{{ $match->getPlayer1SvgUrl() }}" alt="SVG by {{ $match->player1->name }}"
-                                                 class="max-w-full max-h-full object-contain">
-                                        @else
-                                            <x-phosphor-image-square class="size-4 text-gray-300" />
-                                        @endif
-                                    </div>
-
-                                    <div class="aspect-square bg-gray-50 rounded p-1 flex items-center justify-center overflow-hidden">
-                                        @if($match->getPlayer2SvgUrl())
-                                            <img src="{{ $match->getPlayer2SvgUrl() }}" alt="SVG by {{ $match->player2->name }}"
-                                                 class="max-w-full max-h-full object-contain">
-                                        @else
-                                            <x-phosphor-image-square class="size-4 text-gray-300" />
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center justify-between text-xs">
-                                    <div class="flex items-center">
-                                        <x-phosphor-trophy-fill class="size-3.5 mr-1 text-amber-500" />
-                                        <span class="truncate">{{ $match->winner ? $match->winner->name : 'No winner' }}</span>
-                                    </div>
-
-                                    <span class="text-amber-600 flex items-center">
-                                        View
-                                        <x-phosphor-arrow-right class="size-3.5 ml-1" />
-                                    </span>
-                                </div>
-                            </div>
-                        </a>
+                        <x-svg.match-card :match="$match" class="hover-scale" />
                     @endforeach
                 </div>
             </section>
