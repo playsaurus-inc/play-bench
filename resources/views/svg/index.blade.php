@@ -58,7 +58,7 @@
                 </div>
 
                 <div class="mt-8">
-                    <x-ui.button href="#featured-matches" variant="primary" size="lg" class="bg-amber-600 hover:bg-amber-700 focus:ring-amber-500">
+                    <x-ui.button href="#featured-matches" variant="primary" size="lg">
                         Explore Drawings
                     </x-ui.button>
                 </div>
@@ -146,7 +146,7 @@
                             Just added
                         </div>
                     </div>
-                    <x-svg.match-card :match="$latestMatch" class="hover-scale" />
+                    <x-svg.match-card :match="$latestMatch" />
                 </div>
             @endif
 
@@ -162,7 +162,7 @@
                             Exceptional artwork
                         </div>
                     </div>
-                    <x-svg.match-card :match="$mostCreativeMatch" class="hover-scale"/>
+                    <x-svg.match-card :match="$mostCreativeMatch"/>
                 </div>
             @endif
 
@@ -177,7 +177,7 @@
                             Outstanding design
                         </div>
                     </div>
-                    <x-svg.match-card :match="$visuallyInterestingMatch" class="hover-scale"/>
+                    <x-svg.match-card :match="$visuallyInterestingMatch" />
                 </div>
             @endif
         </div>
@@ -219,19 +219,4 @@
 
     <!-- About the SVG Benchmark section -->
     <x-svg.game-rules />
-
-    <style>
-        .hover-scale {
-            transition: transform 0.3s ease;
-        }
-        .hover-scale:hover {
-            transform: translateY(-4px) scale(1.01);
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0); }
-            50% { transform: translateY(-10px) rotate(10deg); }
-            100% { transform: translateY(5px) rotate(-5deg); }
-        }
-    </style>
 </x-layouts::app>

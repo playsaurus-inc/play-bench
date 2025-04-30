@@ -35,6 +35,12 @@
     .hover-scale:hover {
         transform: translateY(-0.25rem) scale(1.01);
     }
+
+    @keyframes float {
+        0% { transform: translateY(0) rotate(0); }
+        50% { transform: translateY(-10px) rotate(10deg); }
+        100% { transform: translateY(5px) rotate(-5deg); }
+    }
 }
 
 /* Focus outline styles for accessibility */

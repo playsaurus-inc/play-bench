@@ -52,33 +52,42 @@
 
             <!-- RPS Icon Display -->
             <div class="md:w-1/3 flex justify-center">
-                <div class="relative" x-data="{ currentMove: 0 }" x-init="setInterval(() => currentMove = (currentMove + 1) % 3, 1500)">
+                <div class="relative w-72 h-48" x-data="{ currentMove: 0 }" x-init="setInterval(() => currentMove = (currentMove + 1) % 3, 2000)">
                     <!-- Rock -->
                     <div
-                        class="size-24 md:size-32 rounded-full bg-red-100 border-4 border-white shadow-lg flex items-center justify-center absolute -left-22 md:-left-28 top-0 md:top-0"
-                        :class="{'scale-110 shadow-xl z-10': currentMove === 0, 'z-0': currentMove !== 0}"
-                        style="transition: all 0.3s ease"
+                        class="absolute left-0 top-1/2 -translate-y-1/2 transform transition-all duration-700 ease-in-out"
+                        :class="{'scale-110 z-20 drop-shadow-xl': currentMove === 0, 'scale-90 opacity-60': currentMove !== 0}"
                     >
-                        <x-fas-hand-rock class="size-8" x-bind:class="{'text-red-600': currentMove === 0}" />
-                    </div>
-
-                    <!-- Scissors -->
-                    <div
-                        class="size-24 md:size-32 rounded-full bg-green-100 border-4 border-white shadow-lg flex items-center justify-center absolute -right-22 md:-right-28 top-0 md:top-0"
-                        :class="{'scale-110 shadow-xl z-10': currentMove === 2, 'z-0': currentMove !== 2}"
-                        style="transition: all 0.3s ease"
-                    >
-                        <x-fas-hand-scissors class="size-8" x-bind:class="{'text-green-600': currentMove === 2}" />
+                        <div class="size-28 rounded-full bg-gradient-to-br from-red-100 to-white border-4 border-red-200 shadow-lg flex items-center justify-center">
+                            <x-fas-hand-rock class="size-10" x-bind:class="{'text-red-600': currentMove === 0, 'text-red-400': currentMove !== 0}" />
+                        </div>
                     </div>
 
                     <!-- Paper -->
                     <div
-                        class="size-24 md:size-32 rounded-full bg-blue-100 border-4 border-white shadow-lg flex items-center justify-center relative"
-                        :class="{'scale-110 shadow-xl z-10': currentMove === 1, 'z-0': currentMove !== 1}"
-                        style="transition: all 0.3s ease"
+                        class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 transform transition-all duration-700 ease-in-out"
+                        :class="{'scale-110 z-20 drop-shadow-xl': currentMove === 1, 'scale-90 opacity-60': currentMove !== 1}"
                     >
-                        <x-fas-hand-paper class="size-8" x-bind:class="{'text-blue-600': currentMove === 1}" />
+                        <div class="size-28 rounded-full bg-gradient-to-br from-blue-100 to-white border-4 border-blue-200 shadow-lg flex items-center justify-center">
+                            <x-fas-hand-paper class="size-10" x-bind:class="{'text-blue-600': currentMove === 1, 'text-blue-400': currentMove !== 1}" />
+                        </div>
                     </div>
+
+                    <!-- Scissors -->
+                    <div
+                        class="absolute right-0 top-1/2 -translate-y-1/2 transform transition-all duration-700 ease-in-out"
+                        :class="{'scale-110 z-20 drop-shadow-xl': currentMove === 2, 'scale-90 opacity-60': currentMove !== 2}"
+                    >
+                        <div class="size-28 rounded-full bg-gradient-to-br from-green-100 to-white border-4 border-green-200 shadow-lg flex items-center justify-center">
+                            <x-fas-hand-scissors class="size-10" x-bind:class="{'text-green-600': currentMove === 2, 'text-green-400': currentMove !== 2}" />
+                        </div>
+                    </div>
+
+                    <!-- Decorative floating circles -->
+                    <div class="absolute -top-4 -right-4 size-10 bg-red-200 rounded-full opacity-50 animate-pulse"></div>
+                    <div class="absolute -bottom-6 -left-3 size-8 bg-blue-200 rounded-full opacity-60 animate-bounce"></div>
+                    <div class="absolute bottom-4 -right-6 size-6 bg-green-200 rounded-full opacity-40"
+                         style="animation: float 4s ease-in-out infinite alternate;"></div>
                 </div>
             </div>
         </div>
