@@ -44,9 +44,11 @@
                     >
                         <td class="px-6 py-3 whitespace-nowrap">
                             <div class="flex items-center">
-                                <div class="w-8 h-8 rounded-full {{ $model->rps_rank < 4 ? 'bg-amber-100' : 'bg-gray-100' }} flex items-center justify-center {{ $model->rps_rank < 4 ? 'border-2 border-amber-200' : 'border border-gray-200' }}">
-                                    <span class="{{ $model->rps_rank < 4 ? 'text-amber-800' : 'text-gray-600' }} text-sm font-bold">{{ $model->rps_rank }}</span>
-                                </div>
+                                <div @class([
+                                    'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold',
+                                    'bg-amber-100 border-2 border-amber-200 text-amber-800' => $model->rps_rank < 4,
+                                    'bg-gray-100 border border-gray-200 text-gray-600' => $model->rps_rank >= 4,
+                                ])>{{ $model->rps_rank }}</div>
                             </div>
                         </td>
                         <td class="px-6 py-3 whitespace-nowrap">
