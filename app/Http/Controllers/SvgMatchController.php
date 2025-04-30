@@ -63,7 +63,7 @@ class SvgMatchController extends Controller
 
         return view('svg.index', [
             'totalMatchesCount' => SvgMatch::count(),
-            'uniquePromptCount' => SvgMatch::distinct('prompt')->count('prompt'),
+            'giraffeCount' => SvgMatch::where('prompt', 'like', '%giraffe%')->count(),
             'modelsCount' => $models->count(),
             'latestMatch' => $latestMatch,
             'mostCreativeMatch' => $mostCreativeMatch ?? $latestMatch, // Fallback to latest if none found

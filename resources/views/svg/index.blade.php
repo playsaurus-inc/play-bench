@@ -43,18 +43,18 @@
                     </div>
                     <div
                         class="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-amber-100 text-amber-800"
-                        x-data="animatedCounter({{ $uniquePromptCount }})"
-                    >
-                        <x-phosphor-chat-text-fill class="size-6 mr-2" />
-                        <span x-text="integerValue + ' unique prompts'"></span>
-                    </div>
-                    <span
-                        class="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-amber-100 text-amber-800"
                         x-data="animatedCounter({{ $modelsCount }})"
                     >
                         <x-phosphor-robot-fill class="size-6 mr-2" />
                         <span x-text="integerValue + ' AI models competing'"></span>
-                    </span>
+                    </div>
+                    <div
+                        class="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-amber-100 text-amber-800"
+                        x-data="animatedCounter({{ $giraffeCount * 2 }})"
+                    >
+                        <x-icons.giraffe class="size-5 mr-2" />
+                        <span x-text="integerValue + ' giraffes drawn'"></span>
+                    </div>
                 </div>
 
                 <div class="mt-8">
