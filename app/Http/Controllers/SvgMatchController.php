@@ -19,14 +19,14 @@ class SvgMatchController extends Controller
             ->with(['player1', 'player2', 'winner'])
             ->latest()
             ->first();
-            
+
         // Most creative (Judge reasoning contains "creative" or "creativity")
         $mostCreativeMatch = SvgMatch::query()
             ->with(['player1', 'player2', 'winner'])
             ->where('judge_reasoning', 'like', '%creativ%')
             ->inRandomOrder()
             ->first();
-            
+
         // Match with interesting visual elements (adjust search terms as needed)
         $visuallyInterestingMatch = SvgMatch::query()
             ->with(['player1', 'player2', 'winner'])
@@ -52,14 +52,13 @@ class SvgMatchController extends Controller
             ->get()
             ->map(function ($model) {
                 $model->total_svg_matches = $model->svg_matches_as_player1_count + $model->svg_matches_as_player2_count;
-                $model->svg_matches_tied_count = $model->svg_matches_as_player1_tied_count + $model->svg_matches_as_player2_tied_count;
-                $model->win_rate = $model->total_svg_matches > 0 
-                    ? $model->svg_matches_won_count / $model->total_svg_matches 
+                $model->win_rate = $model->total_svg_matches > 0
+                    ? $model->svg_matches_won_count / $model->total_svg_matches
                     : 0;
 
                 return $model;
             })
-            ->sortByDesc('svg_matches_won_count')
+            ->sortByDesc('svg_elo')
             ->reject(fn ($model) => $model->total_svg_matches < 1);
 
         return view('svg.index', [
