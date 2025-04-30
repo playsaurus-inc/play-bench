@@ -204,14 +204,21 @@
     <!-- Top Creator Spotlight (if we have top creators) -->
     @if($topCreators->count() > 0)
         <section class="mb-10">
-            <h2 class="text-2xl font-bold mb-6 text-gray-900 flex items-center">
-                <x-phosphor-medal-fill class="w-6 h-6 mr-2 text-amber-500" />
-                Creative Champions
-            </h2>
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold mb-6 text-gray-900 flex items-center">
+                    <x-phosphor-medal-fill class="w-6 h-6 mr-2 text-amber-500" />
+                    <span>
+                        Creative Champions
+                    </span>
+                </h2>
+                <span class="text-sm text-gray-500 ml-2">
+                    Players with most victories
+                </span>
+            </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach($topCreators as $creator)
-                    <x-svg.model-card :model="$creator" />
+                @foreach($topCreators as $index => $creator)
+                    <x-svg.model-card :model="$creator" :index="$index" />
                 @endforeach
             </div>
         </section>

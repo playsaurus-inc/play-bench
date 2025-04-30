@@ -1,4 +1,4 @@
-@props(['model'])
+@props(['model', 'index' => 0 ])
 
 <a href="{{ route('models.show.svg', $model) }}" class="block bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 rounded-xl hover:-translate-y-1">
     <div class="p-6">
@@ -22,7 +22,7 @@
         </div>
 
         <!-- Stats -->
-        <div class="grid grid-cols-3 gap-3 mb-4">
+        <div class="grid grid-cols-2 gap-3 mb-4">
             <div class="bg-gray-50 rounded-lg p-3 flex flex-col items-center justify-center">
                 <span class="text-xs text-gray-500">Matches</span>
                 <span class="text-lg font-bold text-amber-700">{{ $model->total_svg_matches ?? 0 }}</span>
@@ -34,33 +34,59 @@
                     {{ isset($model->win_rate) ? Number::percentage($model->win_rate * 100, 1) : '0.0%' }}
                 </span>
             </div>
-
-            <div class="bg-gray-50 rounded-lg p-3 flex flex-col items-center justify-center">
-                <span class="text-xs text-gray-500">Creativity</span>
-                <div class="flex items-center">
-                    @php
-                        $rating = min(5, max(1, round(($model->win_rate ?? 0) * 5)));
-                    @endphp
-                    @for($i = 0; $i < $rating; $i++)
-                        <x-phosphor-star-fill class="size-4 text-amber-500" />
-                    @endfor
-                    @for($i = $rating; $i < 5; $i++)
-                        <x-phosphor-star class="size-4 text-gray-300" />
-                    @endfor
-                </div>
-            </div>
         </div>
 
         <!-- Sample style (visual preview) -->
-        <div class="h-32 bg-amber-50 rounded-lg overflow-hidden flex items-center justify-center p-3 mb-4">
-            <div class="flex space-x-2">
-                <!-- Simple geometric shapes to represent the model's style -->
-                <div class="size-12 rounded-full bg-amber-200 border-2 border-amber-300"></div>
-                <div class="size-12 bg-amber-300 transform rotate-45"></div>
-                <div class="size-12 bg-amber-400 transform rotate-12 rounded-sm"></div>
-                <div class="size-12 bg-amber-200 transform -rotate-12 rounded-lg"></div>
+
+        @empty($model->svg_samples)
+            <div class="h-32 bg-amber-50 rounded-lg overflow-hidden flex gap-3 items-center justify-center p-3 mb-4">
+                <div class="flex space-x-2">
+                    <!-- Simple geometric shapes to represent the model's style -->
+                    <div class="size-12 rounded-full bg-amber-200 border-2 border-amber-300"></div>
+                    <div class="size-12 bg-amber-300 transform rotate-45"></div>
+                    <div class="size-12 bg-amber-400 transform rotate-12 rounded-sm"></div>
+                    <div class="size-12 bg-amber-200 transform -rotate-12 rounded-lg"></div>
+                </div>
             </div>
-        </div>
+        @else
+            <div
+                x-data="{
+                    urls: {{ json_encode($model->svg_samples) }},
+                    samples: [
+                        {urlIndex: 0, url: '{{ $model->svg_samples[0] ?? '' }}'},
+                        {urlIndex: 1, url: '{{ $model->svg_samples[1] ?? '' }}'},
+                        {urlIndex: 2, url: '{{ $model->svg_samples[2] ?? '' }}'},
+                    ],
+                    sampleIndex: 0,
+                    changeInterval: 3000,
+                    initialDelay: {{ $index * 1000 }},
+                    init() {
+                        setTimeout(() => this.startAnimation(), this.initialDelay);
+                    },
+                    startAnimation() {
+                        setInterval(() => {
+                            this.sampleIndex = (this.sampleIndex + 1) % this.samples.length;
+                            const sample = this.samples[this.sampleIndex];
+                            sample.urlIndex = (sample.urlIndex + this.samples.length) % this.urls.length;
+                            sample.url = this.urls[sample.urlIndex];
+                        }, this.changeInterval);
+                    }
+                }"
+                class="h-32 bg-gray-50 rounded-lg flex gap-3 items-center justify-center p-3 mb-4"
+            >
+                <template x-for="(sample, index) in samples" :key="index">
+                    <div class="flex-shrink-0">
+                        <img
+                            :src="sample.url"
+                            alt="Sample SVG"
+                            class="size-30 object-cover rounded-lg shadow-md transition-transform bg-white"
+                            x-bind:class="{ 'scale-105': index === sampleIndex }"
+                        />
+                    </div>
+                </template>
+            </div>
+
+        @endempty
 
         <!-- View button -->
         <div class="flex justify-end">

@@ -61,6 +61,16 @@ class SvgMatchController extends Controller
             ->sortByDesc('svg_elo')
             ->reject(fn ($model) => $model->total_svg_matches < 1);
 
+        $topSvgCreators = $models
+            ->sortByDesc('svg_matches_won_count')
+            ->take(3)
+            ->load(['svgMatchesWon' => fn ($q) => $q->take(12)])
+            ->map(function ($model) {
+                $model->svg_samples = $model->svgMatchesWon->map->getWinnerSvgUrl();
+                return $model;
+            })
+            ->values();
+
         return view('svg.index', [
             'totalMatchesCount' => SvgMatch::count(),
             'giraffeCount' => SvgMatch::where('prompt', 'like', '%giraffe%')->count(),
@@ -69,7 +79,7 @@ class SvgMatchController extends Controller
             'mostCreativeMatch' => $mostCreativeMatch ?? $latestMatch, // Fallback to latest if none found
             'visuallyInterestingMatch' => $visuallyInterestingMatch ?? $latestMatch, // Fallback to latest if none found
             'models' => $models->values(),
-            'topCreators' => $models->sortByDesc('svg_matches_won_count')->take(3),
+            'topCreators' => $topSvgCreators,
         ]);
     }
 
