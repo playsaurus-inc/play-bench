@@ -129,9 +129,9 @@
                     </div>
                 </div>
 
-                <div x-show="showCode" x-cloak class="overflow-auto max-h-[60vh]">
+                <div x-show="showCode" x-cloak class="overflow-auto w-full h-full max-h-[60vh]">
                     @if($svgMatch->getPlayer1SvgContent())
-                        <pre class="bg-gray-900 text-gray-100 rounded text-xs font-mono size-full"><code class="language-xml w-max">{{ $svgMatch->getPlayer1SvgContent() }}</code></pre>
+                        <pre class="bg-gray-900 text-gray-100 rounded text-xs font-mono size-full"><code class="language-xml min-w-full min-w-full w-max">{{ $svgMatch->getPlayer1SvgContent() }}</code></pre>
                     @else
                         <div class="text-center p-8 text-gray-400 size-full flex flex-col items-center justify-center">
                             <x-phosphor-code-fill class="size-12 mx-auto mb-2" />
@@ -196,9 +196,9 @@
                     </div>
                 </div>
 
-                <div x-show="showCode" x-cloak class="max-h-[60vh] overflow-auto">
+                <div x-show="showCode" x-cloak class="max-h-[60vh] w-full h-full overflow-auto">
                     @if($svgMatch->getPlayer2SvgContent())
-                        <pre class="bg-gray-900 text-gray-100 rounded text-xs font-mono size-full"><code class="language-xml w-max">{{ $svgMatch->getPlayer2SvgContent() }}</code></pre>
+                        <pre class="bg-gray-900 text-gray-100 rounded text-xs font-mono size-full"><code class="language-xml min-w-full min-h-full w-max">{{ $svgMatch->getPlayer2SvgContent() }}</code></pre>
                     @else
                         <div class="text-center p-8 text-gray-400 size-full flex flex-col items-center justify-center">
                             <x-phosphor-code-fill class="size-12 mx-auto mb-2" />
