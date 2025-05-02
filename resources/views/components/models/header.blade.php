@@ -64,20 +64,35 @@
                         </div>
                     </div>
 
-                    <!-- SVG Drawing Performance (coming soon) -->
-                    <div class="bg-gray-50 rounded-lg p-4 sm:p-5 relative opacity-70">
+                    <!-- SVG Drawing Performance -->
+                    <div class="bg-gray-50 rounded-lg p-4 sm:p-5 relative transition-all duration-300 hover:bg-white hover:shadow-md hover:-translate-y-1">
                         <div class="absolute top-0 right-0 w-12 h-12 sm:w-16 sm:h-16 border-l border-b border-gray-100 rounded-bl-3xl opacity-40"></div>
                         <div class="relative">
-                            <div class="flex items-center mb-1.5 sm:mb-2">
-                                <h3 class="text-xs sm:text-sm font-medium text-gray-500 flex items-center">
-                                    <x-phosphor-paint-brush-fill class="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-1.5 text-blue-500" />
-                                    SVG Drawing
-                                </h3>
-                                <span class="ml-1 sm:ml-2 text-xs px-1 sm:px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded-sm">Coming soon</span>
-                            </div>
-                            <div class="flex items-center mt-2">
-                                <span class="text-xs sm:text-sm text-gray-500">No matches yet</span>
-                            </div>
+                            <h3 class="text-xs sm:text-sm font-medium text-gray-500 mb-1.5 sm:mb-2 flex items-center">
+                                <x-phosphor-paint-brush-fill class="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-1.5 text-blue-500" />
+                                SVG Drawing
+                            </h3>
+                            @if($model->svg_rank > 0)
+                                <div class="flex items-end">
+                                    <span class="text-xl sm:text-2xl font-bold text-blue-600">Rank #{{ $model->svg_rank }}</span>
+                                </div>
+                                <div class="mt-1.5 sm:mt-2 flex flex-col">
+                                    <div class="flex items-center justify-between text-xs sm:text-sm">
+                                        <span class="text-gray-500">ELO Rating:</span>
+                                        <span class="font-medium">{{ Number::format($model->svg_elo, 0) }}</span>
+                                    </div>
+                                </div>
+                                <div class="mt-1">
+                                    <a href="{{ route('models.show.svg', $model) }}" class="text-xs text-blue-600 hover:text-blue-700 flex items-center">
+                                        View SVG details
+                                        <x-phosphor-arrow-right class="w-3 h-3 ml-1" />
+                                    </a>
+                                </div>
+                            @else
+                                <div class="flex items-center mt-2">
+                                    <span class="text-xs sm:text-sm text-gray-500">No matches yet</span>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
