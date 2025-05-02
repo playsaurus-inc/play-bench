@@ -60,11 +60,17 @@
                     sampleIndex: 0,
                     changeInterval: 3000,
                     initialDelay: {{ $index * 1000 }},
+                    isPlaying: true,
                     init() {
                         setTimeout(() => this.startAnimation(), this.initialDelay);
+                        const observer = new IntersectionObserver((entries) => {
+                            entries.forEach(entry => this.isPlaying = entry.isIntersecting);
+                        });
+                        observer.observe(this.$el);
                     },
                     startAnimation() {
                         setInterval(() => {
+                            if (!this.isPlaying) return;
                             this.sampleIndex = (this.sampleIndex + 1) % this.samples.length;
                             const sample = this.samples[this.sampleIndex];
                             sample.urlIndex = (sample.urlIndex + this.samples.length) % this.urls.length;
