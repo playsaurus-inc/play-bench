@@ -155,6 +155,16 @@ class SvgMatch extends Model implements RankedMatch
     }
 
     /**
+     * Get the full URL to the loser's SVG
+     */
+    public function getLoserSvgUrl(): ?string
+    {
+        return $this->loser_id === $this->player1_id
+            ? $this->getPlayer1SvgUrl()
+            : $this->getPlayer2SvgUrl();
+    }
+
+    /**
      * Check if player 1 is the winner
      */
     public function isPlayer1Winner(): bool

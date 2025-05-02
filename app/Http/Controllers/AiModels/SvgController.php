@@ -30,37 +30,24 @@ class SvgController extends Controller
         // Get winning artwork samples
         $winningArtworks = $aiModel->svgMatchesWon()
             ->latest()
-            ->take(9)
+            ->take(8)
             ->get()
-            ->map(function ($match) use ($aiModel) {
-                return [
-                    'match' => $match,
-                    'prompt' => $match->prompt,
-                    'svg_url' => $match->winner_id === $match->player1_id
-                        ? $match->getPlayer1SvgUrl()
-                        : $match->getPlayer2SvgUrl(),
-                ];
-            });
+            ->map(fn ($match) => [
+                'match' => $match,
+                'prompt' => $match->prompt,
+                'svg_url' => $match->getWinnerSvgUrl(),
+            ]);
 
         // Get failed artwork samples (matches where this model lost)
         $failedArtworks = $aiModel->svgMatchesLost()
-            ->with(['winner'])
             ->latest()
-            ->take(6)
+            ->take(8)
             ->get()
-            ->map(function ($match) use ($aiModel) {
-                return [
-                    'match' => $match,
-                    'prompt' => $match->prompt,
-                    'svg_url' => $match->player1_id === $aiModel->id
-                        ? $match->getPlayer1SvgUrl()
-                        : $match->getPlayer2SvgUrl(),
-                    'winner_url' => $match->winner_id === $match->player1_id
-                        ? $match->getPlayer1SvgUrl()
-                        : $match->getPlayer2SvgUrl(),
-                    'winner_name' => $match->winner->name,
-                ];
-            });
+            ->map(fn ($match) => [
+                'match' => $match,
+                'prompt' => $match->prompt,
+                'svg_url' => $match->getLoserSvgUrl(),
+            ]);
 
         // Get opponents info
         $opponents = $this->getOpponents($aiModel);

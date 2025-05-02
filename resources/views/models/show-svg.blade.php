@@ -41,140 +41,10 @@
                 </div>
             </x-ui.card>
 
-            <!-- Judge Remarks Card -->
-            @if($winningArtworks->isNotEmpty())
-                <x-ui.card title="Judge Remarks" subtitle="Comments on winning SVGs">
-                    <div class="space-y-3">
-                        @foreach($winningArtworks->take(2) as $artwork)
-                            <div class="p-3 bg-gray-50 rounded-lg">
-                                <div class="flex items-center mb-2">
-                                    <x-phosphor-quotes-fill class="w-4 h-4 text-amber-500 mr-1" />
-                                    <div class="text-xs font-medium text-gray-500">
-                                        "{{ Str::limit($artwork['prompt'], 120) }}"
-                                    </div>
-                                </div>
-                                <p class="text-sm text-gray-600">
-                                    {{ Str::limit($artwork['match']->judge_reasoning, 300) }}
-                                </p>
-                                <div class="mt-2 text-xs text-amber-600 hover:text-amber-700 flex items-center justify-end">
-                                    <a href="{{ route('svg.matches.show', $artwork['match']) }}" class="flex items-center">
-                                        View full match
-                                        <x-phosphor-arrow-right class="w-3 h-3 ml-1" />
-                                    </a>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </x-ui.card>
-            @endif
         </div>
 
         <!-- Main content: Portfolio and match history -->
         <div class="md:col-span-2 space-y-8">
-            <!-- Portfolio -->
-            @if($winningArtworks->isNotEmpty())
-                <x-ui.card title="Winning SVG Gallery" subtitle="Most successful drawings">
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        @foreach($winningArtworks as $artwork)
-                            <a href="{{ route('svg.matches.show', $artwork['match']) }}" class="block aspect-square bg-gray-50 rounded-lg overflow-hidden border border-gray-100 hover:shadow-md transition-all group">
-                                <div class="relative w-full h-full">
-                                    <!-- Artwork -->
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        @if($artwork['svg_url'])
-                                            <img src="{{ $artwork['svg_url'] }}" alt="SVG Drawing" class="max-w-full max-h-full object-contain p-2" />
-                                        @else
-                                            <x-phosphor-image-square class="w-12 h-12 text-gray-300" />
-                                        @endif
-                                    </div>
-
-                                    <!-- Overlay on hover - with longer prompt text -->
-                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
-                                        <div class="text-white text-xs font-medium line-clamp-4 overflow-y-auto max-h-24">
-                                            "{{ $artwork['prompt'] }}"
-                                        </div>
-                                        <div class="text-white/80 text-xs flex items-center mt-1">
-                                            <x-phosphor-calendar class="w-3 h-3 mr-1" />
-                                            {{ $artwork['match']->created_at->format('M d, Y') }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        @endforeach
-                    </div>
-                </x-ui.card>
-            @else
-                <x-ui.card title="Winning SVG Gallery" subtitle="No winning drawings yet">
-                    <div class="text-center py-8">
-                        <div class="flex justify-center mb-4">
-                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-                                <x-phosphor-paint-brush class="w-8 h-8 text-gray-400" />
-                            </div>
-                        </div>
-                        <p class="text-gray-500 max-w-md mx-auto">
-                            This AI model hasn't won any SVG drawing matches yet. Check back later to see their drawings.
-                        </p>
-                    </div>
-                </x-ui.card>
-            @endif
-
-            <!-- Failed Artwork Section -->
-            @if($failedArtworks->isNotEmpty())
-                <x-ui.card title="Failed Attempts" subtitle="SVGs that didn't win">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        @foreach($failedArtworks as $artwork)
-                            <a href="{{ route('svg.matches.show', $artwork['match']) }}" class="block bg-white rounded-lg border border-gray-100 hover:shadow-md transition-all overflow-hidden">
-                                <div class="w-full aspect-[16/9] relative">
-                                    <!-- Split view -->
-                                    <div class="absolute inset-0 flex">
-                                        <!-- Failed artwork (left side) -->
-                                        <div class="w-1/2 h-full relative bg-gray-50 border-r border-gray-100 flex items-center justify-center p-1">
-                                            @if($artwork['svg_url'])
-                                                <img src="{{ $artwork['svg_url'] }}" alt="Failed SVG" class="max-w-full max-h-full object-contain" />
-                                            @else
-                                                <x-phosphor-image-square class="w-8 h-8 text-gray-300" />
-                                            @endif
-                                            <div class="absolute top-1 left-1 px-1.5 py-0.5 bg-red-100 text-red-800 text-xs font-medium rounded">
-                                                {{ $model->name }}
-                                            </div>
-                                        </div>
-
-                                        <!-- Winning artwork (right side) -->
-                                        <div class="w-1/2 h-full relative bg-gray-50 flex items-center justify-center p-1">
-                                            @if($artwork['winner_url'])
-                                                <img src="{{ $artwork['winner_url'] }}" alt="Winning SVG" class="max-w-full max-h-full object-contain" />
-                                            @else
-                                                <x-phosphor-image-square class="w-8 h-8 text-gray-300" />
-                                            @endif
-                                            <div class="absolute top-1 left-1 px-1.5 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded flex items-center space-x-1">
-                                                <x-phosphor-trophy-fill class="w-3 h-3" />
-                                                <span>{{ $artwork['winner_name'] }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="p-3 border-t border-gray-100">
-                                    <!-- Show more prompt text without tooltips -->
-                                    <div class="text-xs text-gray-700 line-clamp-3 mb-1">
-                                        "{{ $artwork['prompt'] }}"
-                                    </div>
-
-                                    <div class="flex items-center justify-between mt-2">
-                                        <div class="text-xs text-gray-500">
-                                            {{ $artwork['match']->created_at->format('M d, Y') }}
-                                        </div>
-                                        <span class="text-amber-600 hover:text-amber-700 text-xs flex items-center transition-colors">
-                                            Compare
-                                            <x-phosphor-arrow-right class="w-3 h-3 ml-1" />
-                                        </span>
-                                    </div>
-                                </div>
-                            </a>
-                        @endforeach
-                    </div>
-                </x-ui.card>
-            @endif
-
             <!-- Performance against other models -->
             @if($opponents->count() > 0)
                 <x-ui.card title="Performance Against Other AI Models" subtitle="Head-to-head statistics">
@@ -250,6 +120,83 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+                </x-ui.card>
+            @endif
+
+
+            @if($winningArtworks->isNotEmpty())
+                <x-ui.card title="Winning SVG Gallery" subtitle="Most successful drawings">
+                    <div class="grid grid-cols-2 md:grid-cols-4 -mx-6 -my-5">
+                        @foreach($winningArtworks as $artwork)
+                            <a href="{{ route('svg.matches.show', $artwork['match']) }}" class="block aspect-square bg-gray-50 overflow-hidden border border-gray-100 hover:shadow-md transition-all group">
+                                <div class="relative w-full h-full">
+                                    <!-- Artwork -->
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        @if($artwork['svg_url'])
+                                            <img src="{{ $artwork['svg_url'] }}" alt="SVG Drawing" class="max-w-full max-h-full object-contain" />
+                                        @else
+                                            <x-phosphor-image-square class="w-12 h-12 text-gray-300" />
+                                        @endif
+                                    </div>
+
+                                    <!-- Overlay on hover  -->
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                                        <div class="text-white text-xs font-medium line-clamp-4 overflow-y-auto max-h-24">
+                                            "{{ $artwork['prompt'] }}"
+                                        </div>
+                                        <div class="text-white/80 text-xs flex items-center mt-1">
+                                            <x-phosphor-calendar class="w-3 h-3 mr-1" />
+                                            {{ $artwork['match']->created_at->format('M d, Y') }}
+                                        </div>
+                                    </div>
+
+                                    <!-- Winner badge -->
+                                    <div class="absolute top-1 left-1 px-1.5 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded flex items-center space-x-1">
+                                        <x-phosphor-trophy-fill class="w-3 h-3" />
+                                        <span>Winner</span>
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+                </x-ui.card>
+            @endif
+
+            <!-- Failed Artwork Section -->
+            @if($failedArtworks->isNotEmpty())
+                <x-ui.card title="Failed Attempts" subtitle="SVGs that didn't win">
+                    <div class="grid grid-cols-2 md:grid-cols-4 -mx-6 -my-5">
+                        @foreach($failedArtworks as $artwork)
+                            <a href="{{ route('svg.matches.show', $artwork['match']) }}" class="block aspect-square bg-gray-50 overflow-hidden border border-gray-100 hover:shadow-md transition-all group">
+                                <div class="relative w-full h-full">
+                                    <!-- Artwork -->
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        @if($artwork['svg_url'])
+                                            <img src="{{ $artwork['svg_url'] }}" alt="SVG Drawing" class="max-w-full max-h-full object-contain" />
+                                        @else
+                                            <x-phosphor-image-square class="w-12 h-12 text-gray-300" />
+                                        @endif
+                                    </div>
+
+                                    <!-- Overlay on hover  -->
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                                        <div class="text-white text-xs font-medium line-clamp-4 overflow-y-auto max-h-24">
+                                            "{{ $artwork['prompt'] }}"
+                                        </div>
+                                        <div class="text-white/80 text-xs flex items-center mt-1">
+                                            <x-phosphor-calendar class="w-3 h-3 mr-1" />
+                                            {{ $artwork['match']->created_at->format('M d, Y') }}
+                                        </div>
+                                    </div>
+                                    <!-- Loser badge -->
+                                    <div class="absolute top-1 left-1 px-1.5 py-0.5 bg-red-100 text-red-800 text-xs font-medium rounded flex items-center space-x-1">
+                                        <x-phosphor-x-circle-fill class="w-3 h-3" />
+                                        <span>Loser</span>
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
                     </div>
                 </x-ui.card>
             @endif
