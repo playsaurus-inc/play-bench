@@ -190,7 +190,7 @@ class RpsMatch extends Model implements RankedMatch
      * Scopes the query to only include matches with a specific player.
      */
     #[Scope]
-    public function playedBy(Builder $query, AiModel|int $player): void
+    protected function playedBy(Builder $query, AiModel|int $player): void
     {
         $player = $player instanceof AiModel ? $player->id : $player;
 
@@ -202,7 +202,8 @@ class RpsMatch extends Model implements RankedMatch
     /**
      * Scopes the query to only include matches with a specific winner.
      */
-    public function scopeWonBy(Builder $query, AiModel|int $winner): void
+    #[Scope]
+    protected function wonBy(Builder $query, AiModel|int $winner): void
     {
         $winner = $winner instanceof AiModel ? $winner->id : $winner;
 
