@@ -76,7 +76,6 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
             <!-- Player 1's SVG -->
             <div class="bg-white rounded-lg shadow-sm border border-red-50 overflow-hidden">
-                <!-- Player 1 header with more breathing room -->
                 <div class="bg-gradient-to-r from-red-50 to-white p-3 border-b border-red-100 flex items-center">
                     <a href="{{ route('models.show.svg', $svgMatch->player1) }}" class="group flex items-center flex-1">
                         <div class="size-10 rounded-full bg-red-100 flex items-center justify-center mr-2.5 group-hover:ring-2 group-hover:ring-red-300 transition-all">
@@ -106,7 +105,7 @@
                     @if($svgMatch->isPlayer1Winner())
                         <span class="inline-flex items-center px-2 py-1 sm:px-2.5 sm:py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 ml-2 shrink-0 whitespace-nowrap">
                             <x-phosphor-trophy-fill class="size-4 mr-1" />
-                            <span class="hidden xs:inline">Winner</span>
+                            <span class="hidden sm:inline">Winner</span>
                         </span>
                     @endif
                 </div>
@@ -143,7 +142,6 @@
 
             <!-- Player 2's SVG -->
             <div class="bg-white rounded-lg shadow-sm border border-blue-50 overflow-hidden">
-                <!-- Player 2 header with more breathing room -->
                 <div class="bg-gradient-to-r from-blue-50 to-white p-3 border-b border-blue-100 flex items-center">
                     <a href="{{ route('models.show.svg', $svgMatch->player2) }}" class="group flex items-center flex-1">
                         <div class="size-10 rounded-full bg-blue-100 flex items-center justify-center mr-2.5 group-hover:ring-2 group-hover:ring-blue-300 transition-all">
@@ -173,7 +171,7 @@
                     @if($svgMatch->isPlayer2Winner())
                         <span class="inline-flex items-center px-2 py-1 sm:px-2.5 sm:py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 ml-2 shrink-0 whitespace-nowrap">
                             <x-phosphor-trophy-fill class="size-4 mr-1" />
-                            <span class="hidden xs:inline">Winner</span>
+                            <span class="hidden sm:inline">Winner</span>
                         </span>
                     @endif
                 </div>
