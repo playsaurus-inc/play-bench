@@ -169,13 +169,12 @@
             </a>
 
             <a
-                href="javascript:void"
+                href="{{ route('svg.index') }}"
                 class="flex items-center px-4 py-3 {{ request()->routeIs('svg.*') ? 'bg-amber-50 border-l-4 border-amber-500 text-amber-700' : 'border-l-4 border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300' }}"
                 x-on:click="mobileMenuOpen = false"
             >
                 <x-phosphor-paint-brush-fill class="w-5 h-5 mr-3 {{ request()->routeIs('svg.*') ? 'text-amber-500' : 'text-gray-400' }}" />
                 <span class="font-medium">SVG Drawing</span>
-                <span class="ml-2 text-xs px-2 py-0.5 bg-blue-100 text-blue-800 rounded">Coming soon</span>
             </a>
 
             <a

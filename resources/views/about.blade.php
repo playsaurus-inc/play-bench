@@ -52,7 +52,7 @@
                     </p>
                 </div>
 
-                <!-- SVG Drawing Benchmark (Coming Soon) -->
+                <!-- SVG Drawing Benchmark -->
                 <div class="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100 opacity-80">
                     <div class="flex items-center mb-4">
                         <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
