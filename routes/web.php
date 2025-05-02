@@ -8,7 +8,7 @@ use App\Http\Controllers\RpsMatchController;
 use App\Http\Controllers\SvgMatchController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/rock-paper-scissors');
+Route::redirect('/', '/models');
 
 Route::view('/about', 'about')->name('about');
 

@@ -60,11 +60,10 @@
                         </div>
                         <div>
                             <h3 class="text-xl font-bold text-gray-900">SVG Drawing</h3>
-                            <span class="text-xs font-medium bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">Coming Soon</span>
                         </div>
                     </div>
                     <p class="text-gray-700">
-                        Will evaluate a model's visual creativity, spatial understanding, and ability to generate
+                        Evaluates a model's visual creativity, spatial understanding, and ability to generate
                         clean, optimized vector graphics based on textual prompts.
                     </p>
                 </div>
