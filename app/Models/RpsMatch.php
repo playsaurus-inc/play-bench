@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Contracts\RankedMatch;
 use App\Services\Rps\RpsMatchAnalysisService;
 use App\Support\Statistics;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -188,12 +189,14 @@ class RpsMatch extends Model implements RankedMatch
     /**
      * Scopes the query to only include matches with a specific player.
      */
-    public function scopePlayedBy(Builder $query, AiModel|int $player): void
+    #[Scope]
+    public function playedBy(Builder $query, AiModel|int $player): void
     {
         $player = $player instanceof AiModel ? $player->id : $player;
 
-        $query->where(fn ($q) => $q->where('player1_id', $player)->orWhere('player2_id', $player)
-        );
+        $query->where(function ($q) use ($player) {
+            return $q->where('player1_id', $player)->orWhere('player2_id', $player);
+        });
     }
 
     /**

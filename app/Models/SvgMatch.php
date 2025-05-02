@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Contracts\RankedMatch;
 use Illuminate\Contracts\Filesystem\Cloud;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -194,6 +196,19 @@ class SvgMatch extends Model implements RankedMatch
     public function getPlayer2(): AiModel
     {
         return $this->player2;
+    }
+
+    /**
+     * Scopes the query to only include matches with a specific player.
+     */
+    #[Scope]
+    public function playedBy(Builder $query, AiModel|int $player): void
+    {
+        $player = $player instanceof AiModel ? $player->id : $player;
+
+        $query->where(function ($q) use ($player) {
+            return $q->where('player1_id', $player)->orWhere('player2_id', $player);
+        });
     }
 
     /**
