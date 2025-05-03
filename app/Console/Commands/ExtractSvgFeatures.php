@@ -38,7 +38,7 @@ class ExtractSvgFeatures extends Command
                 $match->getPlayer1SvgContent()
             );
             $match->player2_features = $analysis->extractFeatures(
-                $match->getPlayer1SvgContent()
+                $match->getPlayer2SvgContent()
             );
 
             $match->save();
