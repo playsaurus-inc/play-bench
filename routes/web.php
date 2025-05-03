@@ -26,6 +26,7 @@ Route::get('/models/{aiModel}/svg-drawing', [SvgController::class, 'show'])
 
 // Benchmark index pages
 Route::get('/rock-paper-scissors', [RpsMatchController::class, 'home'])->name('rps.index');
+Route::get('/rock-paper-scissors/matches', [RpsMatchController::class, 'index'])->name('rps.matches.index');
 Route::get('/rock-paper-scissors/matches/{rpsMatch}', [RpsMatchController::class, 'show'])->name('rps.matches.show');
 
 // SVG Drawing benchmark pages

@@ -66,6 +66,40 @@ class RpsMatchController extends Controller
     }
 
     /**
+     * Display a paginated list of RPS matches with optional filtering.
+     */
+    public function index(Request $request)
+    {
+        $query = RpsMatch::with(['player1', 'player2', 'winner'])
+            ->when($request->player, function ($query, $player) {
+                return $query->playedBy($player);
+            })
+            ->when($request->sort, function ($query, $sort) {
+                return match ($sort) {
+                    'rounds' => $query->orderBy('rounds_played', 'desc'),
+                    'date_asc' => $query->orderBy('created_at', 'asc'),
+                    default => $query->orderBy('created_at', 'desc'),
+                };
+            }, function ($query) {
+                return $query->orderBy('created_at', 'desc');
+            });
+
+        $matches = $query->paginate(12)->withQueryString();
+        
+        // Get some stats for the header
+        $stats = [
+            'total' => RpsMatch::count(),
+            'rounds' => RpsMatch::sum('rounds_played'),
+            'ties' => RpsMatch::whereNull('winner_id')->count(),
+        ];
+
+        return view('rps.matches.index', [
+            'matches' => $matches,
+            'stats' => $stats,
+        ]);
+    }
+
+    /**
      * Display the specified RPS match with enhanced visualization.
      */
     public function show(RpsMatch $rpsMatch): View
