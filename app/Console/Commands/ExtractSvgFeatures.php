@@ -6,21 +6,21 @@ use App\Models\SvgMatch;
 use App\Services\Svg\SvgAnalysisService;
 use Illuminate\Console\Command;
 
-class ExtractSvgStats extends Command
+class ExtractSvgFeatures extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:extract-svg-stats';
+    protected $signature = 'app:extract-svg-features';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Extract SVG statistics from the SVG files';
+    protected $description = 'Extract SVG features from the SVG files';
 
     /**
      * Execute the console command.
