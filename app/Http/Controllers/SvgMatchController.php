@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AiModel;
 use App\Models\SvgMatch;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class SvgMatchController extends Controller
@@ -80,6 +81,67 @@ class SvgMatchController extends Controller
             'visuallyInterestingMatch' => $visuallyInterestingMatch ?? $latestMatch, // Fallback to latest if none found
             'models' => $models->values(),
             'topCreators' => $topSvgCreators,
+        ]);
+    }
+
+    /**
+     * Display a paginated list of SVG matches with enhanced filtering options.
+     */
+    public function index(Request $request): View
+    {
+        // Get all models for filtering options
+        $models = AiModel::orderBy('name')->get();
+
+        $query = SvgMatch::with(['player1', 'player2', 'winner'])
+            ->when($request->model, function ($query, $modelId) {
+                return $query->playedBy($modelId);
+            })
+            ->when($request->contender, function ($query, $contenderId) use ($request) {
+                return ($request->model)
+                    ? $query->playedAgainst($request->model, $contenderId)
+                    : $query->playedBy($contenderId);
+            })
+            ->when($request->has('winner'), function ($query) use ($request) {
+                return $query->where('winner_id', $request->winner);
+            })
+            ->when($request->has('prompt'), function ($query) use ($request) {
+                return $query->where('prompt', 'like', '%' . $request->prompt . '%');
+            })
+            ->when($request->sort, function ($query, $sort) {
+                return match ($sort) {
+                    'date_asc' => $query->orderBy('created_at', 'asc'),
+                    'complexity' => $query->orderByRaw("CAST(COALESCE(json_extract(player1_features, '$.path_commands'), 0) AS INTEGER) +
+                                               CAST(COALESCE(json_extract(player2_features, '$.path_commands'), 0) AS INTEGER) DESC"),
+                    'animations' => $query->orderByRaw("CAST(COALESCE(json_extract(player1_features, '$.animations'), 0) AS INTEGER) +
+                                               CAST(COALESCE(json_extract(player2_features, '$.animations'), 0) AS INTEGER) DESC"),
+                    'text' => $query->orderByRaw("CAST(COALESCE(json_extract(player1_features, '$.text_elements'), 0) AS INTEGER) +
+                                         CAST(COALESCE(json_extract(player2_features, '$.text_elements'), 0) AS INTEGER) DESC"),
+                    'gradients' => $query->orderByRaw("CAST(COALESCE(json_extract(player1_features, '$.gradients'), 0) AS INTEGER) +
+                                            CAST(COALESCE(json_extract(player2_features, '$.gradients'), 0) AS INTEGER) DESC"),
+                    default => $query->orderBy('created_at', 'desc'),
+                };
+            }, function ($query) {
+                return $query->orderBy('created_at', 'desc');
+            });
+
+        $matches = $query->paginate(12)->withQueryString();
+
+        // Get stats for the header
+        $stats = [
+            'total' => SvgMatch::count(),
+            'models' => AiModel::whereHas('svgMatchesAsPlayer1')->orWhereHas('svgMatchesAsPlayer2')->count(),
+            'unique_prompts' => SvgMatch::distinct('prompt')->count(),
+        ];
+
+        $selectedModel = $request->model ? AiModel::from($request->model) : null;
+        $selectedContender = $request->contender ? AiModel::from($request->contender) : null;
+
+        return view('svg.matches.index', [
+            'matches' => $matches,
+            'stats' => $stats,
+            'models' => $models,
+            'selectedModel' => $selectedModel,
+            'selectedContender' => $selectedContender,
         ]);
     }
 

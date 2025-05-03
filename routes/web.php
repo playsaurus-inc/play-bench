@@ -31,6 +31,7 @@ Route::get('/rock-paper-scissors/matches/{rpsMatch}', [RpsMatchController::class
 
 // SVG Drawing benchmark pages
 Route::get('/svg-drawing', [SvgMatchController::class, 'home'])->name('svg.index');
+Route::get('/svg-drawing/matches', [SvgMatchController::class, 'index'])->name('svg.matches.index');
 Route::get('/svg-drawing/matches/{svgMatch}', [SvgMatchController::class, 'show'])->name('svg.matches.show');
 
 // Future benchmark index pages (commented out until implemented)

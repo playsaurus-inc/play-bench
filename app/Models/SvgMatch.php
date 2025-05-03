@@ -219,12 +219,30 @@ class SvgMatch extends Model implements RankedMatch
      * Scopes the query to only include matches with a specific player.
      */
     #[Scope]
-    public function playedBy(Builder $query, AiModel|int $player): void
+    public function playedBy(Builder $query, AiModel|int|string $player): void
     {
-        $player = $player instanceof AiModel ? $player->id : $player;
+        $player = AiModel::idFrom($player);
 
         $query->where(function ($q) use ($player) {
             return $q->where('player1_id', $player)->orWhere('player2_id', $player);
+        });
+    }
+
+    /**
+     * Scopes the query to only include matches where two players played against each other.
+     */
+    #[Scope]
+    protected function playedAgainst(Builder $query, AiModel|int|string $player1, AiModel|int|string $player2): void
+    {
+        $player1 = AiModel::idFrom($player1);
+        $player2 = AiModel::idFrom($player2);
+
+        $query->where(function ($q) use ($player1, $player2) {
+            return $q->where(function ($inner) use ($player1, $player2) {
+                $inner->where('player1_id', $player1)->where('player2_id', $player2);
+            })->orWhere(function ($inner) use ($player1, $player2) {
+                $inner->where('player1_id', $player2)->where('player2_id', $player1);
+            });
         });
     }
 

@@ -61,6 +61,9 @@
                     <x-ui.button href="#featured-matches" variant="primary" size="lg">
                         Explore Drawings
                     </x-ui.button>
+                    <x-ui.button href="{{ route('svg.matches.index') }}" variant="secondary" size="lg" class="ml-4">
+                        View All Drawings
+                    </x-ui.button>
                 </div>
             </div>
 
