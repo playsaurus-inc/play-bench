@@ -198,7 +198,7 @@
                 <div class="flex-grow p-6 flex items-center">
                     <div class="w-full">
                         <div class="flex items-center justify-center py-4 md:py-0">
-                            <div class="text-center md:flex md:items-center md:space-x-4">
+                            <div class="text-left flex items-center gap-4">
                                 <div class="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3 md:mb-0">
                                     <x-phosphor-crown-fill class="w-8 h-8 text-gray-300" />
                                 </div>
