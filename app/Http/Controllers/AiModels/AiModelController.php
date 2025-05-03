@@ -55,14 +55,14 @@ class AiModelController extends Controller
         $rpsWinRate = $totalRpsMatches > 0 ? $totalRpsWins / $totalRpsMatches : 0;
 
         $moveBreakdown = $aiModel->rpsMoveBreakdown();
-        $strategyAnalysis = $analysis->getStrategyAnalysis($aiModel, $moveBreakdown);
+        $rpsStrategyAnalysis = $analysis->getStrategyAnalysis($aiModel, $moveBreakdown);
 
         // Get SVG matches and stats
         $svgMatches = SvgMatch::query()
             ->playedBy($aiModel)
             ->with(['player1', 'player2', 'winner'])
             ->latest()
-            ->take(2)
+            ->take(4)
             ->get();
 
         $totalSvgMatches = $aiModel->svgMatchesAsPlayer1()->count() + $aiModel->svgMatchesAsPlayer2()->count();
@@ -72,7 +72,7 @@ class AiModelController extends Controller
         // Get best SVG artworks
         $bestArtworks = $aiModel->svgMatchesWon()
             ->latest()
-            ->take(4)
+            ->take(6)
             ->get()
             ->map(fn ($match) => [
                 'match' => $match,
@@ -87,7 +87,8 @@ class AiModelController extends Controller
             'totalRpsWins' => $totalRpsWins,
             'rpsWinRate' => $rpsWinRate,
             'moveBreakdown' => $moveBreakdown,
-            'strategyAnalysis' => $strategyAnalysis,
+            'rpsStrategyAnalysis' => $rpsStrategyAnalysis,
+            'svgStrategyAnalysis' => $this->getSvgStrategyAnalysis($svgWinRate),
             'svgMatches' => $svgMatches,
             'totalSvgMatches' => $totalSvgMatches,
             'totalSvgWins' => $totalSvgWins,
@@ -95,5 +96,21 @@ class AiModelController extends Controller
             'bestArtworks' => $bestArtworks,
             'activeTab' => 'overview',
         ]);
+    }
+
+    /**
+     * Get SVG strategy analysis for the given model.
+     */
+    private function getSvgStrategyAnalysis(float $svgWinRate): string
+    {
+        if($svgWinRate > 0.6) {
+            return 'This model excels at visual creativity and produces high-quality SVG drawings that frequently win against competitors.';
+        } else if ($svgWinRate > 0.45) {
+            return 'This model demonstrates solid drawing capabilities with a balanced performance in SVG creation.';
+        } else if ($svgWinRate > 0.3) {
+            return 'This model has potential in SVG drawing but may need further training to improve its performance.';
+        } else {
+            return 'This model struggles with SVG drawing and may require significant improvements to compete effectively.';
+        }
     }
 }
