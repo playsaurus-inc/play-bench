@@ -28,6 +28,34 @@ class AiModel extends Model
     }
 
     /**
+     * Get the AI model from the given model, id or slug.
+     */
+    public static function from(AiModel|int|string $model): AiModel
+    {
+        if ($model instanceof AiModel) {
+            return $model;
+        } else if (is_numeric($model)) {
+            return AiModel::findOrFail($model);
+        } else {
+            return AiModel::where('slug', $model)->firstOrFail();
+        }
+    }
+
+    /**
+     * Get the AI model ID from the given model, id or slug.
+     */
+    public static function idFrom(AiModel|int|string $model): int
+    {
+        if ($model instanceof AiModel) {
+            return $model->id;
+        } else if (is_numeric($model)) {
+            return $model;
+        } else {
+            return AiModel::where('slug', $model)->firstOrFail()->id;
+        }
+    }
+
+    /**
      * Get the route key for the model.
      */
     public function getRouteKeyName(): string

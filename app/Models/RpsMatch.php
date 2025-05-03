@@ -187,26 +187,12 @@ class RpsMatch extends Model implements RankedMatch
     }
 
     /**
-     * Get the AI model ID from the given model, id or slug.
-     */
-    public static function getModelIdFrom(AiModel|int|string $model): int
-    {
-        if ($model instanceof AiModel) {
-            return $model->id;
-        } else if (is_numeric($model)) {
-            return (int) $model;
-        } else {
-            return AiModel::where('slug', $model)->firstOrFail();
-        }
-    }
-
-    /**
      * Scopes the query to only include matches with a specific player.
      */
     #[Scope]
     protected function playedBy(Builder $query, AiModel|int|string $player): void
     {
-        $player = $this->getModelIdFrom($player);
+        $player = AiModel::idFrom($player);
 
         $query->where(function ($q) use ($player) {
             return $q->where('player1_id', $player)->orWhere('player2_id', $player);
@@ -219,8 +205,8 @@ class RpsMatch extends Model implements RankedMatch
     #[Scope]
     protected function playedAgainst(Builder $query, AiModel|int|string $player1, AiModel|int|string $player2): void
     {
-        $player1 = $this->getModelIdFrom($player1);
-        $player2 = $this->getModelIdFrom($player2);
+        $player1 = AiModel::idFrom($player1);
+        $player2 = AiModel::idFrom($player2);
 
         $query->where(function ($q) use ($player1, $player2) {
             return $q->where(function ($inner) use ($player1, $player2) {

@@ -70,7 +70,7 @@
                     <select id="model" name="model" class="block w-full rounded-md border border-gray-700/10 shadow-sm focus:border-amber-500 focus:ring-amber-500 text-sm p-3">
                         <option value="">All Models</option>
                         @foreach($models as $model)
-                            <option value="{{ $model->id }}" {{ request('model') == $model->id ? 'selected' : '' }}>
+                            <option value="{{ $model->slug }}" {{ request('model') == $model->slug ? 'selected' : '' }}>
                                 {{ $model->name }}
                             </option>
                         @endforeach
@@ -83,7 +83,7 @@
                     <select id="contender" name="contender" class="block w-full rounded-md border border-gray-700/10 shadow-sm focus:border-amber-500 focus:ring-amber-500 text-sm p-3">
                         <option value="">Any Opponent</option>
                         @foreach($models as $model)
-                            <option value="{{ $model->id }}" {{ request('contender') == $model->id ? 'selected' : '' }}>
+                            <option value="{{ $model->slug }}" {{ request('contender') == $model->slug ? 'selected' : '' }}>
                                 {{ $model->name }}
                             </option>
                         @endforeach
@@ -94,9 +94,10 @@
                 <div>
                     <label for="sort" class="block text-xs font-medium text-gray-700 mb-1">Sort by</label>
                     <select id="sort" name="sort" class="block w-full rounded-md border border-gray-700/10 shadow-sm focus:border-amber-500 focus:ring-amber-500 text-sm p-3">
-                        <option value="date_desc" {{ request('sort', 'date_desc') === 'date_desc' ? 'selected' : '' }}>Date (Newest first)</option>
-                        <option value="date_asc" {{ request('sort') === 'date_asc' ? 'selected' : '' }}>Date (Oldest first)</option>
-                        <option value="rounds" {{ request('sort') === 'rounds' ? 'selected' : '' }}>Most rounds</option>
+                        <option value="date_desc" {{ request('sort', 'date_desc') === 'date_desc' ? 'selected' : '' }}>Newest</option>
+                        <option value="date_asc" {{ request('sort') === 'date_asc' ? 'selected' : '' }}>Oldest</option>
+                        <option value="rounds_desc" {{ request('sort') === 'rounds_desc' ? 'selected' : '' }}>Most rounds</option>
+                        <option value="rounds_asc" {{ request('sort') === 'rounds_asc' ? 'selected' : '' }}>Fewest rounds</option>
                         <option value="score_diff" {{ request('sort') === 'score_diff' ? 'selected' : '' }}>Largest score difference</option>
                     </select>
                 </div>
@@ -175,18 +176,18 @@
                 </h2>
 
                 <div class="flex flex-wrap gap-2">
-                    @if(request('model'))
+                    @if(isset($selectedModel))
                         <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-800">
-                            Model: {{ $models->firstWhere('id', request('model'))->name }}
+                            Model: {{ $selectedModel->name }}
                             <a href="{{ route('rps.matches.index', request()->except('model')) }}" class="ml-1.5 text-amber-600 hover:text-amber-800">
                                 <x-phosphor-x-circle-fill class="size-4" />
                             </a>
                         </span>
                     @endif
 
-                    @if(request('contender'))
+                    @if(isset($selectedContender))
                         <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-800">
-                            Opponent: {{ $models->firstWhere('id', request('contender'))->name }}
+                            Opponent: {{ $models->firstWhere('slug', request('contender'))->name }}
                             <a href="{{ route('rps.matches.index', request()->except('contender')) }}" class="ml-1.5 text-amber-600 hover:text-amber-800">
                                 <x-phosphor-x-circle-fill class="size-4" />
                             </a>

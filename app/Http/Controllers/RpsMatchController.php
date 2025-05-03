@@ -90,7 +90,8 @@ class RpsMatchController extends Controller
             })
             ->when($request->sort, function ($query, $sort) {
                 return match ($sort) {
-                    'rounds' => $query->orderBy('rounds_played', 'desc'),
+                    'rounds_desc' => $query->orderBy('rounds_played', 'desc'),
+                    'rounds_asc' => $query->orderBy('rounds_played', 'asc'),
                     'score_diff' => $query->orderByRaw('ABS(player1_score - player2_score) DESC'),
                     'date_asc' => $query->orderBy('created_at', 'asc'),
                     default => $query->orderBy('created_at', 'desc'),
@@ -99,7 +100,7 @@ class RpsMatchController extends Controller
                 return $query->orderBy('created_at', 'desc');
             });
 
-        $matches = $query->paginate(12)->withQueryString();
+        $matches = $query->paginate(15)->withQueryString();
 
         // Get some stats for the header
         $stats = [
@@ -108,17 +109,8 @@ class RpsMatchController extends Controller
             'ties' => RpsMatch::whereNull('winner_id')->count(),
         ];
 
-        // If filtering by model, get the model for additional info
-        $selectedModel = null;
-        if ($request->model) {
-            $selectedModel = AiModel::find($request->model);
-        }
-
-        // If filtering by contender, get the contender model
-        $selectedContender = null;
-        if ($request->contender) {
-            $selectedContender = AiModel::find($request->contender);
-        }
+        $selectedModel = $request->model ? AiModel::from($request->model) : null;
+        $selectedContender = $request->contender ? AiModel::from($request->contender) : null;
 
         return view('rps.matches.index', [
             'matches' => $matches,

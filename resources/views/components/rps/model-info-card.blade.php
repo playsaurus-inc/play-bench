@@ -1,3 +1,5 @@
+@props(['model'])
+
 <div class="mb-8 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
     <div class="flex flex-col md:flex-row md:items-center">
         <div class="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
