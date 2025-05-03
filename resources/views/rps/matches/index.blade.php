@@ -6,68 +6,68 @@
         <div class="absolute left-0 bottom-0 w-24 h-24 bg-amber-50 rounded-full translate-y-1/2 -translate-x-1/4 opacity-80"></div>
 
         <!-- Content -->
-        <div class="relative px-6 py-8 md:px-8 md:py-10">
-            <div class="flex items-center justify-between mb-4">
-                <x-ui.button :href="route('rps.index')" variant="secondary" class="text-xs sm:text-sm">
-                    <x-phosphor-arrow-left class="size-4 mr-1 sm:mr-2" />
-                    <span class="hidden xs:inline">Back to RPS Home</span>
-                    <span class="xs:hidden">Back</span>
-                </x-ui.button>
-            </div>
+        <div class="relative px-6 py-6 md:px-8 md:py-7">
 
-            <h1 class="text-2xl sm:text-3xl font-bold mt-4 sm:mt-6 text-center mb-6">
-                Rock Paper Scissors Matches
-            </h1>
-            
-            <!-- Stats cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-3xl mx-auto">
-                <div class="bg-white rounded-xl shadow-sm p-4 flex items-center border border-gray-100">
-                    <div class="p-3 bg-amber-100 rounded-full mr-4">
-                        <x-phosphor-trophy-fill class="size-6 text-amber-600" />
-                    </div>
-                    <div>
-                        <div class="text-xl font-bold text-amber-600">{{ Number::format($stats['total']) }}</div>
-                        <div class="text-sm text-gray-500">Total Matches</div>
-                    </div>
+            <div class="flex flex-col md:flex-row md:items-center">
+                <div class="md:w-1/3 mb-4 md:mb-0">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">
+                        Rock Paper Scissors Matches
+                    </h1>
+                    <p class="text-sm text-gray-500 mt-2 hidden md:block">
+                        Browse, filter and discover matches between AI models
+                    </p>
                 </div>
-                <div class="bg-white rounded-xl shadow-sm p-4 flex items-center border border-gray-100">
-                    <div class="p-3 bg-amber-100 rounded-full mr-4">
-                        <x-phosphor-circle-notch-fill class="size-6 text-amber-600" />
+
+                <!-- Stats cards -->
+                <div class="md:w-2/3 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                    <div class="bg-white rounded-xl shadow-sm p-3 flex items-center border border-gray-100">
+                        <div class="p-2 bg-amber-100 rounded-full mr-3">
+                            <x-phosphor-trophy-fill class="size-5 text-amber-600" />
+                        </div>
+                        <div>
+                            <div class="text-lg font-bold text-amber-600">{{ Number::format($stats['total']) }}</div>
+                            <div class="text-xs text-gray-500">Total Matches</div>
+                        </div>
                     </div>
-                    <div>
-                        <div class="text-xl font-bold text-amber-600">{{ Number::format($stats['rounds']) }}</div>
-                        <div class="text-sm text-gray-500">Total Rounds</div>
+                    <div class="bg-white rounded-xl shadow-sm p-3 flex items-center border border-gray-100">
+                        <div class="p-2 bg-amber-100 rounded-full mr-3">
+                            <x-phosphor-circle-notch-fill class="size-5 text-amber-600" />
+                        </div>
+                        <div>
+                            <div class="text-lg font-bold text-amber-600">{{ Number::format($stats['rounds']) }}</div>
+                            <div class="text-xs text-gray-500">Total Rounds</div>
+                        </div>
                     </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-sm p-4 flex items-center border border-gray-100">
-                    <div class="p-3 bg-amber-100 rounded-full mr-4">
-                        <x-phosphor-equals-fill class="size-6 text-amber-600" />
-                    </div>
-                    <div>
-                        <div class="text-xl font-bold text-amber-600">{{ Number::format($stats['ties']) }}</div>
-                        <div class="text-sm text-gray-500">Tied Matches</div>
+                    <div class="bg-white rounded-xl shadow-sm p-3 flex items-center border border-gray-100">
+                        <div class="p-2 bg-amber-100 rounded-full mr-3">
+                            <x-phosphor-equals-fill class="size-5 text-amber-600" />
+                        </div>
+                        <div>
+                            <div class="text-lg font-bold text-amber-600">{{ Number::format($stats['ties']) }}</div>
+                            <div class="text-xs text-gray-500">Tied Matches</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <!-- Quick filters section -->
     <x-rps.quick-filters />
-    
+
     <!-- Enhanced filters section -->
     <div class="mb-8 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h2 class="text-lg font-semibold mb-4 flex items-center">
             <x-phosphor-funnel-fill class="mr-2 size-5 text-amber-500" />
             Filter Matches
         </h2>
-        
+
         <form action="{{ route('rps.matches.index') }}" method="GET" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <!-- Model filter -->
                 <div>
                     <label for="model" class="block text-sm font-medium text-gray-700 mb-1">AI Model</label>
-                    <select id="model" name="model" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm p-3">
+                    <select id="model" name="model" class="block w-full rounded-md border border-gray-700/10 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm p-3">
                         <option value="">All Models</option>
                         @foreach($models as $model)
                             <option value="{{ $model->id }}" {{ request('model') == $model->id ? 'selected' : '' }}>
@@ -80,18 +80,18 @@
                 <!-- Sort filter -->
                 <div>
                     <label for="sort" class="block text-sm font-medium text-gray-700 mb-1">Sort by</label>
-                    <select id="sort" name="sort" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm p-3">
+                    <select id="sort" name="sort" class="block w-full rounded-md border border-gray-700/10 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm p-3">
                         <option value="date_desc" {{ request('sort', 'date_desc') === 'date_desc' ? 'selected' : '' }}>Date (Newest first)</option>
                         <option value="date_asc" {{ request('sort') === 'date_asc' ? 'selected' : '' }}>Date (Oldest first)</option>
                         <option value="rounds" {{ request('sort') === 'rounds' ? 'selected' : '' }}>Most rounds</option>
                         <option value="score_diff" {{ request('sort') === 'score_diff' ? 'selected' : '' }}>Largest score difference</option>
                     </select>
                 </div>
-                
+
                 <!-- Winner filter -->
                 <div>
                     <label for="winner" class="block text-sm font-medium text-gray-700 mb-1">Match Result</label>
-                    <select id="winner" name="winner" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm p-3">
+                    <select id="winner" name="winner" class="block w-full rounded-md border border-gray-700/10 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm p-3">
                         <option value="">Any result</option>
                         <option value="tie" {{ request('winner') === 'tie' ? 'selected' : '' }}>Only ties</option>
                         @foreach($models as $model)
@@ -102,7 +102,7 @@
                     </select>
                 </div>
             </div>
-            
+
             <div class="flex items-center justify-between pt-2">
                 <div>
                     @if(request()->hasAny(['sort', 'model', 'winner', 'match_type']))
@@ -112,7 +112,7 @@
                         </span>
                     @endif
                 </div>
-                
+
                 <div class="flex space-x-3">
                     @if(request()->hasAny(['sort', 'model', 'winner', 'match_type']))
                         <x-ui.button :href="route('rps.matches.index')" variant="outline" size="sm">
@@ -120,7 +120,7 @@
                             Reset
                         </x-ui.button>
                     @endif
-                    
+
                     <x-ui.button type="submit" variant="primary" size="sm">
                         <x-phosphor-funnel-fill class="size-4 mr-1" />
                         Apply Filters
@@ -143,7 +143,7 @@
                     <x-phosphor-hand-fill class="size-12 text-gray-400 mx-auto mb-4" />
                     <h3 class="text-lg font-medium text-gray-900 mb-2">No matches found</h3>
                     <p class="text-gray-500 mb-6">We couldn't find any matches matching your filters.</p>
-                    
+
                     @if(request()->hasAny(['sort', 'model', 'winner', 'match_type']))
                         <x-ui.button :href="route('rps.matches.index')" variant="secondary">
                             <x-phosphor-arrow-counter-clockwise class="size-4 mr-1" />
@@ -158,7 +158,7 @@
                 <h2 class="text-lg font-medium text-gray-900 mb-2 sm:mb-0">
                     {{ Number::format($matches->total()) }} {{ Str::plural('match', $matches->total()) }} found
                 </h2>
-                
+
                 <div class="flex flex-wrap gap-2">
                     @if(request('model'))
                         <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-800">
@@ -168,7 +168,7 @@
                             </a>
                         </span>
                     @endif
-                    
+
                     @if(request('winner'))
                         <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-800">
                             @if(request('winner') === 'tie')
@@ -181,7 +181,7 @@
                             </a>
                         </span>
                     @endif
-                    
+
                     @if(request('match_type') === 'close')
                         <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-800">
                             Close Matches
@@ -192,7 +192,7 @@
                     @endif
                 </div>
             </div>
-            
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
                 @foreach($matches as $match)
                     <x-rps.match-card :match="$match" />
