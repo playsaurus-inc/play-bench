@@ -175,6 +175,29 @@ class AiModel extends Model
      */
     public function elo(): Attribute
     {
+        // This is not technically correct, the Elo rating should not be averaged
+        // The correct way would be to normalize the Elo rating for each game type
+        // using the median and standard deviation of the Elo ratings of all models
+        // for each game type. Then use the normalized Elo ratings to calculate the overall Elo rating.
+        // For now, for the sake of simplicity, we will just average the Elo ratings.
+
         return Attribute::get(fn () => ($this->rps_elo + $this->svg_elo) / 2);
+    }
+
+    /**
+     * Calculate the move breakdown of the given AI model.
+     *
+     * @return array<{'rock': int, 'paper': int, 'scissors': int}>
+     */
+    public function rpsMoveBreakdown(): array
+    {
+        return [
+            'rock' => $this->rpsMatchesAsPlayer1()->sum('player1_move_distribution->rock') +
+                $this->rpsMatchesAsPlayer2()->sum('player2_move_distribution->rock'),
+            'paper' => $this->rpsMatchesAsPlayer1()->sum('player1_move_distribution->paper') +
+                $this->rpsMatchesAsPlayer2()->sum('player2_move_distribution->paper'),
+            'scissors' => $this->rpsMatchesAsPlayer1()->sum('player1_move_distribution->scissors') +
+                $this->rpsMatchesAsPlayer2()->sum('player2_move_distribution->scissors'),
+        ];
     }
 }

@@ -28,13 +28,10 @@ class RpsController extends Controller
         $totalRpsWins = $aiModel->rpsMatchesWon()->count();
         $winRate = $totalRpsMatches > 0 ? $totalRpsWins / $totalRpsMatches : 0;
 
-        // Calculate move breakdown
-        $moveBreakdown = $this->calculateMoveBreakdown($aiModel);
+        $moveBreakdown = $aiModel->rpsMoveBreakdown();
 
-        // Get most impressive victory
         $mostImpressiveVictory = $this->getMostImpressiveVictory($aiModel);
 
-        // Get opponents info
         $opponents = $this->getOpponents($aiModel);
 
         return view('models.show-rps', [
@@ -49,21 +46,6 @@ class RpsController extends Controller
             'strategyAnalysis' => $analysis->getStrategyAnalysis($aiModel, $moveBreakdown),
             'activeTab' => 'rps',
         ]);
-    }
-
-    /**
-     * Calculate the move breakdown of the given AI model.
-     */
-    protected function calculateMoveBreakdown(AiModel $aiModel): array
-    {
-        return [
-            'rock' => $aiModel->rpsMatchesAsPlayer1()->sum('player1_move_distribution->rock') +
-                $aiModel->rpsMatchesAsPlayer2()->sum('player2_move_distribution->rock'),
-            'paper' => $aiModel->rpsMatchesAsPlayer1()->sum('player1_move_distribution->paper') +
-                $aiModel->rpsMatchesAsPlayer2()->sum('player2_move_distribution->paper'),
-            'scissors' => $aiModel->rpsMatchesAsPlayer1()->sum('player1_move_distribution->scissors') +
-                $aiModel->rpsMatchesAsPlayer2()->sum('player2_move_distribution->scissors'),
-        ];
     }
 
     /**

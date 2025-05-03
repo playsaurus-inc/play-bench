@@ -50,16 +50,13 @@ class AiModelController extends Controller
             ->take(4)
             ->get();
 
-        // Calculate RPS stats
         $totalRpsMatches = $aiModel->rpsMatches()->count();
         $totalRpsWins = $aiModel->rpsMatchesWon()->count();
         $rpsWinRate = $totalRpsMatches > 0 ? $totalRpsWins / $totalRpsMatches : 0;
 
-        // Get RPS move distribution
-        $moveBreakdown = $this->getRpsMoveBreakdown($aiModel);
+        $moveBreakdown = $aiModel->rpsMoveBreakdown();
         $strategyAnalysis = $analysis->getStrategyAnalysis($aiModel, $moveBreakdown);
 
-        // Get top RPS opponents
         $rpsOpponents = $this->getRpsOpponents($aiModel, 3);
 
         // Get SVG matches and stats
@@ -101,36 +98,6 @@ class AiModelController extends Controller
             'bestArtworks' => $bestArtworks,
             'activeTab' => 'overview',
         ]);
-    }
-
-    /**
-     * Get move distribution statistics for an AI model in RPS matches.
-     */
-    protected function getRpsMoveBreakdown(AiModel $aiModel): array
-    {
-        $matches = RpsMatch::query()->playedBy($aiModel)->get();
-        $rockCount = 0;
-        $paperCount = 0;
-        $scissorsCount = 0;
-
-        foreach ($matches as $match) {
-            $isPlayer1 = $match->player1_id === $aiModel->id;
-            $distribution = $isPlayer1 ? $match->player1_move_distribution : $match->player2_move_distribution;
-
-            if (!$distribution) {
-                continue;
-            }
-
-            $rockCount += $distribution['rock'] ?? 0;
-            $paperCount += $distribution['paper'] ?? 0;
-            $scissorsCount += $distribution['scissors'] ?? 0;
-        }
-
-        return [
-            'rock' => $rockCount,
-            'paper' => $paperCount,
-            'scissors' => $scissorsCount,
-        ];
     }
 
     /**
