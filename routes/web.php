@@ -25,11 +25,11 @@ Route::get('/models/{aiModel}/svg-drawing', [SvgController::class, 'show'])
     ->name('models.show.svg');
 
 // Benchmark index pages
-Route::get('/rock-paper-scissors', [RpsMatchController::class, 'index'])->name('rps.index');
+Route::get('/rock-paper-scissors', [RpsMatchController::class, 'home'])->name('rps.index');
 Route::get('/rock-paper-scissors/matches/{rpsMatch}', [RpsMatchController::class, 'show'])->name('rps.matches.show');
 
 // SVG Drawing benchmark pages
-Route::get('/svg-drawing', [SvgMatchController::class, 'index'])->name('svg.index');
+Route::get('/svg-drawing', [SvgMatchController::class, 'home'])->name('svg.index');
 Route::get('/svg-drawing/matches/{svgMatch}', [SvgMatchController::class, 'show'])->name('svg.matches.show');
 
 // Future benchmark index pages (commented out until implemented)

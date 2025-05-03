@@ -13,7 +13,7 @@ class RpsMatchController extends Controller
     /**
      * Display a listing of the RPS matches with filtering options.
      */
-    public function index(Request $request): View
+    public function home(Request $request): View
     {
         $latestMatch = RpsMatch::query()
             ->with(['player1', 'player2', 'winner'])

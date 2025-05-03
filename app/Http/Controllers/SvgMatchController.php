@@ -12,7 +12,7 @@ class SvgMatchController extends Controller
     /**
      * Display the index page for SVG matches.
      */
-    public function index(): View
+    public function home(): View
     {
         // Latest SVG match
         $latestMatch = SvgMatch::query()
