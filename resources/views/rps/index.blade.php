@@ -169,10 +169,14 @@
         <!-- Using our new reusable component -->
         <x-rps.models-ranking-table :models="$models" />
 
-        <div class="mt-4 text-center">
-            <x-ui.button href="{{ route('models.index') }}" variant="outline">
+        <div class="mt-4 flex justify-center">
+            <x-ui.button href="{{ route('models.index') }}" variant="outline" class="border-amber-300 text-amber-700 hover:bg-amber-50">
                 <x-phosphor-chart-bar-fill class="w-4 h-4 mr-2" />
-                View Detailed Model Analysis
+                View All Model Analysis
+            </x-ui.button>
+            <x-ui.button href="{{ route('rps.matches.index') }}" variant="outline" class="ml-4 border-amber-300 text-amber-700 hover:bg-amber-50">
+                <x-phosphor-trophy-fill class="w-4 h-4 mr-2" />
+                View All Matches
             </x-ui.button>
         </div>
     </section>
