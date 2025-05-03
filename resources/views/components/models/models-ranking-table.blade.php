@@ -23,7 +23,7 @@
                 </div>
             </th>
             <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Overall
+                Overall (*)
             </th>
             <th scope="col" class="relative px-6 py-3">
                 <span class="sr-only">Actions</span>
@@ -74,8 +74,8 @@
                     <span class="text-sm text-gray-500">Coming soon</span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-center">
-                    <span class="text-sm font-medium px-2.5 py-0.5 rounded-full {{ $rank <= 3 ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-800' }}">
-                        {{ $rank++ }}
+                    <span class="text-sm font-medium px-2.5 py-0.5 rounded-full {{ $model->rank <= 3 ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-800' }}">
+                        {{ $model->rank }}
                     </span>
                     <span class="text-sm font-medium text-amber-600 ml-2">
                         {{ Number::format($model->elo, 0) }}

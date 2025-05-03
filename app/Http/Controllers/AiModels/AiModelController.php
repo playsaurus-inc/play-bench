@@ -18,7 +18,7 @@ class AiModelController extends Controller
     public function index(): View
     {
         // Get all models with their rankings
-        $models = AiModel::all()->sortByDesc('elo');
+        $models = AiModel::all()->sortBy('rank');
 
         // Overall stats
         $modelCount = $models->count();

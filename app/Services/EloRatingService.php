@@ -7,6 +7,7 @@ use App\Models\ChessMatch;
 use App\Models\Contracts\RankedMatch;
 use App\Models\RpsMatch;
 use App\Models\SvgMatch;
+use App\Support\Statistics;
 use Illuminate\Support\Facades\DB;
 
 class EloRatingService
@@ -24,32 +25,26 @@ class EloRatingService
 
     /**
      * Update ELO ratings for all RPS matches.
-     *
-     * @return int Number of matches processed
      */
-    public function updateRpsEloRatings(): int
+    public function updateRpsEloRatings(): void
     {
-        return $this->updateEloRatings('rps');
+        $this->updateEloRatings('rps');
     }
 
     /**
      * Update ELO ratings for all SVG matches.
-     *
-     * @return int Number of matches processed
      */
-    public function updateSvgEloRatings(): int
+    public function updateSvgEloRatings(): void
     {
-        return $this->updateEloRatings('svg');
+        $this->updateEloRatings('svg');
     }
 
     /**
      * Update ELO ratings for all Chess matches.
-     *
-     * @return int Number of matches processed
      */
-    public function updateChessEloRatings(): int
+    public function updateChessEloRatings(): void
     {
-        return $this->updateEloRatings('chess');
+        $this->updateEloRatings('chess');
     }
 
     /**
@@ -224,5 +219,53 @@ class EloRatingService
             'chess' => 'chess_rank',
             default => throw new \InvalidArgumentException("Unknown game type: {$gameType}")
         };
+    }
+
+    /**
+     * Computes the overall ELO rating and rank for all game types.
+     */
+    public function updateOverallEloRatings(): void
+    {
+        // We need to update overall `elo` and `rank` for all AI models
+        // We need to first calculate for each game type the average ELO rating
+        // and std deviation. We will then use these values to calculate the overall ELO rating.
+
+        $models = AiModel::all();
+
+        $stdD = collect([
+            Statistics::standardDeviation($models->pluck('rps_elo')->toArray()),
+            Statistics::standardDeviation($models->pluck('svg_elo')->toArray()),
+            //Statistics::standardDeviation($models->pluck('chess_elo')->toArray()),
+        ]);
+
+        $mean = collect([
+            $models->avg('rps_elo'),
+            $models->avg('svg_elo'),
+            //$models->avg('chess_elo'),
+        ]);
+
+        $targetEloMean = $mean->avg();
+        $targetEloStdD = $stdD->avg();
+
+        foreach ($models as $model) {
+            $zScores = collect([
+                Statistics::zScore($model->rps_elo, $mean[0], $stdD[0]),
+                Statistics::zScore($model->svg_elo, $mean[1], $stdD[1]),
+                //Statistics::zScore($model->chess_elo, $mean[2], $stdD[2]),
+            ]);
+
+            $zScore = $zScores->avg();
+
+            // Scale the z-score to the target ELO mean and std deviation
+            // otherwise the z-score by itself is near zero and doesn't look good
+            $model->elo = $targetEloMean + ($zScore * $targetEloStdD);
+        }
+
+        $rank = 1;
+        foreach ($models->sortByDesc('elo') as $model) {
+            $model->rank = $rank++;
+        }
+
+        DB::transaction(fn () => $models->each->save());
     }
 }

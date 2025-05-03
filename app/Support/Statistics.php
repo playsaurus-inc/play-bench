@@ -118,4 +118,39 @@ class Statistics
         // is still plausible under the assumption of equal skill.
         return $confidenceZ * $stdDevOfDifference;
     }
+
+    /**
+     * Calculate the standard deviation of an array of numbers.
+     *
+     * @see https://www.php.net/manual/en/function.stats-standard-deviation.php
+     */
+    public static function standardDeviation(array $a, $sample = false): float
+    {
+        $n = count($a);
+        if ($n <= 1) {
+            // Standard deviation is not defined for 0 or 1 elements
+            return 0.0;
+        }
+        $mean = array_sum($a) / $n;
+        $carry = 0.0;
+        foreach ($a as $val) {
+            $d = ((double) $val) - $mean;
+            $carry += $d * $d;
+        };
+        if ($sample) {
+           --$n;
+        }
+        return sqrt($carry / $n);
+    }
+
+    /**
+     * Calculate the z-score for a given value.
+     */
+    public static function zScore(float $value, float $mean, float $stdDev): float
+    {
+        if ($stdDev === 0) {
+            return 0.0; // Avoid division by zero
+        }
+        return ($value - $mean) / $stdDev;
+    }
 }

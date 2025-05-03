@@ -189,6 +189,10 @@
                 <x-models.models-ranking-table :models="$models" class="divide-y divide-gray-200" />
             </div>
         </div>
+
+        <p class="mt-4 text-sm text-gray-500">
+            (*) Overall ELO is derived by averaging standardized scores (Z-scores) across the included benchmarks.
+        </p>
     </div>
 
     <!-- Benchmark Comparison -->

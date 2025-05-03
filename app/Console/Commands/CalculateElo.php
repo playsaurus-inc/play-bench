@@ -37,31 +37,30 @@ class CalculateElo extends Command
         $this->info('Starting ELO rating calculations...');
 
         if ($game === 'all' || $game === 'rps') {
-            $this->components->task('Calculating Rock-Paper-Scissors ELO ratings', function () use ($eloService) {
-                $count = $eloService->updateRpsEloRatings();
-                $this->info("Processed {$count} RPS matches.");
-
-                return true;
-            });
+            $this->components->task(
+                'Calculating Rock-Paper-Scissors ELO ratings',
+                fn() => $eloService->updateRpsEloRatings(),
+            );
         }
 
         if ($game === 'all' || $game === 'svg') {
-            $this->components->task('Calculating SVG drawing ELO ratings', function () use ($eloService) {
-                $count = $eloService->updateSvgEloRatings();
-                $this->info("Processed {$count} SVG matches.");
-
-                return true;
-            });
+            $this->components->task(
+                'Calculating SVG drawing ELO ratings',
+                fn() => $eloService->updateSvgEloRatings(),
+            );
         }
 
         if ($game === 'all' || $game === 'chess') {
-            $this->components->task('Calculating Chess ELO ratings', function () use ($eloService) {
-                $count = $eloService->updateChessEloRatings();
-                $this->info("Processed {$count} Chess matches.");
-
-                return true;
-            });
+            $this->components->task(
+                'Calculating Chess ELO ratings',
+                fn() => $eloService->updateChessEloRatings(),
+            );
         }
+
+        $this->components->task(
+            'Calculating overall ELO ratings',
+            fn() => $eloService->updateOverallEloRatings(),
+        );
 
         $this->info('ELO rating calculations completed!');
 
