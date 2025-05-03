@@ -10,10 +10,10 @@
 <a href="{{ route('rps.matches.show', $match) }}" class="block bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all">
     <div class="p-4">
         <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center">
-                <span class="font-medium text-gray-900">#{{ $match->id }}</span>
+            <div class="flex items-center text-sm">
+                <span class="font-medium  text-gray-900">#{{ $match->id }}</span>
                 <span class="mx-2 text-gray-400">•</span>
-                <span class="text-sm text-gray-500">{{ $match->created_at->format('M d') }}</span>
+                <span class="text-gray-500">{{ $match->created_at->format('M d') }}</span>
             </div>
             <span @class([
                 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
