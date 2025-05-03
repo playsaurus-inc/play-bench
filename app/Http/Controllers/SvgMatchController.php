@@ -114,10 +114,16 @@ class SvgMatchController extends Controller
             ->take(3)
             ->get();
 
+        // Get SVG comparative features
+        $svgFeatures = collect($svgMatch->getComparativeSvgFeatures())
+            ->reject(fn ($feat, $key) => in_array($key, ['width', 'height']))
+            ->groupBy('category');
+
         return view('svg.matches.show', [
             'svgMatch' => $svgMatch,
             'similarMatches' => $similarMatches,
             'topSvgCreators' => $topSvgCreators,
+            'svgFeatures' => $svgFeatures,
         ]);
     }
 }

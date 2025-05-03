@@ -75,12 +75,167 @@ class SvgAnalysisService
             'elements_with_opacity' => $xpath->query('//*[@opacity]')->length,
             'elements_with_stroke' => $xpath->query('//*[@stroke]')->length,
             'text_elements' => $xpath->query('//svg:text')->length,
-
-
         ];
 
         return collect($features)
             ->reject(fn ($value) => is_null($value) || $value === 0)
+            ->toArray();
+    }
+
+    /**
+     * Returns english human readable names for the features with descriptions.
+     */
+    public function getFeatureDescriptions(?array $features): array
+    {
+        return $this->combineFeatures($features, [
+            'width' => [
+                'name' => 'Width',
+                'category' => 'General',
+                'description' => 'The width of the SVG viewBox or canvas.',
+            ],
+            'height' => [
+                'name' => 'Height',
+                'category' => 'General',
+                'description' => 'The height of the SVG viewBox or canvas.',
+            ],
+            'total_shapes' => [
+                'name' => 'Total Shapes',
+                'category' => 'Shapes',
+                'description' => 'The total number of shape elements (rect, circle, ellipse, line, polygon, polyline, path) in the SVG.',
+            ],
+            'rectangles' => [
+                'name' => 'Rectangles',
+                'category' => 'Shapes',
+                'description' => 'The number of rectangle elements (rect) in the SVG.',
+            ],
+            'circles' => [
+                'name' => 'Circles',
+                'category' => 'Shapes',
+                'description' => 'The number of circle elements (circle) in the SVG.',
+            ],
+            'ellipses' => [
+                'name' => 'Ellipses',
+                'category' => 'Shapes',
+                'description' => 'The number of ellipse elements (ellipse) in the SVG.',
+            ],
+            'lines' => [
+                'name' => 'Lines',
+                'category' => 'Shapes',
+                'description' => 'The number of line elements (line) in the SVG.',
+            ],
+            'polygons' => [
+                'name' => 'Polygons',
+                'category' => 'Shapes',
+                'description' => 'The number of polygon elements (polygon) in the SVG.',
+            ],
+            'paths' => [
+                'name' => 'Paths',
+                'category' => 'Shapes',
+                'description' => 'The number of path elements (path) in the SVG.',
+            ],
+            'groups' => [
+                'name' => 'Groups',
+                'category' => 'Shapes',
+                'description' => 'The number of group elements (g) in the SVG.',
+            ],
+            'gradients' => [
+                'name' => 'Gradients',
+                'category' => 'Visual Effects',
+                'description' => 'The number of gradient definitions (linearGradient, radialGradient) in the SVG.',
+            ],
+            'patterns' => [
+                'name' => 'Patterns',
+                'category' => 'Visual Effects',
+                'description' => 'The number of pattern definitions (pattern) in the SVG.',
+            ],
+            'filters' => [
+                'name' => 'Filters',
+                'category' => 'Visual Effects',
+                'description' => 'The number of filter definitions (filter) in the SVG.',
+            ],
+            'masks' => [
+                'name' => 'Masks',
+                'category' => 'Visual Effects',
+                'description' => 'The number of mask definitions (mask) in the SVG.',
+            ],
+            'clip_paths' => [
+                'name' => 'Clip Paths',
+                'category' => 'Visual Effects',
+                'description' => 'The number of clipping path definitions (clipPath) in the SVG.',
+            ],
+            'unique_colors' => [
+                'name' => 'Unique Colors',
+                'category' => 'Colors',
+                'description' => 'The number of unique colors used in the SVG.',
+            ],
+            'animations' => [
+                'name' => 'Animations',
+                'category' => 'Interactivity',
+                'description' => 'The number of animation elements (animate, animateMotion, animateTransform, set) in the SVG.',
+            ],
+            'elements_with_transform' => [
+                'name' => 'Elements with Transform',
+                'category' => 'Interactivity',
+                'description' => 'The number of elements with transform attributes in the SVG.',
+            ],
+            'path_commands' => [
+                'name' => 'Path Commands',
+                'category' => 'Complexity',
+                'description' => 'The total number of path commands in all path elements (M, L, C, Q, etc.) in the SVG.',
+            ],
+            'max_group_nesting' => [
+                'name' => 'Max Group Nesting',
+                'category' => 'Complexity',
+                'description' => 'The maximum nesting level of group elements (g) in the SVG.',
+            ],
+            'defs_elements' => [
+                'name' => 'Defs Elements',
+                'category' => 'Complexity',
+                'description' => 'The number of elements defined within the defs element in the SVG.',
+            ],
+            'use_elements' => [
+                'name' => 'Use Elements',
+                'category' => 'Complexity',
+                'description' => 'The number of use elements (use) in the SVG.',
+            ],
+            'elements_with_opacity' => [
+                'name' => 'Elements with Opacity',
+                'category' => 'Visual Effects',
+                'description' => 'The number of elements with opacity attributes in the SVG.',
+            ],
+            'elements_with_stroke' => [
+                'name' => 'Elements with Stroke',
+                'category' => 'Visual Effects',
+                'description' => 'The number of elements with stroke attributes in the SVG.',
+            ],
+            'text_elements' => [
+                'name' => 'Text Elements',
+                'category' => 'Text',
+                'description' => 'The number of text elements (text) in the SVG.',
+            ],
+        ]);
+    }
+
+    /**
+     * Combines the features with their descriptions.
+     *
+     * @param array<string, mixed> $features The features to combine.
+     * @param array<string, array<string, mixed>> $descriptions The descriptions for each feature.
+     * @return array<string, array<string, mixed>> The combined features with descriptions.
+     */
+    protected function combineFeatures(?array $features, array $descriptions): array
+    {
+        if (is_null($features)) {
+            return [];
+        }
+
+        return collect($descriptions)
+            ->map(fn ($description, $key) => [
+                'name' => $description['name'],
+                'category' => $description['category'],
+                'description' => $description['description'],
+                'value' => $features[$key] ?? null,
+            ])
             ->toArray();
     }
 

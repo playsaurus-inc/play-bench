@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Contracts\RankedMatch;
+use App\Services\Svg\SvgAnalysisService;
 use Illuminate\Contracts\Filesystem\Cloud;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -25,6 +26,12 @@ class SvgMatch extends Model implements RankedMatch
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
         'is_forced_completion' => 'boolean',
+        'player1_elo_before' => 'float',
+        'player2_elo_before' => 'float',
+        'player1_elo_after' => 'float',
+        'player2_elo_after' => 'float',
+        'player1_features' => 'array',
+        'player2_features' => 'array',
     ];
 
     /**
@@ -250,5 +257,48 @@ class SvgMatch extends Model implements RankedMatch
             'player1_elo_after' => $player1EloAfter,
             'player2_elo_after' => $player2EloAfter,
         ]);
+    }
+
+    /**
+     * Gets the SVG features for the player 1.
+     */
+    public function getPlayer1SvgFeatures(): ?array
+    {
+        return app(SvgAnalysisService::class)->getFeatureDescriptions($this->player1_features);
+    }
+
+    /**
+     * Gets the SVG features for the player 2.
+     */
+    public function getPlayer2SvgFeatures(): ?array
+    {
+        return app(SvgAnalysisService::class)->getFeatureDescriptions($this->player2_features);
+    }
+
+    /**
+     * Gets a comparative analysis of the SVG features between player 1 and player 2.
+     */
+    public function getComparativeSvgFeatures(): ?array
+    {
+        $player1 = collect($this->getPlayer1SvgFeatures());
+        $player2 = collect($this->getPlayer2SvgFeatures());
+
+        $player1Values = $player1->map(fn ($value) => $value['value']);
+        $player2Values = $player2->map(fn ($value) => $value['value']);
+
+        return $player1->merge($player2)
+            ->map(fn ($feature, $key) => [
+                'name' => $feature['name'],
+                'value' => $feature['value'],
+                'description' => $feature['description'],
+                'category' => $feature['category'],
+                'player1_value' => $player1Values[$key] ?? null,
+                'player2_value' => $player2Values[$key] ?? null,
+                'delta' => is_numeric($player1Values[$key]) && is_numeric($player2Values[$key])
+                    ? $player1Values[$key] - $player2Values[$key]
+                    : null,
+            ])
+            //->reject(fn ($feature) => $feature['player1_value'] === null && $feature['player2_value'] === null)
+            ->all();
     }
 }

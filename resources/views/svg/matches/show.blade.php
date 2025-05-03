@@ -268,6 +268,147 @@
             </div>
         </div>
 
+        <!-- 3.5 SVG Features Analysis - Collapsible section -->
+        <div x-data="{ open: false }" class="bg-white rounded-lg shadow-sm border border-amber-50 mb-6 overflow-hidden">
+            <!-- Header with toggle button -->
+            <button @click="open = !open" class="w-full text-left p-4 flex items-center justify-between bg-gradient-to-r from-amber-50 to-white cursor-pointer">
+                <div class="flex items-center">
+                    <div class="size-8 rounded-full bg-amber-100 flex items-center justify-center mr-3">
+                        <x-phosphor-chart-bar-fill class="size-4 text-amber-600" />
+                    </div>
+                    <h3 class="text-base font-medium text-gray-800">SVG Stats & Insights</h3>
+                    <p class="text-sm text-gray-500 ml-3">
+                        Compare technical aspects of both SVGs
+                    </p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="ml-2 text-xs text-amber-800 bg-amber-50 rounded-full px-2 py-0.5">{{ count($svgFeatures->flatten(1)) }} features</span>
+                    <x-phosphor-caret-down-fill
+                        class="size-5 text-gray-500 transition-transform"
+                        x-bind:class="{'rotate-180': open}"
+                    />
+                </div>
+            </button>
+
+            <!-- Expandable content -->
+            <div
+                x-show="open"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 transform scale-y-95"
+                x-transition:enter-end="opacity-100 transform scale-y-100"
+                x-transition:leave="transition ease-in duration-100"
+                x-transition:leave-start="opacity-100 transform scale-y-100"
+                x-transition:leave-end="opacity-0 transform scale-y-95"
+                x-cloak
+                class="border-t border-amber-100 p-4"
+            >
+                <!-- Brief explanation -->
+                <p class="text-sm text-gray-600 p-4 mb-2">
+                    <x-phosphor-info-fill class="size-4 text-amber-600 inline-block mr-1" />
+                    These metrics analyze technical aspects of both SVG drawings. Look for differences that might explain the judge's decision.
+                    Use the "View Code" button above to see the SVG code for each drawing.
+                </p>
+
+                <!-- Features by category -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @forelse($svgFeatures as $category => $features)
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <!-- Category header -->
+                            <h4 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                                <span class="size-6 rounded-full bg-amber-100 flex items-center justify-center mr-2">
+                                    @switch(strtolower($category))
+                                        @case('complexity')
+                                            <x-phosphor-code-block-fill class="size-3 text-amber-600" />
+                                            @break
+                                        @case('color')
+                                            <x-phosphor-paint-bucket-fill class="size-3 text-amber-600" />
+                                            @break
+                                        @case('structure')
+                                            <x-phosphor-cube-fill class="size-3 text-amber-600" />
+                                            @break
+                                        @case('text')
+                                            <x-phosphor-text-t-fill class="size-3 text-amber-600" />
+                                            @break
+                                        @default
+                                            <x-phosphor-star-fill class="size-3 text-amber-600" />
+                                    @endswitch
+                                </span>
+                                {{ ucfirst($category) }} Metrics
+                            </h4>
+
+                            <!-- Features table -->
+                            <div class="space-y-2">
+                                @foreach($features as $feature)
+                                    <div class="flex flex-col sm:flex-row">
+                                        <!-- Feature name and description -->
+                                        <div class="flex-1 mb-2 sm:mb-0">
+                                            <div class="font-medium text-sm text-gray-800">{{ $feature['name'] }}</div>
+                                            <p class="text-xs text-gray-500 mt-0.5">{{ $feature['description'] }}</p>
+                                        </div>
+
+                                        <!-- Comparison values -->
+                                        <div class="w-full sm:w-auto flex text-sm">
+                                            <!-- Player 1 value -->
+                                            <div class="flex-1 sm:w-24 text-center">
+                                                <div class="text-xs text-gray-500 mb-1">Player 1</div>
+                                                <div class="px-2.5 py-1 rounded bg-red-50 text-red-800 font-mono text-xs">
+                                                    @if(is_numeric($feature['player1_value']))
+                                                        {{ Number::format($feature['player1_value']) }}
+                                                    @else
+                                                        {{ $feature['player1_value'] ?? '—' }}
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <!-- Comparison indicator -->
+                                            <div class="w-12 flex items-center justify-center">
+                                                @if(isset($feature['delta']) && is_numeric($feature['delta']))
+                                                    @if($feature['delta'] > 0)
+                                                        <span class="size-6 rounded-full bg-red-100 flex items-center justify-center" title="Player 1 has higher value">
+                                                            <x-phosphor-less-than-bold class="size-4 text-red-700" />
+                                                        </span>
+                                                    @elseif($feature['delta'] < 0)
+                                                        <span class="size-6 rounded-full bg-blue-100 flex items-center justify-center" title="Player 2 has higher value">
+                                                            <x-phosphor-greater-than-bold class="size-4 text-blue-700" />
+                                                        </span>
+                                                    @else
+                                                        <span class="size-6 rounded-full bg-slate-200 flex items-center justify-center" title="Equal values">
+                                                            <x-phosphor-equals-bold class="size-4 text-slate-700" />
+                                                        </span>
+                                                    @endif
+                                                @else
+                                                    <span class="size-6 rounded-full bg-gray-200 flex items-center justify-center" title="No comparison available">
+                                                        <x-phosphor-question-mark-bold class="size-4 text-gray-700" />
+                                                    </span>
+                                                @endif
+                                            </div>
+
+                                            <!-- Player 2 value -->
+                                            <div class="flex-1 sm:w-24 text-center">
+                                                <div class="text-xs text-gray-500 mb-1">Player 2</div>
+                                                <div class="px-2.5 py-1 rounded bg-blue-50 text-blue-800 font-mono text-xs">
+                                                    @if(is_numeric($feature['player2_value']))
+                                                        {{ Number::format($feature['player2_value']) }}
+                                                    @else
+                                                        {{ $feature['player2_value'] ?? '—' }}
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @empty
+                        <div class="text-center p-4 text-gray-400 md:col-span-2">
+                            <x-phosphor-chart-line-fill class="size-12 mx-auto mb-2" />
+                            <p class="text-sm">No feature analysis available for these SVGs</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
         <!-- 4. Judging info cards -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 mb-6 overflow-hidden">
             <div class="p-3 sm:p-4">
