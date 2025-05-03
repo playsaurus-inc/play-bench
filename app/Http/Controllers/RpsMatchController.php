@@ -66,17 +66,31 @@ class RpsMatchController extends Controller
     }
 
     /**
-     * Display a paginated list of RPS matches with optional filtering.
+     * Display a paginated list of RPS matches with enhanced filtering options.
      */
     public function index(Request $request)
     {
+        // Get all models for filtering options
+        $models = AiModel::orderBy('name')->get();
+        
         $query = RpsMatch::with(['player1', 'player2', 'winner'])
-            ->when($request->player, function ($query, $player) {
-                return $query->playedBy($player);
+            ->when($request->model, function ($query, $modelId) {
+                return $query->playedBy($modelId);
+            })
+            ->when($request->has('winner'), function ($query) use ($request) {
+                if ($request->winner === 'tie') {
+                    return $query->whereNull('winner_id');
+                }
+                return $query->where('winner_id', $request->winner);
+            })
+            ->when($request->has('match_type') && $request->match_type === 'close', function ($query) {
+                return $query->whereRaw('ABS(player1_score - player2_score) <= 3')
+                             ->where('rounds_played', '>=', 10);
             })
             ->when($request->sort, function ($query, $sort) {
                 return match ($sort) {
                     'rounds' => $query->orderBy('rounds_played', 'desc'),
+                    'score_diff' => $query->orderByRaw('ABS(player1_score - player2_score) DESC'),
                     'date_asc' => $query->orderBy('created_at', 'asc'),
                     default => $query->orderBy('created_at', 'desc'),
                 };
@@ -93,9 +107,17 @@ class RpsMatchController extends Controller
             'ties' => RpsMatch::whereNull('winner_id')->count(),
         ];
 
+        // If filtering by model, get the model for additional info
+        $selectedModel = null;
+        if ($request->model) {
+            $selectedModel = AiModel::find($request->model);
+        }
+
         return view('rps.matches.index', [
             'matches' => $matches,
             'stats' => $stats,
+            'models' => $models,
+            'selectedModel' => $selectedModel,
         ]);
     }
 
