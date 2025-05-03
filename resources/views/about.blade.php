@@ -228,7 +228,7 @@
                     <div>
                         <h3 class="text-lg font-bold text-gray-900 mb-1">New Benchmarks</h3>
                         <p class="text-gray-700">
-                            We're working on the SVG Drawing and Chess benchmarks, with plans to add more creative
+                            We're working on the Chess benchmark, with plans to add more creative
                             and strategic tasks in the future.
                         </p>
                     </div>
