@@ -57,8 +57,6 @@ class AiModelController extends Controller
         $moveBreakdown = $aiModel->rpsMoveBreakdown();
         $strategyAnalysis = $analysis->getStrategyAnalysis($aiModel, $moveBreakdown);
 
-        $rpsOpponents = $this->getRpsOpponents($aiModel, 3);
-
         // Get SVG matches and stats
         $svgMatches = SvgMatch::query()
             ->playedBy($aiModel)
@@ -90,7 +88,6 @@ class AiModelController extends Controller
             'rpsWinRate' => $rpsWinRate,
             'moveBreakdown' => $moveBreakdown,
             'strategyAnalysis' => $strategyAnalysis,
-            'rpsOpponents' => $rpsOpponents,
             'svgMatches' => $svgMatches,
             'totalSvgMatches' => $totalSvgMatches,
             'totalSvgWins' => $totalSvgWins,
@@ -98,40 +95,5 @@ class AiModelController extends Controller
             'bestArtworks' => $bestArtworks,
             'activeTab' => 'overview',
         ]);
-    }
-
-    /**
-     * Get top opponents for RPS.
-     */
-    protected function getRpsOpponents(AiModel $aiModel, int $limit = 3)
-    {
-        return AiModel::query()
-            ->whereHas('rpsMatchesAsPlayer1', fn ($q) => $q->where('player2_id', $aiModel->id))
-            ->orWhereHas('rpsMatchesAsPlayer2', fn ($q) => $q->where('player1_id', $aiModel->id))
-            ->with([
-                'rpsMatchesAsPlayer1' => fn ($q) => $q->where('player2_id', $aiModel->id),
-                'rpsMatchesAsPlayer2' => fn ($q) => $q->where('player1_id', $aiModel->id),
-            ])
-            ->get()
-            ->map(function (AiModel $opponent) use ($aiModel) {
-                $matches1 = $opponent->rpsMatchesAsPlayer1->filter(
-                    fn ($match) => $match->player2_id === $aiModel->id
-                );
-                $matches2 = $opponent->rpsMatchesAsPlayer2->filter(
-                    fn ($match) => $match->player1_id === $aiModel->id
-                );
-
-                $matches = $matches1->concat($matches2);
-                $wins = $matches->filter(fn ($match) => $match->winner_id === $aiModel->id)->count();
-                $total = $matches->count();
-
-                return (object) [
-                    'model' => $opponent,
-                    'win_rate' => $total > 0 ? $wins / $total : 0,
-                    'total_matches' => $total,
-                ];
-            })
-            ->sortByDesc('total_matches')
-            ->take($limit);
     }
 }

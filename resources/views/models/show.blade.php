@@ -96,28 +96,6 @@
                 <div class="bg-gray-50 rounded-lg p-3 text-xs text-gray-700">
                     {{ $strategyAnalysis }}
                 </div>
-
-                <!-- Top Opponents -->
-                @if($rpsOpponents->count() > 0)
-                    <div class="mt-6">
-                        <h3 class="text-sm font-medium text-gray-700 mb-2">Top Opponents</h3>
-                        <div class="space-y-2">
-                            @foreach($rpsOpponents as $opponent)
-                                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
-                                    <div class="flex items-center">
-                                        <div class="bg-gray-100 rounded-full w-6 h-6 flex items-center justify-center mr-2">
-                                            <x-phosphor-robot-fill class="w-3 h-3 text-gray-500" />
-                                        </div>
-                                        <div class="text-xs font-medium text-gray-900">{{ $opponent->model->name }}</div>
-                                    </div>
-                                    <div class="text-xs font-medium {{ $opponent->win_rate > 0.5 ? 'text-green-600' : 'text-red-600' }}">
-                                        {{ Number::percentage($opponent->win_rate * 100, 1) }} win rate
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
             </div>
         </div>
 
