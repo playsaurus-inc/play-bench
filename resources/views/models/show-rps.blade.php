@@ -180,6 +180,9 @@
                                     <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         Status
                                     </th>
+                                    <th scope="col" class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Details
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200" x-data="{ hoverRow: null }">
@@ -231,6 +234,15 @@
                                                     Struggles
                                                 </span>
                                             @endif
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-right">
+                                            <x-ui.button
+                                                :href="route('rps.matches.index', ['model' => $model->slug, 'contender' => $opponent->model->slug])"
+                                                size="sm"
+                                                variant="secondary"
+                                            >
+                                                View Matches
+                                            </x-ui.button>
                                         </td>
                                     </tr>
                                 @endforeach
