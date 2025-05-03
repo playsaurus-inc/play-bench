@@ -43,9 +43,12 @@
                     </span>
                 </div>
 
-                <div class="mt-8">
+                <div class="mt-8 flex gap-3">
                     <x-ui.button href="#featured-matches" variant="primary" size="lg">
                         Explore Matches
+                    </x-ui.button>
+                    <x-ui.button href="{{ route('rps.matches.index') }}" variant="secondary" size="lg">
+                        View All Matches
                     </x-ui.button>
                 </div>
             </div>
@@ -151,10 +154,17 @@
 
     <!-- Model Rankings -->
     <section id="model-rankings" class="mb-10 scroll-mt-20">
-        <h2 class="text-2xl font-bold mb-6 text-gray-900 flex items-center">
-            <x-phosphor-trophy-fill class="w-6 h-6 mr-2 text-amber-500" />
-            Current Model Rankings
-        </h2>
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                <x-phosphor-trophy-fill class="w-6 h-6 mr-2 text-amber-500" />
+                Current Model Rankings
+            </h2>
+
+            <a href="{{ route('rps.matches.index') }}" class="text-sm text-amber-600 hover:text-amber-800 flex items-center">
+                <span>View all matches</span>
+                <x-phosphor-arrow-right class="w-4 h-4 ml-1" />
+            </a>
+        </div>
 
         <!-- Using our new reusable component -->
         <x-rps.models-ranking-table :models="$models" />
