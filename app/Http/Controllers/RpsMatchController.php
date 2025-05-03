@@ -72,20 +72,21 @@ class RpsMatchController extends Controller
     {
         // Get all models for filtering options
         $models = AiModel::orderBy('name')->get();
-        
+
         $query = RpsMatch::with(['player1', 'player2', 'winner'])
             ->when($request->model, function ($query, $modelId) {
                 return $query->playedBy($modelId);
+            })
+            ->when($request->contender, function ($query, $contenderId) use ($request) {
+                return ($request->model)
+                    ? $query->playedAgainst($request->model, $contenderId)
+                    : $query->playedBy($contenderId);
             })
             ->when($request->has('winner'), function ($query) use ($request) {
                 if ($request->winner === 'tie') {
                     return $query->whereNull('winner_id');
                 }
                 return $query->where('winner_id', $request->winner);
-            })
-            ->when($request->has('match_type') && $request->match_type === 'close', function ($query) {
-                return $query->whereRaw('ABS(player1_score - player2_score) <= 3')
-                             ->where('rounds_played', '>=', 10);
             })
             ->when($request->sort, function ($query, $sort) {
                 return match ($sort) {
@@ -99,7 +100,7 @@ class RpsMatchController extends Controller
             });
 
         $matches = $query->paginate(12)->withQueryString();
-        
+
         // Get some stats for the header
         $stats = [
             'total' => RpsMatch::count(),
@@ -113,11 +114,18 @@ class RpsMatchController extends Controller
             $selectedModel = AiModel::find($request->model);
         }
 
+        // If filtering by contender, get the contender model
+        $selectedContender = null;
+        if ($request->contender) {
+            $selectedContender = AiModel::find($request->contender);
+        }
+
         return view('rps.matches.index', [
             'matches' => $matches,
             'stats' => $stats,
             'models' => $models,
             'selectedModel' => $selectedModel,
+            'selectedContender' => $selectedContender,
         ]);
     }
 

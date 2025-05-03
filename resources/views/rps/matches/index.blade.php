@@ -56,18 +56,18 @@
     <x-rps.quick-filters />
 
     <!-- Enhanced filters section -->
-    <div class="mb-8 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h2 class="text-lg font-semibold mb-4 flex items-center">
-            <x-phosphor-funnel-fill class="mr-2 size-5 text-amber-500" />
-            Filter Matches
-        </h2>
+    <div class="mb-6 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div class="flex items-center mb-3">
+            <x-phosphor-funnel-fill class="mr-2 size-4 text-amber-500" />
+            <h2 class="text-base font-medium">Filter Matches</h2>
+        </div>
 
-        <form action="{{ route('rps.matches.index') }}" method="GET" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- Model filter -->
+        <form action="{{ route('rps.matches.index') }}" method="GET">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <!-- AI Model filter -->
                 <div>
-                    <label for="model" class="block text-sm font-medium text-gray-700 mb-1">AI Model</label>
-                    <select id="model" name="model" class="block w-full rounded-md border border-gray-700/10 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm p-3">
+                    <label for="model" class="block text-xs font-medium text-gray-700 mb-1">AI Model</label>
+                    <select id="model" name="model" class="block w-full rounded-md border border-gray-700/10 shadow-sm focus:border-amber-500 focus:ring-amber-500 text-sm p-3">
                         <option value="">All Models</option>
                         @foreach($models as $model)
                             <option value="{{ $model->id }}" {{ request('model') == $model->id ? 'selected' : '' }}>
@@ -77,10 +77,23 @@
                     </select>
                 </div>
 
+                <!-- Contender AI Model filter -->
+                <div>
+                    <label for="contender" class="block text-xs font-medium text-gray-700 mb-1">Opponent Model</label>
+                    <select id="contender" name="contender" class="block w-full rounded-md border border-gray-700/10 shadow-sm focus:border-amber-500 focus:ring-amber-500 text-sm p-3">
+                        <option value="">Any Opponent</option>
+                        @foreach($models as $model)
+                            <option value="{{ $model->id }}" {{ request('contender') == $model->id ? 'selected' : '' }}>
+                                {{ $model->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
                 <!-- Sort filter -->
                 <div>
-                    <label for="sort" class="block text-sm font-medium text-gray-700 mb-1">Sort by</label>
-                    <select id="sort" name="sort" class="block w-full rounded-md border border-gray-700/10 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm p-3">
+                    <label for="sort" class="block text-xs font-medium text-gray-700 mb-1">Sort by</label>
+                    <select id="sort" name="sort" class="block w-full rounded-md border border-gray-700/10 shadow-sm focus:border-amber-500 focus:ring-amber-500 text-sm p-3">
                         <option value="date_desc" {{ request('sort', 'date_desc') === 'date_desc' ? 'selected' : '' }}>Date (Newest first)</option>
                         <option value="date_asc" {{ request('sort') === 'date_asc' ? 'selected' : '' }}>Date (Oldest first)</option>
                         <option value="rounds" {{ request('sort') === 'rounds' ? 'selected' : '' }}>Most rounds</option>
@@ -88,10 +101,10 @@
                     </select>
                 </div>
 
-                <!-- Winner filter -->
+                <!-- Match Result filter -->
                 <div>
-                    <label for="winner" class="block text-sm font-medium text-gray-700 mb-1">Match Result</label>
-                    <select id="winner" name="winner" class="block w-full rounded-md border border-gray-700/10 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm p-3">
+                    <label for="winner" class="block text-xs font-medium text-gray-700 mb-1">Match Result</label>
+                    <select id="winner" name="winner" class="block w-full rounded-md border border-gray-700/10 shadow-sm focus:border-amber-500 focus:ring-amber-500 text-sm p-3">
                         <option value="">Any result</option>
                         <option value="tie" {{ request('winner') === 'tie' ? 'selected' : '' }}>Only ties</option>
                         @foreach($models as $model)
@@ -103,26 +116,26 @@
                 </div>
             </div>
 
-            <div class="flex items-center justify-between pt-2">
+            <div class="flex items-center justify-between mt-3">
                 <div>
-                    @if(request()->hasAny(['sort', 'model', 'winner', 'match_type']))
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                            <x-phosphor-funnel-fill class="size-3.5 mr-1" />
+                    @if(request()->hasAny(['sort', 'model', 'contender', 'winner']))
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                            <x-phosphor-funnel-fill class="size-3 mr-1" />
                             Filters applied
                         </span>
                     @endif
                 </div>
 
-                <div class="flex space-x-3">
-                    @if(request()->hasAny(['sort', 'model', 'winner', 'match_type']))
-                        <x-ui.button :href="route('rps.matches.index')" variant="outline" size="sm">
-                            <x-phosphor-x class="size-4 mr-1" />
+                <div class="flex space-x-2">
+                    @if(request()->hasAny(['sort', 'model', 'contender', 'winner']))
+                        <x-ui.button :href="route('rps.matches.index')" variant="outline" size="sm" class="!px-3 !py-1">
+                            <x-phosphor-x class="size-3.5 mr-1" />
                             Reset
                         </x-ui.button>
                     @endif
 
-                    <x-ui.button type="submit" variant="primary" size="sm">
-                        <x-phosphor-funnel-fill class="size-4 mr-1" />
+                    <x-ui.button type="submit" variant="primary" size="sm" class="!px-3 !py-1">
+                        <x-phosphor-funnel-fill class="size-3.5 mr-1" />
                         Apply Filters
                     </x-ui.button>
                 </div>
@@ -131,7 +144,9 @@
     </div>
 
     <!-- Selected model stats (if filtering by model) -->
-    @if(isset($selectedModel) && $selectedModel)
+    @if(isset($selectedModel) && $selectedModel && isset($selectedContender) && $selectedContender)
+        <x-rps.models-matchup-card :model="$selectedModel" :contender="$selectedContender" />
+    @elseif(isset($selectedModel) && $selectedModel)
         <x-rps.model-info-card :model="$selectedModel" />
     @endif
 
@@ -169,6 +184,15 @@
                         </span>
                     @endif
 
+                    @if(request('contender'))
+                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-800">
+                            Opponent: {{ $models->firstWhere('id', request('contender'))->name }}
+                            <a href="{{ route('rps.matches.index', request()->except('contender')) }}" class="ml-1.5 text-amber-600 hover:text-amber-800">
+                                <x-phosphor-x-circle-fill class="size-4" />
+                            </a>
+                        </span>
+                    @endif
+
                     @if(request('winner'))
                         <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-800">
                             @if(request('winner') === 'tie')
@@ -177,15 +201,6 @@
                                 Winner: {{ $models->firstWhere('id', request('winner'))->name }}
                             @endif
                             <a href="{{ route('rps.matches.index', request()->except('winner')) }}" class="ml-1.5 text-amber-600 hover:text-amber-800">
-                                <x-phosphor-x-circle-fill class="size-4" />
-                            </a>
-                        </span>
-                    @endif
-
-                    @if(request('match_type') === 'close')
-                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-800">
-                            Close Matches
-                            <a href="{{ route('rps.matches.index', request()->except('match_type')) }}" class="ml-1.5 text-amber-600 hover:text-amber-800">
                                 <x-phosphor-x-circle-fill class="size-4" />
                             </a>
                         </span>
