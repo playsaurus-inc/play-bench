@@ -235,13 +235,13 @@ class EloRatingService
         $stdD = collect([
             Statistics::standardDeviation($models->pluck('rps_elo')->toArray()),
             Statistics::standardDeviation($models->pluck('svg_elo')->toArray()),
-            //Statistics::standardDeviation($models->pluck('chess_elo')->toArray()),
+            // Statistics::standardDeviation($models->pluck('chess_elo')->toArray()),
         ]);
 
         $mean = collect([
             $models->avg('rps_elo'),
             $models->avg('svg_elo'),
-            //$models->avg('chess_elo'),
+            // $models->avg('chess_elo'),
         ]);
 
         $targetEloMean = $mean->avg();
@@ -251,7 +251,7 @@ class EloRatingService
             $zScores = collect([
                 Statistics::zScore($model->rps_elo, $mean[0], $stdD[0]),
                 Statistics::zScore($model->svg_elo, $mean[1], $stdD[1]),
-                //Statistics::zScore($model->chess_elo, $mean[2], $stdD[2]),
+                // Statistics::zScore($model->chess_elo, $mean[2], $stdD[2]),
             ]);
 
             $zScore = $zScores->avg();

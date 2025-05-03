@@ -68,6 +68,7 @@ class SvgMatchController extends Controller
             ->load(['svgMatchesWon' => fn ($q) => $q->take(12)])
             ->map(function ($model) {
                 $model->svg_samples = $model->svgMatchesWon->map->getWinnerSvgUrl();
+
                 return $model;
             })
             ->values();
@@ -105,7 +106,7 @@ class SvgMatchController extends Controller
                 return $query->where('winner_id', $request->winner);
             })
             ->when($request->has('prompt'), function ($query) use ($request) {
-                return $query->where('prompt', 'like', '%' . $request->prompt . '%');
+                return $query->where('prompt', 'like', '%'.$request->prompt.'%');
             })
             ->when($request->sort, function ($query, $sort) {
                 return match ($sort) {

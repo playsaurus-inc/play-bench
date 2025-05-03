@@ -316,7 +316,6 @@ class SvgMatch extends Model implements RankedMatch
                     ? $player1Values[$key] - $player2Values[$key]
                     : null,
             ])
-            //->reject(fn ($feature) => $feature['player1_value'] === null && $feature['player2_value'] === null)
             ->all();
     }
 }

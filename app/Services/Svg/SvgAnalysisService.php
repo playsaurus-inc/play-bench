@@ -16,14 +16,14 @@ class SvgAnalysisService
     /**
      * Extracts the features used in the given SVG string.
      *
-     * @param string $svgString The SVG string to analyze.
+     * @param  string  $svgString  The SVG string to analyze.
      * @return array<string, mixed> An associative array of feature names and their counts or values.
      */
     public function extractFeatures(string $svgString): array
     {
         $dom = $this->loadSvgDom($svgString);
 
-        if (!$dom) {
+        if (! $dom) {
             return [];
         }
 
@@ -219,8 +219,8 @@ class SvgAnalysisService
     /**
      * Combines the features with their descriptions.
      *
-     * @param array<string, mixed> $features The features to combine.
-     * @param array<string, array<string, mixed>> $descriptions The descriptions for each feature.
+     * @param  array<string, mixed>  $features  The features to combine.
+     * @param  array<string, array<string, mixed>>  $descriptions  The descriptions for each feature.
      * @return array<string, array<string, mixed>> The combined features with descriptions.
      */
     protected function combineFeatures(?array $features, array $descriptions): array
@@ -242,12 +242,12 @@ class SvgAnalysisService
     /**
      * Loads the SVG string into a DOMDocument.
      *
-     * @param string $svgString The SVG string to load.
+     * @param  string  $svgString  The SVG string to load.
      * @return DOMDocument|null The loaded DOM document or null if invalid.
      */
     protected function loadSvgDom(string $svgString): ?DOMDocument
     {
-        $dom = new DOMDocument();
+        $dom = new DOMDocument;
 
         // Disable error output when loading potentially malformed XML
         libxml_use_internal_errors(true);
@@ -261,7 +261,7 @@ class SvgAnalysisService
     /**
      * Counts the total number of shape elements in the SVG.
      *
-     * @param DOMXPath $xpath The XPath object for the SVG.
+     * @param  DOMXPath  $xpath  The XPath object for the SVG.
      * @return int The total number of shapes.
      */
     protected function countTotalShapes(DOMXPath $xpath): int
@@ -277,7 +277,7 @@ class SvgAnalysisService
     /**
      * Counts unique colors used in the SVG.
      *
-     * @param DOMXPath $xpath The XPath object for the SVG.
+     * @param  DOMXPath  $xpath  The XPath object for the SVG.
      * @return int The number of unique colors.
      */
     protected function countUniqueColors(DOMXPath $xpath): int
@@ -343,7 +343,7 @@ class SvgAnalysisService
     /**
      * Checks if a string represents a valid color.
      *
-     * @param string $color The color string to check.
+     * @param  string  $color  The color string to check.
      * @return bool Whether the string is a valid color.
      */
     public function isValidColor(string $color): bool
@@ -374,7 +374,7 @@ class SvgAnalysisService
     /**
      * Counts the number of path commands in all paths.
      *
-     * @param DOMXPath $xpath The XPath object for the SVG.
+     * @param  DOMXPath  $xpath  The XPath object for the SVG.
      * @return int The total number of path commands.
      */
     protected function countPathCommands(DOMXPath $xpath): int
@@ -394,7 +394,7 @@ class SvgAnalysisService
     /**
      * Determines the maximum nesting level of groups.
      *
-     * @param DOMXPath $xpath The XPath object for the SVG.
+     * @param  DOMXPath  $xpath  The XPath object for the SVG.
      * @return int The maximum nesting level.
      */
     protected function getMaxGroupNesting(DOMXPath $xpath): int
@@ -420,7 +420,7 @@ class SvgAnalysisService
     /**
      * Gets the width and height from the SVG's viewBox or width/height attributes.
      *
-     * @param DOMDocument $dom The SVG DOM document.
+     * @param  DOMDocument  $dom  The SVG DOM document.
      * @return array<int|null> The width and height, or null if not available.
      */
     protected function getSvgDimensions(DOMDocument $dom): array

@@ -86,6 +86,7 @@ class RpsMatchController extends Controller
                 if ($request->winner === 'tie') {
                     return $query->whereNull('winner_id');
                 }
+
                 return $query->where('winner_id', $request->winner);
             })
             ->when($request->sort, function ($query, $sort) {

@@ -75,6 +75,7 @@ class ImportSvg extends AbstractImport
                 $winner = $player2;
             } else {
                 $this->warn("Match {$sourceMatch->id} is a draw. Skipping...");
+
                 return;
             }
 

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -34,7 +33,7 @@ class AiModel extends Model
     {
         if ($model instanceof AiModel) {
             return $model;
-        } else if (is_numeric($model)) {
+        } elseif (is_numeric($model)) {
             return AiModel::findOrFail($model);
         } else {
             return AiModel::where('slug', $model)->firstOrFail();
@@ -48,7 +47,7 @@ class AiModel extends Model
     {
         if ($model instanceof AiModel) {
             return $model->id;
-        } else if (is_numeric($model)) {
+        } elseif (is_numeric($model)) {
             return $model;
         } else {
             return AiModel::where('slug', $model)->firstOrFail()->id;

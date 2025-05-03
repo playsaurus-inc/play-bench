@@ -12,7 +12,7 @@ class SvgAnalysisServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new SvgAnalysisService();
+        $this->service = new SvgAnalysisService;
     }
 
     public function test_extract_features_with_basic_rectangle()

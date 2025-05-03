@@ -134,12 +134,13 @@ class Statistics
         $mean = array_sum($a) / $n;
         $carry = 0.0;
         foreach ($a as $val) {
-            $d = ((double) $val) - $mean;
+            $d = ((float) $val) - $mean;
             $carry += $d * $d;
-        };
-        if ($sample) {
-           --$n;
         }
+        if ($sample) {
+            $n--;
+        }
+
         return sqrt($carry / $n);
     }
 
@@ -151,6 +152,7 @@ class Statistics
         if ($stdDev === 0) {
             return 0.0; // Avoid division by zero
         }
+
         return ($value - $mean) / $stdDev;
     }
 }

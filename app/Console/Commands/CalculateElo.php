@@ -39,27 +39,27 @@ class CalculateElo extends Command
         if ($game === 'all' || $game === 'rps') {
             $this->components->task(
                 'Calculating Rock-Paper-Scissors ELO ratings',
-                fn() => $eloService->updateRpsEloRatings(),
+                fn () => $eloService->updateRpsEloRatings(),
             );
         }
 
         if ($game === 'all' || $game === 'svg') {
             $this->components->task(
                 'Calculating SVG drawing ELO ratings',
-                fn() => $eloService->updateSvgEloRatings(),
+                fn () => $eloService->updateSvgEloRatings(),
             );
         }
 
         if ($game === 'all' || $game === 'chess') {
             $this->components->task(
                 'Calculating Chess ELO ratings',
-                fn() => $eloService->updateChessEloRatings(),
+                fn () => $eloService->updateChessEloRatings(),
             );
         }
 
         $this->components->task(
             'Calculating overall ELO ratings',
-            fn() => $eloService->updateOverallEloRatings(),
+            fn () => $eloService->updateOverallEloRatings(),
         );
 
         $this->info('ELO rating calculations completed!');

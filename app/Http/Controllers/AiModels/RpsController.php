@@ -85,6 +85,4 @@ class RpsController extends Controller
             ->orderByRaw('ABS(player1_score - player2_score) DESC')
             ->first();
     }
-
-
 }

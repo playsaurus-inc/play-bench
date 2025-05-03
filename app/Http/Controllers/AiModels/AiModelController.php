@@ -24,7 +24,7 @@ class AiModelController extends Controller
         $modelCount = $models->count();
         $rpsMatchCount = RpsMatch::count();
         $svgMatchCount = SvgMatch::count();
-        $chessMatchCount = 0; //ChessMatch::count();
+        $chessMatchCount = 0; // ChessMatch::count();
 
         return view('models.index', [
             'models' => $models,
@@ -103,11 +103,11 @@ class AiModelController extends Controller
      */
     private function getSvgStrategyAnalysis(float $svgWinRate): string
     {
-        if($svgWinRate > 0.6) {
+        if ($svgWinRate > 0.6) {
             return 'This model excels at visual creativity and produces high-quality SVG drawings that frequently win against competitors.';
-        } else if ($svgWinRate > 0.45) {
+        } elseif ($svgWinRate > 0.45) {
             return 'This model demonstrates solid drawing capabilities with a balanced performance in SVG creation.';
-        } else if ($svgWinRate > 0.3) {
+        } elseif ($svgWinRate > 0.3) {
             return 'This model has potential in SVG drawing but may need further training to improve its performance.';
         } else {
             return 'This model struggles with SVG drawing and may require significant improvements to compete effectively.';
