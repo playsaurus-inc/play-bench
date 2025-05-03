@@ -4,7 +4,6 @@
 $isPlayer1 = $match->player1_id === $model->id;
 $opponent = $isPlayer1 ? $match->player2 : $match->player1;
 $result = $match->winner_id === $model->id ? 'win' : 'loss';
-$resultColor = $result === 'win' ? 'green' : 'red';
 $modelSvgUrl = $isPlayer1 ? $match->getPlayer1SvgUrl() : $match->getPlayer2SvgUrl();
 @endphp
 <a href="{{ route('svg.matches.show', $match) }}" class="block bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all">
@@ -26,8 +25,13 @@ $modelSvgUrl = $isPlayer1 ? $match->getPlayer1SvgUrl() : $match->getPlayer2SvgUr
                     <span class="mx-2 text-gray-400">•</span>
                     <span class="text-xs text-gray-500">{{ $match->created_at->format('M d') }}</span>
                 </div>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-{{ $resultColor }}-100 text-{{ $resultColor }}-800">
-                    {{ ucfirst($result) }}
+                <span @class([
+                    'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium',
+                    'bg-green-100 text-green-800' => $result === 'win',
+                    'bg-red-100 text-red-800' => $result === 'loss',
+                    'bg-gray-100 text-gray-800' => $result === 'tie',
+                ])>
+                    {{ $result === 'win' ? 'Victory' : ($result === 'loss' ? 'Defeat' : 'Draw') }}
                 </span>
             </div>
 
