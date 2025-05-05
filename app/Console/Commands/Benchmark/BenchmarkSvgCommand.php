@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Benchmark;
 
 use App\Models\AiModel;
 use App\Models\SvgMatch;
@@ -13,7 +13,12 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(
+    name: 'benchmark:svg',
+    description: 'Run SVG creation benchmarks between AI models',
+)]
 class BenchmarkSvgCommand extends Command
 {
     /**

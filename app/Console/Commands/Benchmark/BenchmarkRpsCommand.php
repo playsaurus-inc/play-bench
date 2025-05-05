@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Benchmark;
 
 use App\Models\RpsMatch;
 use App\Services\EloRatingService;
@@ -10,7 +10,12 @@ use App\Services\Rps\RpsRound;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(
+    name: 'benchmark:rps',
+    description: 'Run Rock Paper Scissors benchmarks between AI models',
+)]
 class BenchmarkRpsCommand extends Command
 {
     /**
