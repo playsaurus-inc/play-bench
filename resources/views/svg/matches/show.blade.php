@@ -316,22 +316,7 @@
                             <!-- Category header -->
                             <h4 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
                                 <span class="size-6 rounded-full bg-amber-100 flex items-center justify-center mr-2">
-                                    @switch(strtolower($category))
-                                        @case('complexity')
-                                            <x-phosphor-code-block-fill class="size-3 text-amber-600" />
-                                            @break
-                                        @case('color')
-                                            <x-phosphor-paint-bucket-fill class="size-3 text-amber-600" />
-                                            @break
-                                        @case('structure')
-                                            <x-phosphor-cube-fill class="size-3 text-amber-600" />
-                                            @break
-                                        @case('text')
-                                            <x-phosphor-text-t-fill class="size-3 text-amber-600" />
-                                            @break
-                                        @default
-                                            <x-phosphor-star-fill class="size-3 text-amber-600" />
-                                    @endswitch
+                                    <x-phosphor-star-fill class="size-3 text-amber-600" />
                                 </span>
                                 {{ ucfirst($category) }} Metrics
                             </h4>
