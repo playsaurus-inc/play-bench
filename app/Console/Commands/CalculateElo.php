@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(
-    name: 'calculate:elo',
+    name: 'app:calculate-elo',
     description: 'Calculate ELO ratings for all AI models based on match outcomes',
 )]
 class CalculateElo extends Command
@@ -17,7 +17,7 @@ class CalculateElo extends Command
      *
      * @var string
      */
-    protected $signature = 'calculate:elo
+    protected $signature = 'app:calculate-elo
                             {--game= : Specific game type to calculate (rps, svg, chess, or all)}';
 
     /**

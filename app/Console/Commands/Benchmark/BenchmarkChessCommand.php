@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Benchmark;
 
 use App\Models\ChessMatch;
 use App\Services\Chess\ChessBenchmarkService;
@@ -11,7 +11,12 @@ use App\Services\EloRatingService;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(
+    name: 'benchmark:chess',
+    description: 'Run chess benchmarks between AI models',
+)]
 class BenchmarkChessCommand extends Command
 {
     /**

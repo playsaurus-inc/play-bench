@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Import;
 
 use App\Models\ChessMatch;
 use Illuminate\Support\Carbon;
@@ -17,7 +17,7 @@ class ImportChess extends AbstractImport
      *
      * @var string
      */
-    protected $signature = 'import:chess {--fresh}';
+    protected $signature = 'chess:import {--fresh}';
 
     /**
      * The console command description.

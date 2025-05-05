@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Import;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -9,7 +9,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
     name: 'import',
     description: 'Import all benchmark data from the source database',
 )]
-class Import extends Command
+class ImportAll extends Command
 {
     /**
      * The name and signature of the command.
