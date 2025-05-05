@@ -7,6 +7,7 @@ use App\Models\AiModel;
 use App\Models\ChessMatch;
 use App\Models\RpsMatch;
 use App\Models\SvgMatch;
+use App\Services\Rps\RpsMatchAnalysisService;
 use Illuminate\View\View;
 
 class AiModelController extends Controller
@@ -17,44 +18,29 @@ class AiModelController extends Controller
     public function index(): View
     {
         // Get all models with their rankings
-        $models = AiModel::query()
-            ->withCount([
-                'rpsMatchesAsPlayer1',
-                'rpsMatchesAsPlayer2',
-                'rpsMatchesWon',
-            ])
-            ->get()
-            ->map(function ($model) {
-                $model->total_rps_matches = $model->rps_matches_as_player1_count + $model->rps_matches_as_player2_count;
-                $model->win_rate = $model->total_rps_matches > 0
-                    ? $model->rps_matches_won_count / $model->total_rps_matches
-                    : 0;
-
-                return $model;
-            })
-            ->sortByDesc('rps_elo');
+        $models = AiModel::all()->sortBy('rank');
 
         // Overall stats
         $modelCount = $models->count();
-        $matchCount = RpsMatch::count() + ChessMatch::count() + SvgMatch::count();
         $rpsMatchCount = RpsMatch::count();
-
-        // For now, we only have Rock Paper Scissors, but in the future we'll add more
-        $benchmarkCount = 1; // Will become 3 when Chess and SVG are implemented
+        $svgMatchCount = SvgMatch::count();
+        $chessMatchCount = 0; // ChessMatch::count();
 
         return view('models.index', [
             'models' => $models,
             'modelCount' => $modelCount,
-            'matchCount' => $matchCount,
+            'matchCount' => $rpsMatchCount + $svgMatchCount + $chessMatchCount,
             'rpsMatchCount' => $rpsMatchCount,
-            'benchmarkCount' => $benchmarkCount,
+            'svgMatchCount' => $svgMatchCount,
+            'chessMatchCount' => $chessMatchCount,
+            'benchmarkCount' => 2, // RPS and SVG
         ]);
     }
 
     /**
      * Display the specified model with performance across all benchmarks.
      */
-    public function show(AiModel $aiModel): View
+    public function show(RpsMatchAnalysisService $analysis, AiModel $aiModel): View
     {
         // Load RPS matches for this model
         $rpsMatches = RpsMatch::query()
@@ -64,12 +50,35 @@ class AiModelController extends Controller
             ->take(4)
             ->get();
 
-        // Calculate RPS stats
         $totalRpsMatches = $aiModel->rpsMatches()->count();
         $totalRpsWins = $aiModel->rpsMatchesWon()->count();
         $rpsWinRate = $totalRpsMatches > 0 ? $totalRpsWins / $totalRpsMatches : 0;
 
-        // In the future, we would also load chess matches and SVG matches here
+        $moveBreakdown = $aiModel->rpsMoveBreakdown();
+        $rpsStrategyAnalysis = $analysis->getStrategyAnalysis($aiModel, $moveBreakdown);
+
+        // Get SVG matches and stats
+        $svgMatches = SvgMatch::query()
+            ->playedBy($aiModel)
+            ->with(['player1', 'player2', 'winner'])
+            ->latest()
+            ->take(4)
+            ->get();
+
+        $totalSvgMatches = $aiModel->svgMatchesAsPlayer1()->count() + $aiModel->svgMatchesAsPlayer2()->count();
+        $totalSvgWins = $aiModel->svgMatchesWon()->count();
+        $svgWinRate = $totalSvgMatches > 0 ? $totalSvgWins / $totalSvgMatches : 0;
+
+        // Get best SVG artworks
+        $bestArtworks = $aiModel->svgMatchesWon()
+            ->latest()
+            ->take(6)
+            ->get()
+            ->map(fn ($match) => [
+                'match' => $match,
+                'prompt' => $match->prompt,
+                'svg_url' => $match->getWinnerSvgUrl(),
+            ]);
 
         return view('models.show', [
             'model' => $aiModel,
@@ -77,7 +86,31 @@ class AiModelController extends Controller
             'totalRpsMatches' => $totalRpsMatches,
             'totalRpsWins' => $totalRpsWins,
             'rpsWinRate' => $rpsWinRate,
+            'moveBreakdown' => $moveBreakdown,
+            'rpsStrategyAnalysis' => $rpsStrategyAnalysis,
+            'svgStrategyAnalysis' => $this->getSvgStrategyAnalysis($svgWinRate),
+            'svgMatches' => $svgMatches,
+            'totalSvgMatches' => $totalSvgMatches,
+            'totalSvgWins' => $totalSvgWins,
+            'svgWinRate' => $svgWinRate,
+            'bestArtworks' => $bestArtworks,
             'activeTab' => 'overview',
         ]);
+    }
+
+    /**
+     * Get SVG strategy analysis for the given model.
+     */
+    private function getSvgStrategyAnalysis(float $svgWinRate): string
+    {
+        if ($svgWinRate > 0.6) {
+            return 'This model excels at visual creativity and produces high-quality SVG drawings that frequently win against competitors.';
+        } elseif ($svgWinRate > 0.45) {
+            return 'This model demonstrates solid drawing capabilities with a balanced performance in SVG creation.';
+        } elseif ($svgWinRate > 0.3) {
+            return 'This model has potential in SVG drawing but may need further training to improve its performance.';
+        } else {
+            return 'This model struggles with SVG drawing and may require significant improvements to compete effectively.';
+        }
     }
 }

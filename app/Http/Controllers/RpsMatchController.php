@@ -13,7 +13,7 @@ class RpsMatchController extends Controller
     /**
      * Display a listing of the RPS matches with filtering options.
      */
-    public function index(Request $request): View
+    public function home(Request $request): View
     {
         $latestMatch = RpsMatch::query()
             ->with(['player1', 'player2', 'winner'])
@@ -62,6 +62,63 @@ class RpsMatchController extends Controller
             'mostRoundsMatch' => $mostRoundsMatch,
             'models' => $models->values(),
             'topModels' => $models->where('total_rps_matches', '>=', 5)->take(3),
+        ]);
+    }
+
+    /**
+     * Display a paginated list of RPS matches with enhanced filtering options.
+     */
+    public function index(Request $request)
+    {
+        // Get all models for filtering options
+        $models = AiModel::orderBy('name')->get();
+
+        $query = RpsMatch::with(['player1', 'player2', 'winner'])
+            ->when($request->model, function ($query, $modelId) {
+                return $query->playedBy($modelId);
+            })
+            ->when($request->contender, function ($query, $contenderId) use ($request) {
+                return ($request->model)
+                    ? $query->playedAgainst($request->model, $contenderId)
+                    : $query->playedBy($contenderId);
+            })
+            ->when($request->has('winner'), function ($query) use ($request) {
+                if ($request->winner === 'tie') {
+                    return $query->whereNull('winner_id');
+                }
+
+                return $query->where('winner_id', $request->winner);
+            })
+            ->when($request->sort, function ($query, $sort) {
+                return match ($sort) {
+                    'rounds_desc' => $query->orderBy('rounds_played', 'desc'),
+                    'rounds_asc' => $query->orderBy('rounds_played', 'asc'),
+                    'score_diff' => $query->orderByRaw('ABS(player1_score - player2_score) DESC'),
+                    'date_asc' => $query->orderBy('created_at', 'asc'),
+                    default => $query->orderBy('created_at', 'desc'),
+                };
+            }, function ($query) {
+                return $query->orderBy('created_at', 'desc');
+            });
+
+        $matches = $query->paginate(15)->withQueryString();
+
+        // Get some stats for the header
+        $stats = [
+            'total' => RpsMatch::count(),
+            'rounds' => RpsMatch::sum('rounds_played'),
+            'ties' => RpsMatch::whereNull('winner_id')->count(),
+        ];
+
+        $selectedModel = $request->model ? AiModel::from($request->model) : null;
+        $selectedContender = $request->contender ? AiModel::from($request->contender) : null;
+
+        return view('rps.matches.index', [
+            'matches' => $matches,
+            'stats' => $stats,
+            'models' => $models,
+            'selectedModel' => $selectedModel,
+            'selectedContender' => $selectedContender,
         ]);
     }
 

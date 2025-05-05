@@ -2,6 +2,7 @@
 
 namespace App\Services\Rps;
 
+use App\Models\AiModel;
 use App\Models\RpsMatch;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
@@ -77,5 +78,34 @@ class RpsMatchAnalysisService
         }
 
         return "The match had a moderate tie rate of {$formattedTieRate}, typical for Rock Paper Scissors games.";
+    }
+
+    /**
+     * Analyze the strategy of the given AI model based on the amount of each move it has made.
+     *
+     * @param  array<{'rock': int, 'paper': int, 'scissors': int}>  $moveBreakdown
+     */
+    public function getStrategyAnalysis(AiModel $aiModel, array $moveBreakdown): string
+    {
+        $totalMoves = $moveBreakdown['rock'] + $moveBreakdown['paper'] + $moveBreakdown['scissors'];
+        if ($totalMoves === 0) {
+            return 'No moves recorded for this AI model.';
+        }
+
+        $highestMove = array_search(max($moveBreakdown), $moveBreakdown);
+
+        $perfectDistribution = abs(($moveBreakdown['rock'] - $totalMoves / 3) / $totalMoves) < 0.1 &&
+                            abs(($moveBreakdown['paper'] - $totalMoves / 3) / $totalMoves) < 0.1 &&
+                            abs(($moveBreakdown['scissors'] - $totalMoves / 3) / $totalMoves) < 0.1;
+
+        $name = ucfirst($aiModel->name);
+
+        if ($perfectDistribution) {
+            return "{$name} uses a highly balanced strategy, playing rock, paper, and scissors with nearly equal frequency. ".
+                   'This makes its moves very difficult to predict, as there is no clear pattern to exploit.';
+        } else {
+            return "{$name} shows a preference for {$highestMove}, using it more frequently than other moves. ".
+                   'This tendency could potentially be exploited by opponents who can detect and adapt to this pattern.';
+        }
     }
 }

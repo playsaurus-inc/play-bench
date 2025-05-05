@@ -26,7 +26,6 @@
             >
                 <x-phosphor-paint-brush-fill class="w-5 h-5 mr-3 {{ $activeTab === 'svg' ? 'text-amber-500' : 'text-gray-400' }}" />
                 <span class="font-medium">SVG Drawing</span>
-                <span class="ml-2 text-xs px-2 py-0.5 bg-blue-100 text-blue-800 rounded">Coming soon</span>
             </a>
 
             <a
@@ -72,7 +71,6 @@
                 <x-phosphor-paint-brush-fill class="w-5 h-5 mb-1 {{ $activeTab === 'svg' ? 'text-amber-500' : 'text-gray-400' }}" />
                 <div class="text-xs font-medium mt-0.5 relative">
                     SVG Drawing
-                    <span class="absolute -top-4 -right-6 text-[9px] px-1 bg-blue-100 text-blue-600 rounded-full">Soon</span>
                 </div>
             </a>
 
@@ -127,7 +125,6 @@
                 <span class="flex items-center">
                     <x-phosphor-paint-brush-fill class="w-4 h-4 mr-1.5 {{ $activeTab === 'svg' ? 'text-amber-500' : 'text-gray-400' }}" />
                     SVG Drawing
-                    <span class="ml-1.5 text-xs px-1.5 py-0.5 bg-blue-100 text-blue-600 rounded">Coming soon</span>
                 </span>
             </a>
 

@@ -1,78 +1,143 @@
 <!-- "How it works" -->
 <section class="mt-8">
-    <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-900 flex items-center">
-        <x-phosphor-question-fill class="w-5 h-5 md:w-6 md:h-6 mr-2 text-amber-500" />
-        How the Rock Paper Scissors Benchmark Works
-    </h2>
+    <!-- About RPS Benchmark Card -->
+    <div class="bg-gradient-to-br from-amber-50 to-white rounded-3xl shadow-sm border border-amber-100 overflow-hidden mb-6 md:mb-8">
+        <div class="p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <x-phosphor-info-fill class="size-6 mr-3 text-amber-500" />
+                About Rock Paper Scissors Benchmark
+            </h2>
 
-    <!-- First row: Basic explanation boxes -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6 mb-6 md:mb-8">
-        <div class="bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
-            <div class="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-red-100 rounded-full mb-3 md:mb-4">
-                <x-phosphor-strategy-fill class="w-5 h-5 md:w-6 md:h-6 text-red-600" />
-            </div>
-            <h3 class="text-base md:text-lg font-medium text-gray-900 mb-1 md:mb-2">Strategic AI Competition</h3>
-            <p class="text-sm md:text-base text-gray-600">
-                AI models compete against each other in a series of Rock Paper Scissors rounds, with full visibility of previous moves to inform their strategy.
-            </p>
-        </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Left column: How it works -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <x-phosphor-gear-fill class="size-5 mr-2 text-amber-500" />
+                        How It Works
+                    </h3>
 
-        <div class="bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
-            <div class="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-blue-100 rounded-full mb-3 md:mb-4">
-                <x-phosphor-brain-fill class="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
-            </div>
-            <h3 class="text-base md:text-lg font-medium text-gray-900 mb-1 md:mb-2">Pattern Recognition</h3>
-            <p class="text-sm md:text-base text-gray-600">
-                Models analyze the complete match history to detect patterns and predict their opponent's next choice, showcasing adaptive learning capabilities.
-            </p>
-        </div>
+                    <ul class="space-y-4">
+                        <li class="flex">
+                            <div class="flex-shrink-0 size-7 rounded-full bg-amber-100 flex items-center justify-center mr-3 mt-0.5">
+                                <span class="text-xs font-bold text-amber-600">1</span>
+                            </div>
+                            <div class="text-gray-600">
+                                <p><span class="font-medium text-gray-700">Strategic Competition:</span> AI models compete against each other in Rock Paper Scissors with full visibility of previous moves.</p>
+                            </div>
+                        </li>
+                        <li class="flex">
+                            <div class="flex-shrink-0 size-7 rounded-full bg-amber-100 flex items-center justify-center mr-3 mt-0.5">
+                                <span class="text-xs font-bold text-amber-600">2</span>
+                            </div>
+                            <div class="text-gray-600">
+                                <p><span class="font-medium text-gray-700">Pattern Recognition:</span> Models analyze complete match history to detect patterns and predict their opponent's next choice.</p>
+                            </div>
+                        </li>
+                        <li class="flex">
+                            <div class="flex-shrink-0 size-7 rounded-full bg-amber-100 flex items-center justify-center mr-3 mt-0.5">
+                                <span class="text-xs font-bold text-amber-600">3</span>
+                            </div>
+                            <div class="text-gray-600">
+                                <p><span class="font-medium text-gray-700">Adaptive Learning:</span> As the match progresses, models can adjust strategies based on observed patterns and outcomes.</p>
+                            </div>
+                        </li>
+                        <li class="flex">
+                            <div class="flex-shrink-0 size-7 rounded-full bg-amber-100 flex items-center justify-center mr-3 mt-0.5">
+                                <span class="text-xs font-bold text-amber-600">4</span>
+                            </div>
+                            <div class="text-gray-600">
+                                <p><span class="font-medium text-gray-700">Statistical Analysis:</span> We apply statistical methods to determine if wins are due to skill rather than random chance.</p>
+                            </div>
+                        </li>
+                    </ul>
 
-        <div class="bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
-            <div class="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-green-100 rounded-full mb-3 md:mb-4">
-                <x-phosphor-chart-bar-fill class="w-5 h-5 md:w-6 md:h-6 text-green-600" />
-            </div>
-            <h3 class="text-base md:text-lg font-medium text-gray-900 mb-1 md:mb-2">Insightful Metrics</h3>
-            <p class="text-sm md:text-base text-gray-600">
-                Each match generates data on win rates, pattern predictability, and strategic adaptation, revealing AI capabilities over time.
-            </p>
-        </div>
-    </div>
+                    <div class="mt-6 flex flex-col sm:flex-row justify-start gap-4 md:gap-6">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                                <x-fas-hand-rock class="size-5" />
+                            </div>
+                            <span class="text-sm text-gray-700">Rock crushes Scissors</span>
+                        </div>
 
-    <!-- Game Rules Section -->
-    <div class="bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-sm mb-6 md:mb-8">
-        <h3 class="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-gray-900 flex items-center">
-            <x-phosphor-list-checks-fill class="w-4 h-4 md:w-5 md:h-5 mr-2 text-amber-500" />
-            Game Rules
-        </h3>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                <x-fas-hand-scissors class="size-5" />
+                            </div>
+                            <span class="text-sm text-gray-700">Scissors cuts Paper</span>
+                        </div>
 
-        <div class="flex flex-col sm:flex-row justify-start sm:justify-center gap-4 md:gap-6 mb-4 md:mb-6">
-            <div class="flex items-center">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-red-100 rounded-full flex items-center justify-center mr-3">
-                    <x-fas-hand-rock class="size-5 md:size-6" />
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                <x-fas-hand-paper class="size-5" />
+                            </div>
+                            <span class="text-sm text-gray-700">Paper covers Rock</span>
+                        </div>
+                    </div>
                 </div>
-                <span class="text-sm md:text-base text-gray-700">Rock crushes Scissors</span>
-            </div>
 
-            <div class="flex items-center">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                    <x-fas-hand-scissors class="size-5 md:size-6" />
-                </div>
-                <span class="text-sm md:text-base text-gray-700">Scissors cuts Paper</span>
-            </div>
+                <!-- Right column: What we test -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <x-phosphor-brain-fill class="size-5 mr-2 text-amber-500" />
+                        What We Test
+                    </h3>
 
-            <div class="flex items-center">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                    <x-fas-hand-paper class="size-5 md:size-6" />
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-white p-4 rounded-lg border border-amber-100 shadow-sm">
+                            <div class="flex items-center mb-2">
+                                <x-phosphor-strategy-fill class="size-5 text-amber-500 mr-2" />
+                                <h4 class="font-medium text-gray-800">Strategic Thinking</h4>
+                            </div>
+                            <p class="text-sm text-gray-600">
+                                Can AI models develop effective counter-strategies against opponents with detectable patterns?
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg border border-amber-100 shadow-sm">
+                            <div class="flex items-center mb-2">
+                                <x-phosphor-chart-line-fill class="size-5 text-amber-500 mr-2" />
+                                <h4 class="font-medium text-gray-800">Pattern Detection</h4>
+                            </div>
+                            <p class="text-sm text-gray-600">
+                                How quickly and accurately can models identify and exploit patterns in opponent behavior?
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg border border-amber-100 shadow-sm">
+                            <div class="flex items-center mb-2">
+                                <x-phosphor-shuffle-fill class="size-5 text-amber-500 mr-2" />
+                                <h4 class="font-medium text-gray-800">Adaptability</h4>
+                            </div>
+                            <p class="text-sm text-gray-600">
+                                Can models adjust their strategy when their own patterns are being exploited by opponents?
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg border border-amber-100 shadow-sm">
+                            <div class="flex items-center mb-2">
+                                <x-phosphor-trend-up-fill class="size-5 text-amber-500 mr-2" />
+                                <h4 class="font-medium text-gray-800">Performance Over Time</h4>
+                            </div>
+                            <p class="text-sm text-gray-600">
+                                Do models improve their performance as they receive more context from previous rounds?
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 bg-amber-50 p-4 rounded-lg border border-amber-100">
+                        <div class="flex items-start">
+                            <x-phosphor-info-fill class="size-5 text-amber-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <div>
+                                <h4 class="font-medium text-gray-800 mb-1">Match Details</h4>
+                                <p class="text-sm text-gray-600">
+                                    Each match typically consists of 50-150 rounds. A random strategy would result in a win rate close to 33%, but models that successfully detect patterns can achieve significantly higher win rates.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <span class="text-sm md:text-base text-gray-700">Paper covers Rock</span>
             </div>
         </div>
-
-        <p class="text-sm md:text-base text-gray-600">
-            Each match typically consists of 50-150 rounds, providing enough data to evaluate the model's strategic capabilities.
-            A truly random strategy would result in a win rate close to 33%, but models that can successfully
-            detect and exploit patterns in their opponent's moves can achieve significantly higher win rates.
-        </p>
     </div>
 
     <!-- How AI Models Play Section -->

@@ -1,12 +1,6 @@
 @props(['models'])
 
 <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100">
-    <div class="px-4 py-5 sm:px-6 border-b border-gray-100">
-        <div class="flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-gray-900">Models Ranking for Rock Paper Scissors by ELO</h3>
-            <span class="text-sm text-gray-500">{{ $models->count() }} models</span>
-        </div>
-    </div>
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -44,9 +38,11 @@
                     >
                         <td class="px-6 py-3 whitespace-nowrap">
                             <div class="flex items-center">
-                                <div class="w-8 h-8 rounded-full {{ $model->rps_rank < 4 ? 'bg-amber-100' : 'bg-gray-100' }} flex items-center justify-center {{ $model->rps_rank < 4 ? 'border-2 border-amber-200' : 'border border-gray-200' }}">
-                                    <span class="{{ $model->rps_rank < 4 ? 'text-amber-800' : 'text-gray-600' }} text-sm font-bold">{{ $model->rps_rank }}</span>
-                                </div>
+                                <div @class([
+                                    'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold',
+                                    'bg-amber-100 border-2 border-amber-200 text-amber-800' => $model->rps_rank < 4,
+                                    'bg-gray-100 border border-gray-200 text-gray-600' => $model->rps_rank >= 4,
+                                ])>{{ $model->rps_rank }}</div>
                             </div>
                         </td>
                         <td class="px-6 py-3 whitespace-nowrap">
@@ -88,7 +84,7 @@
                                                 $lossPercent = $model->rps_matches_lost_count / $model->total_rps_matches * 100;
                                             @endphp
                                             <div class="bg-green-500 h-full" style="width: {{ $winPercent }}%"></div>
-                                            <div class="bg-slate-300 h-full" style="width: {{ $tiePercent }}%"></div>
+                                            <div class="bg-slate-300 border-l-2 border-r-2 border-white h-full" style="width: {{ $tiePercent }}%"></div>
                                             <div class="bg-red-500 h-full" style="width: {{ $lossPercent }}%"></div>
                                         @endif
                                     </div>

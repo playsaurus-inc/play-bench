@@ -52,7 +52,7 @@
                     </p>
                 </div>
 
-                <!-- SVG Drawing Benchmark (Coming Soon) -->
+                <!-- SVG Drawing Benchmark -->
                 <div class="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100 opacity-80">
                     <div class="flex items-center mb-4">
                         <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
@@ -60,11 +60,10 @@
                         </div>
                         <div>
                             <h3 class="text-xl font-bold text-gray-900">SVG Drawing</h3>
-                            <span class="text-xs font-medium bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">Coming Soon</span>
                         </div>
                     </div>
                     <p class="text-gray-700">
-                        Will evaluate a model's visual creativity, spatial understanding, and ability to generate
+                        Evaluates a model's visual creativity, spatial understanding, and ability to generate
                         clean, optimized vector graphics based on textual prompts.
                     </p>
                 </div>
@@ -229,7 +228,7 @@
                     <div>
                         <h3 class="text-lg font-bold text-gray-900 mb-1">New Benchmarks</h3>
                         <p class="text-gray-700">
-                            We're working on the SVG Drawing and Chess benchmarks, with plans to add more creative
+                            We're working on the Chess benchmark, with plans to add more creative
                             and strategic tasks in the future.
                         </p>
                     </div>

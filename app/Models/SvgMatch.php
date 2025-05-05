@@ -3,6 +3,10 @@
 namespace App\Models;
 
 use App\Models\Contracts\RankedMatch;
+use App\Services\Svg\SvgAnalysisService;
+use Illuminate\Contracts\Filesystem\Cloud;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,6 +26,12 @@ class SvgMatch extends Model implements RankedMatch
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
         'is_forced_completion' => 'boolean',
+        'player1_elo_before' => 'float',
+        'player2_elo_before' => 'float',
+        'player1_elo_after' => 'float',
+        'player2_elo_after' => 'float',
+        'player1_features' => 'array',
+        'player2_features' => 'array',
     ];
 
     /**
@@ -86,15 +96,23 @@ class SvgMatch extends Model implements RankedMatch
     }
 
     /**
+     * Get the disk used to store the SVG files.
+     */
+    public function disk(): Cloud
+    {
+        return Storage::disk('svg');
+    }
+
+    /**
      * Get Player 1's SVG content
      */
     public function getPlayer1SvgContent(): ?string
     {
-        if (! $this->player1_svg_path || ! Storage::exists($this->player1_svg_path)) {
+        if (! $this->player1_svg_path || ! $this->disk()->exists($this->player1_svg_path)) {
             return null;
         }
 
-        return Storage::get($this->player1_svg_path);
+        return $this->disk()->get($this->player1_svg_path);
     }
 
     /**
@@ -102,11 +120,11 @@ class SvgMatch extends Model implements RankedMatch
      */
     public function getPlayer2SvgContent(): ?string
     {
-        if (! $this->player2_svg_path || ! Storage::exists($this->player2_svg_path)) {
+        if (! $this->player2_svg_path || ! $this->disk()->exists($this->player2_svg_path)) {
             return null;
         }
 
-        return Storage::get($this->player2_svg_path);
+        return $this->disk()->get($this->player2_svg_path);
     }
 
     /**
@@ -118,7 +136,7 @@ class SvgMatch extends Model implements RankedMatch
             return null;
         }
 
-        return Storage::url($this->player1_svg_path);
+        return $this->disk()->url($this->player1_svg_path);
     }
 
     /**
@@ -130,7 +148,27 @@ class SvgMatch extends Model implements RankedMatch
             return null;
         }
 
-        return Storage::url($this->player2_svg_path);
+        return $this->disk()->url($this->player2_svg_path);
+    }
+
+    /**
+     * Get the full URL to the winner's SVG
+     */
+    public function getWinnerSvgUrl(): ?string
+    {
+        return $this->winner_id === $this->player1_id
+            ? $this->getPlayer1SvgUrl()
+            : $this->getPlayer2SvgUrl();
+    }
+
+    /**
+     * Get the full URL to the loser's SVG
+     */
+    public function getLoserSvgUrl(): ?string
+    {
+        return $this->loser_id === $this->player1_id
+            ? $this->getPlayer1SvgUrl()
+            : $this->getPlayer2SvgUrl();
     }
 
     /**
@@ -178,6 +216,37 @@ class SvgMatch extends Model implements RankedMatch
     }
 
     /**
+     * Scopes the query to only include matches with a specific player.
+     */
+    #[Scope]
+    public function playedBy(Builder $query, AiModel|int|string $player): void
+    {
+        $player = AiModel::idFrom($player);
+
+        $query->where(function ($q) use ($player) {
+            return $q->where('player1_id', $player)->orWhere('player2_id', $player);
+        });
+    }
+
+    /**
+     * Scopes the query to only include matches where two players played against each other.
+     */
+    #[Scope]
+    protected function playedAgainst(Builder $query, AiModel|int|string $player1, AiModel|int|string $player2): void
+    {
+        $player1 = AiModel::idFrom($player1);
+        $player2 = AiModel::idFrom($player2);
+
+        $query->where(function ($q) use ($player1, $player2) {
+            return $q->where(function ($inner) use ($player1, $player2) {
+                $inner->where('player1_id', $player1)->where('player2_id', $player2);
+            })->orWhere(function ($inner) use ($player1, $player2) {
+                $inner->where('player1_id', $player2)->where('player2_id', $player1);
+            });
+        });
+    }
+
+    /**
      * Gets the outcome of the match. '1' for player 1 win, '2' for player 2 win, 't' for tie.
      */
     public function getOutcome(): string
@@ -206,5 +275,47 @@ class SvgMatch extends Model implements RankedMatch
             'player1_elo_after' => $player1EloAfter,
             'player2_elo_after' => $player2EloAfter,
         ]);
+    }
+
+    /**
+     * Gets the SVG features for the player 1.
+     */
+    public function getPlayer1SvgFeatures(): ?array
+    {
+        return app(SvgAnalysisService::class)->getFeatureDescriptions($this->player1_features);
+    }
+
+    /**
+     * Gets the SVG features for the player 2.
+     */
+    public function getPlayer2SvgFeatures(): ?array
+    {
+        return app(SvgAnalysisService::class)->getFeatureDescriptions($this->player2_features);
+    }
+
+    /**
+     * Gets a comparative analysis of the SVG features between player 1 and player 2.
+     */
+    public function getComparativeSvgFeatures(): ?array
+    {
+        $player1 = collect($this->getPlayer1SvgFeatures());
+        $player2 = collect($this->getPlayer2SvgFeatures());
+
+        $player1Values = $player1->map(fn ($value) => $value['value']);
+        $player2Values = $player2->map(fn ($value) => $value['value']);
+
+        return $player1->merge($player2)
+            ->map(fn ($feature, $key) => [
+                'name' => $feature['name'],
+                'value' => $feature['value'],
+                'description' => $feature['description'],
+                'category' => $feature['category'],
+                'player1_value' => $player1Values[$key] ?? null,
+                'player2_value' => $player2Values[$key] ?? null,
+                'delta' => is_numeric($player1Values[$key]) && is_numeric($player2Values[$key])
+                    ? $player1Values[$key] - $player2Values[$key]
+                    : null,
+            ])
+            ->all();
     }
 }

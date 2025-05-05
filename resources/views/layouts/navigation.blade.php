@@ -60,16 +60,13 @@
                             </a>
 
                             <a
-                                href="javascript:void"
+                                href="{{ route('svg.index') }}"
                                 @click="open = false"
                                 class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors"
                             >
                                 <x-phosphor-paint-brush-fill class="w-5 h-5 mr-3 text-gray-400" />
                                 <div class="flex flex-col">
-                                    <div class="flex items-center">
-                                        <span class="font-medium">SVG Drawing</span>
-                                        <span class="ml-2 text-xs px-2 py-0.5 bg-blue-100 text-blue-800 rounded">Coming soon</span>
-                                    </div>
+                                    <span class="font-medium">SVG Drawing</span>
                                     <span class="text-xs text-gray-500">Visual creativity benchmark</span>
                                 </div>
                             </a>
@@ -108,10 +105,9 @@
                     <x-phosphor-hand-fill class="size-5 mr-2 {{ request()->routeIs('rps.*') ? 'text-amber-700' : 'text-gray-400' }}" />
                     <span>Rock Paper Scissors</span>
                 </a>
-                <a href="javascript:void" class="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('svg.*') ? 'bg-amber-50 text-amber-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50' }} transition-colors duration-200">
+                <a href="{{ route('svg.index') }}" class="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('svg.*') ? 'bg-amber-50 text-amber-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50' }} transition-colors duration-200">
                     <x-phosphor-paint-brush-fill class="size-5 mr-2 {{ request()->routeIs('svg.*') ? 'text-amber-700' : 'text-gray-400' }}" />
                     <span>SVG Drawing</span>
-                    <span class="ml-2 text-xs px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded">Coming soon</span>
                 </a>
                 <a href="javascript:void" class="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('chess.*') ? 'bg-amber-50 text-amber-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50' }} transition-colors duration-200">
                     <x-phosphor-crown-cross-fill class="size-5 mr-2 {{ request()->routeIs('chess.*') ? 'text-amber-700' : 'text-gray-400' }}" />
@@ -173,13 +169,12 @@
             </a>
 
             <a
-                href="javascript:void"
+                href="{{ route('svg.index') }}"
                 class="flex items-center px-4 py-3 {{ request()->routeIs('svg.*') ? 'bg-amber-50 border-l-4 border-amber-500 text-amber-700' : 'border-l-4 border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300' }}"
                 x-on:click="mobileMenuOpen = false"
             >
                 <x-phosphor-paint-brush-fill class="w-5 h-5 mr-3 {{ request()->routeIs('svg.*') ? 'text-amber-500' : 'text-gray-400' }}" />
                 <span class="font-medium">SVG Drawing</span>
-                <span class="ml-2 text-xs px-2 py-0.5 bg-blue-100 text-blue-800 rounded">Coming soon</span>
             </a>
 
             <a

@@ -70,6 +70,20 @@
                                 </div>
                             </div>
 
+                            <!-- SVG Drawing -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                                        <x-phosphor-paint-brush-fill class="w-3 h-3 text-blue-500" />
+                                    </div>
+                                    <span class="text-sm text-gray-700">SVG Drawing</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-sm font-medium text-amber-600 mr-2">{{ Number::format($model->svg_elo, 0) }}</span>
+                                    <span class="text-xs text-gray-500">ELO</span>
+                                </div>
+                            </div>
+
                             <!-- Chess (placeholder) -->
                             <div class="flex items-center justify-between opacity-50">
                                 <div class="flex items-center">
@@ -77,19 +91,6 @@
                                         <x-phosphor-crown-cross-fill class="w-3 h-3 text-green-500" />
                                     </div>
                                     <span class="text-sm text-gray-700">Chess</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <span class="text-xs text-gray-500">Coming soon</span>
-                                </div>
-                            </div>
-
-                            <!-- SVG Drawing (placeholder) -->
-                            <div class="flex items-center justify-between opacity-50">
-                                <div class="flex items-center">
-                                    <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-2">
-                                        <x-phosphor-paint-brush-fill class="w-3 h-3 text-blue-500" />
-                                    </div>
-                                    <span class="text-sm text-gray-700">SVG Drawing</span>
                                 </div>
                                 <div class="flex items-center">
                                     <span class="text-xs text-gray-500">Coming soon</span>
@@ -135,22 +136,23 @@
                 </div>
             </div>
 
-            <!-- SVG Drawing (coming soon) -->
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm opacity-70">
+            <!-- SVG Drawing -->
+            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
                 <div class="flex items-center mb-4">
                     <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
                         <x-phosphor-paint-brush-fill class="w-6 h-6 text-blue-600" />
                     </div>
-                    <div>
-                        <h3 class="text-xl font-bold">SVG Drawing</h3>
-                        <span class="text-xs font-medium bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">Coming Soon</span>
-                    </div>
+                    <h3 class="text-xl font-bold">SVG Drawing</h3>
                 </div>
                 <p class="text-gray-600 mb-4">
                     Tests visual creativity, spatial understanding, and technical precision.
                 </p>
                 <div class="flex justify-between items-center text-sm text-gray-500">
-                    <span>0 matches</span>
+                    <span>{{ $svgMatchCount }} matches</span>
+                    <a href="{{ route('svg.index') }}" class="text-amber-600 hover:text-amber-700 flex items-center">
+                        View Rankings
+                        <x-phosphor-arrow-right class="w-4 h-4 ml-1" />
+                    </a>
                 </div>
             </div>
 
@@ -183,95 +185,14 @@
         </h2>
 
         <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100">
-            <div class="px-6 py-4 border-b border-gray-100">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-gray-900">Cross-Benchmark Rankings</h3>
-                    <div class="text-sm text-gray-500">
-                        {{ $models->count() }} models
-                    </div>
-                </div>
-            </div>
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                Model
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                <div class="flex items-center justify-center">
-                                    <x-phosphor-hand-fill class="w-4 h-4 mr-1 text-red-500" />
-                                    RPS Rank & ELO
-                                </div>
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider opacity-50">
-                                <div class="flex items-center justify-center">
-                                    <x-phosphor-paint-brush-fill class="w-4 h-4 mr-1 text-blue-500" />
-                                    SVG Rank & ELO
-                                </div>
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider opacity-50">
-                                <div class="flex items-center justify-center">
-                                    <x-phosphor-crown-cross-fill class="w-4 h-4 mr-1 text-green-500" />
-                                    Chess Rank & ELO
-                                </div>
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                Overall
-                            </th>
-                            <th scope="col" class="relative px-6 py-3">
-                                <span class="sr-only">Actions</span>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @php $rank = 1; @endphp
-                        @foreach($models as $model)
-                            <tr class="hover:bg-gray-50 transition-colors duration-150" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
-                                            <x-phosphor-robot-fill class="h-5 w-5 text-gray-500" />
-                                        </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900">{{ $model->name }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-center">
-                                    @if($model->rps_rank > 0)
-                                        <span class="text-sm font-medium px-2.5 py-0.5 rounded-full {{ $model->rps_rank <= 3 ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-800' }}">
-                                            {{ $model->rps_rank }}
-                                        </span>
-                                        <span class="text-sm font-medium text-amber-600 ml-2">
-                                            {{ Number::format($model->rps_elo, 0) }}
-                                        </span>
-                                    @else
-                                        <span class="text-sm text-gray-500">N/A</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-center opacity-50">
-                                    <span class="text-sm text-gray-500">Coming soon</span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-center opacity-50">
-                                    <span class="text-sm text-gray-500">Coming soon</span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-center">
-                                    <span class="text-sm font-medium px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-800">
-                                        {{ $rank++ }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <x-ui.button :href="route('models.show', $model)" variant="secondary" size="sm" class="transition-all duration-200" x-bind:class="{'opacity-0': !hover, 'opacity-100': hover}">
-                                        View Details
-                                    </x-ui.button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                <x-models.models-ranking-table :models="$models" class="divide-y divide-gray-200" />
             </div>
         </div>
+
+        <p class="mt-4 text-sm text-gray-500">
+            (*) Overall ELO is derived by averaging standardized scores (Z-scores) across the included benchmarks.
+        </p>
     </div>
 
     <!-- Benchmark Comparison -->
@@ -298,9 +219,9 @@
                     <li>Demonstrate <strong>game theory understanding</strong> in a zero-sum environment</li>
                 </ul>
 
-                <h3>SVG Drawing (Coming Soon)</h3>
+                <h3>SVG Drawing</h3>
                 <p>
-                    This benchmark will test an AI model's ability to:
+                    This benchmark test an AI model's ability to:
                 </p>
                 <ul>
                     <li><strong>Interpret visual prompts</strong> and create matching illustrations</li>

@@ -6,6 +6,8 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+@import '../../node_modules/highlight.js/styles/vs2015.css';
+
 @theme {
     --font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
@@ -32,6 +34,12 @@
 
     .hover-scale:hover {
         transform: translateY(-0.25rem) scale(1.01);
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0) rotate(0); }
+        50% { transform: translateY(-10px) rotate(10deg); }
+        100% { transform: translateY(5px) rotate(-5deg); }
     }
 }
 

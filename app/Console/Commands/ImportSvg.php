@@ -73,6 +73,10 @@ class ImportSvg extends AbstractImport
                 $winner = $player1;
             } elseif ($sourceMatch->winner === 'player2') {
                 $winner = $player2;
+            } else {
+                $this->warn("Match {$sourceMatch->id} is a draw. Skipping...");
+
+                return;
             }
 
             // Calculate start and end times

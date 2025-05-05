@@ -27,6 +27,34 @@ class AiModel extends Model
     }
 
     /**
+     * Get the AI model from the given model, id or slug.
+     */
+    public static function from(AiModel|int|string $model): AiModel
+    {
+        if ($model instanceof AiModel) {
+            return $model;
+        } elseif (is_numeric($model)) {
+            return AiModel::findOrFail($model);
+        } else {
+            return AiModel::where('slug', $model)->firstOrFail();
+        }
+    }
+
+    /**
+     * Get the AI model ID from the given model, id or slug.
+     */
+    public static function idFrom(AiModel|int|string $model): int
+    {
+        if ($model instanceof AiModel) {
+            return $model->id;
+        } elseif (is_numeric($model)) {
+            return $model;
+        } else {
+            return AiModel::where('slug', $model)->firstOrFail()->id;
+        }
+    }
+
+    /**
      * Get the route key for the model.
      */
     public function getRouteKeyName(): string
@@ -167,5 +195,22 @@ class AiModel extends Model
     public function allChessMatches()
     {
         return $this->chessMatchesAsWhite->merge($this->chessMatchesAsBlack);
+    }
+
+    /**
+     * Calculate the move breakdown of the given AI model.
+     *
+     * @return array<{'rock': int, 'paper': int, 'scissors': int}>
+     */
+    public function rpsMoveBreakdown(): array
+    {
+        return [
+            'rock' => $this->rpsMatchesAsPlayer1()->sum('player1_move_distribution->rock') +
+                $this->rpsMatchesAsPlayer2()->sum('player2_move_distribution->rock'),
+            'paper' => $this->rpsMatchesAsPlayer1()->sum('player1_move_distribution->paper') +
+                $this->rpsMatchesAsPlayer2()->sum('player2_move_distribution->paper'),
+            'scissors' => $this->rpsMatchesAsPlayer1()->sum('player1_move_distribution->scissors') +
+                $this->rpsMatchesAsPlayer2()->sum('player2_move_distribution->scissors'),
+        ];
     }
 }
