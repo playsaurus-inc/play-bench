@@ -4,6 +4,7 @@ namespace App\Console\Commands\Benchmark;
 
 use App\Models\RpsMatch;
 use App\Services\EloRatingService;
+use App\Services\PlayerSelectionService;
 use App\Services\Rps\RpsBenchmarkService;
 use App\Services\Rps\RpsGame;
 use App\Services\Rps\RpsRound;
@@ -42,6 +43,7 @@ class BenchmarkRpsCommand extends Command
      */
     public function handle(
         RpsBenchmarkService $benchmarkService,
+        PlayerSelectionService $playerSelectionService,
         EloRatingService $eloService,
     ): int {
         $matchCount = (int) $this->option('matches');
@@ -61,13 +63,11 @@ class BenchmarkRpsCommand extends Command
         $this->completedMatches = 0;
 
         while ($this->completedMatches < $matchCount) {
-            // Randomly select two different models
-            $player1 = $aiModels->random();
-            $player2 = $aiModels->whereNotIn('id', [$player1->id])->random();
+            $matchup = $playerSelectionService->first('rps', $aiModels);
 
-            $game = new RpsGame($player1, $player2);
+            $game = new RpsGame($matchup->player1, $matchup->player2);
 
-            $this->reportGameStarted($game);
+            $this->reportGameStarted($game, $matchup->matchesPlayed);
 
             try {
                 $benchmarkService->runGame(
@@ -127,12 +127,13 @@ class BenchmarkRpsCommand extends Command
     /**
      * Report the start of a game.
      */
-    protected function reportGameStarted(RpsGame $game): void
+    protected function reportGameStarted(RpsGame $game, int $matchesPlayed): void
     {
         $this->info(sprintf(
-            'Game started between %s and %s',
+            'Game started between %s and %s. Matches played together: %d',
             $game->getPlayer1()->name,
             $game->getPlayer2()->name,
+            $matchesPlayed,
         ));
     }
 

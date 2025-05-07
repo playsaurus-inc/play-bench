@@ -20,7 +20,7 @@ class RpsBenchmarkService
      */
     public function getAvailableModels(): Collection
     {
-        return AiModel::whereIn('name', $this->aiClient->getAvailableModels())->get();
+        return AiModel::whereIn('slug', $this->aiClient->getAvailableModels())->get();
     }
 
     /**
@@ -54,7 +54,7 @@ class RpsBenchmarkService
         }
 
         $response = $this->aiClient->getResponse(
-            modelName: $aiModel->name,
+            model: $aiModel->slug,
             systemPrompt: $this->buildSystemPrompt($player),
             userPrompt: $this->buildUserPrompt($game, $player),
         );

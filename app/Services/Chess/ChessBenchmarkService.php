@@ -28,7 +28,7 @@ class ChessBenchmarkService
      */
     public function getAvailableModels(): Collection
     {
-        return AiModel::whereIn('name', $this->aiClient->getAvailableModels())->get();
+        return AiModel::whereIn('slug', $this->aiClient->getAvailableModels())->get();
     }
 
     /**
@@ -110,7 +110,7 @@ class ChessBenchmarkService
         $systemPrompt = $this->buildSystemPrompt($game->getCurrentPlayer());
         $playerPrompt = $this->buildPlayerPrompt($game, $attempts);
 
-        $response = $this->aiClient->getResponse($aiModel->name, $systemPrompt, $playerPrompt);
+        $response = $this->aiClient->getResponse($aiModel->slug, $systemPrompt, $playerPrompt);
 
         if (empty($response)) {
             throw new \Exception('Empty response from AI model: '.$aiModel->name);

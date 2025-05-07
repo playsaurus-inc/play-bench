@@ -47,7 +47,7 @@ class SvgBenchmarkService
      */
     public function getAvailableModels(): Collection
     {
-        return AiModel::whereIn('name', $this->aiClient->getAvailableModels())->get();
+        return AiModel::whereIn('slug', $this->aiClient->getAvailableModels())->get();
     }
 
     /**
@@ -98,7 +98,9 @@ class SvgBenchmarkService
      */
     protected function generateImageIdea(): string
     {
-        $idea = $this->aiClient->getResponse('gpt-4o', self::IDEA_SYSTEM_PROMPT, self::IDEA_USER_PROMPT, config: [
+        $juryModel = config('playbench.svg_jury');
+
+        $idea = $this->aiClient->getResponse($juryModel, self::IDEA_SYSTEM_PROMPT, self::IDEA_USER_PROMPT, config: [
             'temperature' => 1.0,
             'max_tokens' => 80,
             'top_p' => 1.0,

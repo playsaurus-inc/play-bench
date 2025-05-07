@@ -17,7 +17,7 @@ class ImportChess extends AbstractImport
      *
      * @var string
      */
-    protected $signature = 'chess:import {--fresh}';
+    protected $signature = 'import:chess {--fresh}';
 
     /**
      * The console command description.

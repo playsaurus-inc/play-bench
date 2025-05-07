@@ -5,6 +5,7 @@ namespace App\Console\Commands\Import;
 use App\Models\AiModel;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 abstract class AbstractImport extends Command
 {
@@ -71,6 +72,6 @@ abstract class AbstractImport extends Command
      */
     protected function aiModel(string $name): AiModel
     {
-        return AiModel::firstOrCreate(['name' => $name]);
+        return AiModel::firstOrCreate(['slug' => Str::slug($name)]);
     }
 }
