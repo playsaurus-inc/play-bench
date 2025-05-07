@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands\Benchmark;
 
-use App\Models\AiModel;
 use App\Models\SvgMatch;
 use App\Services\EloRatingService;
+use App\Services\PlayerSelectionService;
 use App\Services\Svg\SvgBenchmarkService;
 use App\Services\Svg\SvgGame;
 use App\Services\Svg\SvgPlayer;
@@ -45,6 +45,7 @@ class BenchmarkSvgCommand extends Command
      */
     public function handle(
         SvgBenchmarkService $benchmarkService,
+        PlayerSelectionService $playerSelectionService,
         EloRatingService $eloService,
     ): int {
         $matchCount = (int) $this->option('matches');
@@ -64,13 +65,11 @@ class BenchmarkSvgCommand extends Command
         $this->completedMatches = 0;
 
         while ($this->completedMatches < $matchCount) {
-            // Randomly select two different models
-            $player1 = $aiModels->random();
-            $player2 = $aiModels->whereNotIn('id', [$player1->id])->random();
+            $matchup = $playerSelectionService->first('svg', $aiModels);
 
-            $game = new SvgGame($player1, $player2);
+            $game = new SvgGame($matchup->player1, $matchup->player2);
 
-            $this->reportGameStarted($game);
+            $this->reportGameStarted($game, $matchup->matchesPlayed);
 
             try {
                 $benchmarkService->runGame(
@@ -87,7 +86,7 @@ class BenchmarkSvgCommand extends Command
 
                 $this->completedMatches++;
             } catch (\Exception $e) {
-                $this->handleMatchError($e, $player1, $player2);
+                $this->reportError($e);
             }
         }
 
@@ -131,12 +130,13 @@ class BenchmarkSvgCommand extends Command
     /**
      * Report when a game starts.
      */
-    protected function reportGameStarted(SvgGame $game): void
+    protected function reportGameStarted(SvgGame $game, int $matchesPlayed): void
     {
         $this->info(sprintf(
-            'Starting SVG match: %s vs %s',
+            'SVG match started: %s vs %s. Matches played together: %d',
             $game->getPlayer1()->name,
-            $game->getPlayer2()->name
+            $game->getPlayer2()->name,
+            $matchesPlayed,
         ));
     }
 
@@ -172,16 +172,18 @@ class BenchmarkSvgCommand extends Command
     }
 
     /**
-     * Handle match error.
+     * Report an error while running the match
      */
-    protected function handleMatchError(\Exception $e, AiModel $player1, AiModel $player2): void
+    protected function reportError(Exception $exception): void
     {
-        $this->error(sprintf('Error running match: %s', $e->getMessage()));
-        Log::error('SVG benchmark error', [
-            'exception' => $e->getMessage(),
-            'player1' => $player1->name,
-            'player2' => $player2->name,
+        report($exception);
+
+        $this->error('Error occurred while running the match:');
+        $this->error($exception->getMessage());
+        $this->error('Please check the logs for more details.');
+
+        Log::error('RPS benchmark error', [
+            'exception' => $exception->getMessage(),
         ]);
-        report($e);
     }
 }

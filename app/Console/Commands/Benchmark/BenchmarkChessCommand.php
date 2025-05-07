@@ -8,6 +8,7 @@ use App\Services\Chess\ChessGame;
 use App\Services\Chess\ChessMove;
 use App\Services\Chess\ChessPlayer;
 use App\Services\EloRatingService;
+use App\Services\PlayerSelectionService;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -43,6 +44,7 @@ class BenchmarkChessCommand extends Command
      */
     public function handle(
         ChessBenchmarkService $benchmarkService,
+        PlayerSelectionService $playerSelectionService,
         EloRatingService $eloService,
     ): int {
         $matchCount = (int) $this->option('matches');
@@ -62,13 +64,11 @@ class BenchmarkChessCommand extends Command
         $this->completedMatches = 0;
 
         while ($this->completedMatches < $matchCount) {
-            // Randomly select two different models
-            $whitePlayer = $aiModels->random();
-            $blackPlayer = $aiModels->whereNotIn('id', [$whitePlayer->id])->random();
+            $matchup = $playerSelectionService->first('chess', $aiModels);
 
-            $game = new ChessGame($whitePlayer, $blackPlayer);
+            $game = new ChessGame($matchup->player1, $matchup->player2);
 
-            $this->reportGameStarted($game);
+            $this->reportGameStarted($game, $matchup->matchesPlayed);
 
             try {
                 $benchmarkService->runGame(
@@ -99,12 +99,13 @@ class BenchmarkChessCommand extends Command
     /**
      * Report the start of a game.
      */
-    protected function reportGameStarted(ChessGame $game): void
+    protected function reportGameStarted(ChessGame $game, int $matchesPlayed): void
     {
         $this->info(sprintf(
-            'Chess game started: %s (White) vs %s (Black)',
+            'Chess game started: %s (White) vs %s (Black). Matches played together: %d',
             $game->getWhitePlayer()->name,
-            $game->getBlackPlayer()->name
+            $game->getBlackPlayer()->name,
+            $matchesPlayed,
         ));
     }
 
