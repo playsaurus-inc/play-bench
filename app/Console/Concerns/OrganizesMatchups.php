@@ -61,19 +61,4 @@ trait OrganizesMatchups
             scroll: 10,
         )) ?? throw new \RuntimeException('No AI model found');
     }
-
-    /**
-     * Count the number of matches played between two players.
-     */
-    protected function countMatchesBetween(
-        string $game,
-        AiModel $player1,
-        AiModel $player2,
-    ): int {
-        return (int) $this->ask(
-            question: "How many matches have been played between {$player1->name} and {$player2->name}?",
-            default: 0,
-            validator: fn (string $value) => is_numeric($value) && (int) $value >= 0,
-        );
-    }
 }
