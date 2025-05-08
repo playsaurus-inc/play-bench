@@ -4,6 +4,7 @@ namespace App\Services\AiClient;
 
 use App\Services\AiClient\Concerns\AiProviderInterface;
 use App\Services\AiClient\Providers\AnthropicProvider;
+use App\Services\AiClient\Providers\GeminiProvider;
 use App\Services\AiClient\Providers\GroqProvider;
 use App\Services\AiClient\Providers\OpenAiProvider;
 use App\Services\AiClient\Providers\RedpillProvider;
@@ -98,6 +99,7 @@ class AiClientService
             'anthropic' => new AnthropicProvider,
             'groq' => new GroqProvider,
             'redpill' => new RedpillProvider,
+            'gemini' => new GeminiProvider,
             default => throw new \Exception("No provider found for: {$providerName}"),
         };
     }
