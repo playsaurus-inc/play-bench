@@ -69,8 +69,8 @@ class BenchmarkRpsCommand extends Command
             RpsRoundResult::Tie => '⚪️ Tie',
         };
 
-        $move1 = $round->player1Move->emoji() . ' ' . $round->player1Move->name();
-        $move2 = $round->player2Move->emoji() . ' ' . $round->player2Move->name();
+        $move1 = $round->player1Move->emoji().' '.$round->player1Move->name();
+        $move2 = $round->player2Move->emoji().' '.$round->player2Move->name();
 
         $score1 = $game->getPlayer1Score();
         $score2 = $game->getPlayer2Score();

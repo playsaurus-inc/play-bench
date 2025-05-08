@@ -147,8 +147,8 @@ trait RunsMatchups
         $this->line("- 🎮 Game: $game");
         $this->line("- 🔴 Player 1: {$matchup->player1->name}. ELO: ".Number::format($elo1, 0));
         $this->line("- 🔵 Player 2: {$matchup->player2->name}. ELO: ".Number::format($elo2, 0));
-        $this->line("- 📊 Games played: ".Number::format($matchup->matchesPlayed, 0));
-        $this->line("- 📈 ELO difference: ".Number::format($elo1 - $elo2, 0));
+        $this->line('- 📊 Games played: '.Number::format($matchup->matchesPlayed, 0));
+        $this->line('- 📈 ELO difference: '.Number::format($elo1 - $elo2, 0));
     }
 
     /**

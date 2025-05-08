@@ -11,12 +11,9 @@ use App\Services\Svg\SvgGame;
 use App\Services\Svg\SvgPlayer;
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Cursor;
-use Symfony\Component\Console\Helper\TableSeparator;
 
 #[AsCommand(
     name: 'benchmark:svg',
@@ -104,7 +101,7 @@ class BenchmarkSvgCommand extends Command
     protected function reportPromptGenerated(SvgGame $game): void
     {
         $this->newLine();
-        $this->info("Prompt generated");
+        $this->info('Prompt generated');
         $this->line('📄 '.$game->getPrompt());
         $this->newLine();
     }
