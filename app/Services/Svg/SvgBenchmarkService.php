@@ -47,7 +47,7 @@ class SvgBenchmarkService
      */
     public function getAvailableModels(): Collection
     {
-        return AiModel::whereIn('slug', $this->aiClient->getAvailableModels())->get();
+        return AiModel::whereIn('slug', $this->aiClient->getAvailableModels('svg'))->get();
     }
 
     /**

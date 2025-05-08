@@ -20,7 +20,7 @@ class RpsBenchmarkService
      */
     public function getAvailableModels(): Collection
     {
-        return AiModel::whereIn('slug', $this->aiClient->getAvailableModels())->get();
+        return AiModel::whereIn('slug', $this->aiClient->getAvailableModels('rps'))->get();
     }
 
     /**
