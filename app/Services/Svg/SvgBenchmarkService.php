@@ -109,7 +109,9 @@ class SvgBenchmarkService
         ]);
 
         return Str::of($idea)
-            ->remove('\"')
+            ->trim()
+            ->replaceStart('\"', '')
+            ->replaceEnd('\"', '')
             ->limit(limit: 100, end: '...', preserveWords: true);
     }
 

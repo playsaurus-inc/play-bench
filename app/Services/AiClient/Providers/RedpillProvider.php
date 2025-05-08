@@ -15,7 +15,7 @@ class RedpillProvider implements AiProviderInterface
     protected function client(): PendingRequest
     {
         return Http::withToken(config('services.redpill.key'))
-            ->timeout(60)
+            ->timeout(config('playbench.timeout'))
             ->baseUrl('https://api.red-pill.ai/v1');
     }
 

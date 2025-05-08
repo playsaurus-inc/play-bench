@@ -45,7 +45,7 @@ class RecomputeStats extends Command
 
         $this->components->task(
             'Recomputing Elo Ratings',
-            fn () => $this->callSilently('calculate:elo'),
+            fn () => $this->callSilently(CalculateElo::class),
         );
     }
 }

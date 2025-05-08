@@ -19,8 +19,12 @@ class SvgAnalysisService
      * @param  string  $svgString  The SVG string to analyze.
      * @return array<string, mixed> An associative array of feature names and their counts or values.
      */
-    public function extractFeatures(string $svgString): array
+    public function extractFeatures(?string $svgString): array
     {
+        if (is_null($svgString)) {
+            return [];
+        }
+
         $dom = $this->loadSvgDom($svgString);
 
         if (! $dom) {

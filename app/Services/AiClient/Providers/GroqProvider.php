@@ -15,7 +15,7 @@ class GroqProvider implements AiProviderInterface
     protected function client(): PendingRequest
     {
         return Http::withToken(config('services.groq.key'))
-            ->timeout(60)
+            ->timeout(config('playbench.timeout'))
             ->baseUrl('https://api.groq.com/openai/v1');
     }
 

@@ -149,7 +149,7 @@ class Statistics
      */
     public static function zScore(float $value, float $mean, float $stdDev): float
     {
-        if ($stdDev === 0) {
+        if ($stdDev === 0.0) {
             return 0.0; // Avoid division by zero
         }
 
