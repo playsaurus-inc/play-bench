@@ -91,6 +91,52 @@ return [
             'reasoning_effort' => 'high',
             'games' => '*',
         ],
+        'gpt-41-2025-04-14' => [
+            'provider' => 'openai',
+            'model' => 'gpt-4.1-2025-04-14',
+            'name' => 'GPT-4.1 (2025-04-14)',
+            'games' => '*',
+        ],
+        'gpt-41-mini-2025-04-14' => [
+            'provider' => 'openai',
+            'model' => 'gpt-4.1-mini-2025-04-14',
+            'name' => 'GPT-4.1 mini (2025-04-14)',
+            'games' => '*',
+        ],
+        'gpt-41-nano-2025-04-14' => [
+            'provider' => 'openai',
+            'model' => 'gpt-4.1-nano-2025-04-14',
+            'name' => 'GPT-4.1 nano (2025-04-14)',
+            'games' => '*',
+        ],
+        'o4-mini-2025-04-16-high' => [
+            'provider' => 'openai',
+            'model' => 'o4-mini-2025-04-16',
+            'name' => 'o4-mini high (2025-04-16)',
+            'reasoning_effort' => 'high',
+            'games' => '*',
+        ],
+        'o4-mini-2025-04-16-medium' => [
+            'provider' => 'openai',
+            'model' => 'o4-mini-2025-04-16',
+            'name' => 'o4-mini medium (2025-04-16)',
+            'reasoning_effort' => 'medium',
+            'games' => '*',
+        ],
+        'o4-mini-2025-04-16-low' => [
+            'provider' => 'openai',
+            'model' => 'o4-mini-2025-04-16',
+            'name' => 'o4-mini low (2025-04-16)',
+            'reasoning_effort' => 'low',
+            'games' => '*',
+        ],
+        'o3-2025-04-16-high' => [
+            'provider' => 'openai',
+            'model' => 'o3-2025-04-16',
+            'name' => 'o3 high (2025-04-16)',
+            'reasoning_effort' => 'high',
+            'games' => '*',
+        ],
 
         // Anthropic models
         'claude-37-sonnet-20250219-nothink' => [
@@ -171,6 +217,21 @@ return [
             'provider' => 'redpill',
             'model' => 'google/gemini-pro-1.5',
             'name' => 'Gemini Pro 1.5',
+            'games' => '*',
+        ],
+
+        // Gemini models
+        'gemini-25-pro-preview-05-06-nothink' => [
+            'provider' => 'gemini',
+            'model' => 'gemini-2.5-pro-preview-05-06',
+            'name' => 'Gemini 2.5 Pro Preview 05-06',
+            'games' => '*',
+        ],
+        'gemini-25-flash-preview-04-17-high' => [
+            'provider' => 'gemini',
+            'model' => 'gemini-2.5-flash-preview-04-17',
+            'name' => 'Gemini 2.5 Flash Preview High 04-17',
+            'reasoning_effort' => 'high',
             'games' => '*',
         ],
     ],
