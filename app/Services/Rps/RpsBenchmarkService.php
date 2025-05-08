@@ -17,6 +17,8 @@ class RpsBenchmarkService
 
     /**
      * Get all available AI models for the chess benchmark
+     *
+     * @return Collection<AiModel>
      */
     public function getAvailableModels(): Collection
     {

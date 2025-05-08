@@ -9,18 +9,6 @@ use App\Models\SvgMatch;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 
-class Matchup
-{
-    /**
-     * Creates a new Matchup instance.
-     */
-    public function __construct(
-        public AiModel $player1,
-        public AiModel $player2,
-        public int $matchesPlayed,
-    ) {}
-}
-
 class PlayerSelectionService
 {
     /**
@@ -54,6 +42,7 @@ class PlayerSelectionService
                 player1: $p1,
                 player2: $p2,
                 matchesPlayed: $countByPairs->get($this->getKey($p1->id, $p2->id), 0),
+                random: true,
             ))
             ->sortBy('matchesPlayed')
             ->values(); // Re-index the collection
@@ -101,5 +90,31 @@ class PlayerSelectionService
         return $player1Id < $player2Id
             ? "{$player1Id}-{$player2Id}"
             : "{$player2Id}-{$player1Id}";
+    }
+
+    /**
+     * Creates a matchup object between two players.
+     */
+    public function matchup(string $gameType, AiModel $player1, AiModel $player2): Matchup
+    {
+        $matches = $this->getMatches($gameType);
+
+        // This is super inefficient, but whatever
+        $matchesAB = $matches
+            ->where('player1_id', $player1->id)
+            ->where('player2_id', $player2->id)
+            ->count();
+
+        $matchesBA = $matches
+            ->where('player1_id', $player2->id)
+            ->where('player2_id', $player1->id)
+            ->count();
+
+        return new Matchup(
+            player1: $player1,
+            player2: $player2,
+            matchesPlayed: $matchesAB + $matchesBA,
+            random: true,
+        );
     }
 }

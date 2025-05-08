@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands\Benchmark;
 
+use App\Console\Concerns\OrganizesMatchups;
 use App\Models\RpsMatch;
 use App\Services\EloRatingService;
-use App\Services\PlayerSelectionService;
 use App\Services\Rps\RpsBenchmarkService;
 use App\Services\Rps\RpsGame;
 use App\Services\Rps\RpsRound;
@@ -19,12 +19,14 @@ use Symfony\Component\Console\Attribute\AsCommand;
 )]
 class BenchmarkRpsCommand extends Command
 {
+    use OrganizesMatchups;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'benchmark:rps {--matches=10 : Number of matches to run}';
+    protected $signature = 'benchmark:rps {--matches=1 : Number of matches to run}';
 
     /**
      * The console command description.
@@ -43,27 +45,23 @@ class BenchmarkRpsCommand extends Command
      */
     public function handle(
         RpsBenchmarkService $benchmarkService,
-        PlayerSelectionService $playerSelectionService,
         EloRatingService $eloService,
     ): int {
         $matchCount = (int) $this->option('matches');
         $matchCount = $matchCount > 0 ? $matchCount : PHP_INT_MAX;
-
-        // Get all available AI models
-        $aiModels = $benchmarkService->getAvailableModels();
-
-        if ($aiModels->isEmpty()) {
-            $this->error('No AI models found in the database. Please add some AI models first.');
-
-            return Command::FAILURE;
-        }
 
         $this->info('Starting Rock Paper Scissors benchmarks');
 
         $this->completedMatches = 0;
 
         while ($this->completedMatches < $matchCount) {
-            $matchup = $playerSelectionService->first('rps', $aiModels);
+            $matchup = $this->matchup('rps');
+
+            if (! $matchup) {
+                $this->error('No matchup found. Exiting.');
+
+                return Command::FAILURE;
+            }
 
             $game = new RpsGame($matchup->player1, $matchup->player2);
 
@@ -82,7 +80,7 @@ class BenchmarkRpsCommand extends Command
 
             $this->reportGameEnded($game);
 
-            $this->createMatch($game);
+            $this->showMatch($this->createMatch($game));
 
             $eloService->updateRpsEloRatings();
 
@@ -166,5 +164,14 @@ class BenchmarkRpsCommand extends Command
             'move_history' => $game->getRoundHistory(),
             'is_forced_completion' => ! $game->isOver(),
         ]);
+    }
+
+    /**
+     * Show the match URL.
+     */
+    protected function showMatch(RpsMatch $match): void
+    {
+        $this->info('Match URL:');
+        $this->line(route('rps.matches.show', $match));
     }
 }

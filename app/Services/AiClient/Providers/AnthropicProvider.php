@@ -3,22 +3,29 @@
 namespace App\Services\AiClient\Providers;
 
 use App\Services\AiClient\Concerns\AiProviderInterface;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class AnthropicProvider implements AiProviderInterface
 {
     /**
+     * Create a new HTTP client instance
+     */
+    protected function client(): PendingRequest
+    {
+        return Http::withHeaders([
+            'x-api-key' => config('services.anthropic.key'),
+            'anthropic-version' => '2023-06-01',
+            'content-type' => 'application/json',
+        ])->baseUrl('https://api.anthropic.com/v1')->timeout(60);
+    }
+
+    /**
      * Call the Anthropic API
      */
     public function handle(array $config, string $systemPrompt, string $userPrompt): string
     {
-        $client = Http::withHeaders([
-            'x-api-key' => config('services.anthropic.key'),
-            'anthropic-version' => '2023-06-01',
-            'content-type' => 'application/json',
-        ])->baseUrl('https://api.anthropic.com/v1');
-
         $maxTokens = $config['model'] == 'claude-3-5-sonnet-20241022' ? 8192 : 16000;
 
         $payload = [
@@ -38,7 +45,7 @@ class AnthropicProvider implements AiProviderInterface
             ];
         }
 
-        $response = $client->post('messages', $payload);
+        $response = $this->client()->post('messages', $payload);
 
         if (! $response->successful()) {
             Log::error('Anthropic API error', [
