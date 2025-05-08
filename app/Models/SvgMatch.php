@@ -60,6 +60,16 @@ class SvgMatch extends Model implements RankedMatch
                     ->extractFeatures($model->getPlayer2SvgContent());
             }
         });
+
+        static::deleted(function (self $model) {
+            if ($model->player1_svg_path) {
+                $model->disk()->delete($model->player1_svg_path);
+            }
+
+            if ($model->player2_svg_path) {
+                $model->disk()->delete($model->player2_svg_path);
+            }
+        });
     }
 
     /**
