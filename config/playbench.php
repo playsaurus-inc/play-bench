@@ -221,17 +221,18 @@ return [
         ],
 
         // Gemini models
-        'gemini-25-pro-preview-05-06-nothink' => [
+        'gemini-25-pro-preview-05-06-high' => [
             'provider' => 'gemini',
             'model' => 'gemini-2.5-pro-preview-05-06',
             'name' => 'Gemini 2.5 Pro Preview 05-06',
+            'reasoning_effort' => 'high',
             'games' => '*',
         ],
-        'gemini-25-flash-preview-04-17-high' => [
+        'gemini-25-flash-preview-04-17-nothink' => [
             'provider' => 'gemini',
             'model' => 'gemini-2.5-flash-preview-04-17',
             'name' => 'Gemini 2.5 Flash Preview High 04-17',
-            'reasoning_effort' => 'high',
+            'reasoning_effort' => 'none',
             'games' => '*',
         ],
     ],
