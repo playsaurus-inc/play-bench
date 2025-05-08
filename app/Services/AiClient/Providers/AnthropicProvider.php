@@ -18,7 +18,7 @@ class AnthropicProvider implements AiProviderInterface
             'x-api-key' => config('services.anthropic.key'),
             'anthropic-version' => '2023-06-01',
             'content-type' => 'application/json',
-        ])->baseUrl('https://api.anthropic.com/v1')->timeout(60);
+        ])->timeout(config('playbench.timeout'))->baseUrl('https://api.anthropic.com/v1');
     }
 
     /**
@@ -26,23 +26,18 @@ class AnthropicProvider implements AiProviderInterface
      */
     public function handle(array $config, string $systemPrompt, string $userPrompt): string
     {
-        $maxTokens = $config['model'] == 'claude-3-5-sonnet-20241022' ? 8192 : 16000;
-
         $payload = [
             'model' => $config['model'],
-            'max_tokens' => $maxTokens,
-            'temperature' => 0.7,
+            'max_tokens' => $config['max_tokens'] ?? 8192,
+            'temperature' => $config['temperature'] ?? 0.7,
             'system' => $systemPrompt,
             'messages' => [
                 ['role' => 'user', 'content' => $userPrompt],
             ],
         ];
 
-        if (isset($config['thinking']) && $config['thinking']) {
-            $payload['thinking'] = [
-                'type' => 'enabled',
-                'budget_tokens' => 20000,
-            ];
+        if ($config['thinking'] ?? false) {
+            $payload['thinking'] = $config['thinking'];
         }
 
         $response = $this->client()->post('messages', $payload);

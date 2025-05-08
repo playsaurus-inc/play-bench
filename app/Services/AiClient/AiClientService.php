@@ -13,7 +13,7 @@ class AiClientService
     /**
      * The number of times to retry a failed request
      */
-    protected int $retryCount = 3;
+    protected int $retryCount = 2;
 
     /**
      * The milliseconds to wait between retries

@@ -15,7 +15,7 @@ class OpenAiProvider implements AiProviderInterface
     protected function client(): PendingRequest
     {
         return Http::withToken(config('services.openai.key'))
-            ->timeout(60)
+            ->timeout(config('playbench.timeout'))
             ->baseUrl('https://api.openai.com/v1');
     }
 

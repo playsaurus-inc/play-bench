@@ -49,6 +49,16 @@ class SvgMatch extends Model implements RankedMatch
                     default => null, // Should not happen if everything works ok
                 };
             }
+
+            if (! isset($model->player1_features)) {
+                $model->player1_features = app(SvgAnalysisService::class)
+                    ->extractFeatures($model->getPlayer1SvgContent());
+            }
+
+            if (! isset($model->player2_features)) {
+                $model->player2_features = app(SvgAnalysisService::class)
+                    ->extractFeatures($model->getPlayer2SvgContent());
+            }
         });
     }
 
@@ -60,6 +70,8 @@ class SvgMatch extends Model implements RankedMatch
         // Just null the values so they can be recomputed again in the `saving` event
         $this->update([
             'loser_id' => null,
+            'player1_features' => null,
+            'player2_features' => null,
         ]);
     }
 

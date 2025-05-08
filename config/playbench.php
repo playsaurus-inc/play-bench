@@ -42,6 +42,8 @@ return [
 
     'svg_jury' => 'gpt-4o-2024-11-20',
 
+    'timeout' => 200 * 60, // Thinking models can take a long time to respond
+
     'models' => [
         'random' => [
             'provider' => null,
@@ -95,20 +97,26 @@ return [
             'provider' => 'anthropic',
             'model' => 'claude-3-7-sonnet-20250219',
             'name' => 'Claude 3.7 Sonnet (2025-02-19)',
-            'thinking' => false,
+            'max_tokens' => 16000,
             'games' => '*',
         ],
         'claude-37-sonnet-20250219-thinking' => [
             'provider' => 'anthropic',
             'model' => 'claude-3-7-sonnet-20250219',
             'name' => 'Claude 3.7 Sonnet Thinking (2025-02-19)',
-            'thinking' => true,
+            'max_tokens' => 32000,
+            'temperature' => 1.0, // Must be 1.0 for thinking
+            'thinking' => [
+                'type' => 'enabled',
+                'budget_tokens' => 20000,
+            ],
             'games' => '*',
         ],
         'claude-35-sonnet-20241022' => [
             'provider' => 'anthropic',
             'model' => 'claude-3-5-sonnet-20241022',
             'name' => 'Claude 3.5 Sonnet (2024-10-22)',
+            'max_tokens' => 8192,
             'games' => '*',
         ],
 
