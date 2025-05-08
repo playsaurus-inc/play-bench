@@ -483,6 +483,14 @@ class RpsMatch extends Model implements RankedMatch
     }
 
     /**
+     * Gets the URL of the show page for the match.
+     */
+    public function getUrl(): string
+    {
+        return route('rps.matches.show', $this);
+    }
+
+    /**
      * Generate cumulative win data for charting
      *
      * @return array{labels: array<int>, player1Data: array<int>, player2Data: array<int>, player1Name: string, player2Name: string}

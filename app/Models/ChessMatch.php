@@ -237,4 +237,13 @@ class ChessMatch extends Model implements RankedMatch
             'black_elo_after' => $player2EloAfter,
         ]);
     }
+
+    /**
+     * Gets the URL of the show page for the match.
+     */
+    public function getUrl(): string
+    {
+        return url('/'); // TODO: Update this to return the actual URL of the match when view is implemented
+        // return route('chess.matches.show', $this);
+    }
 }

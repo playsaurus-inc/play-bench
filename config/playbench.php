@@ -141,6 +141,7 @@ return [
             'games' => '*',
         ],
         'deepseek-r1-distill-qwen-32b' => [ // Developer=DeepSeek
+            'enabled' => false, // deepseek-r1-distill-qwen-32b` has been decommissioned and is no longer supported. Please refer to https://console.groq.com/docs/deprecations for a recommendation on which model to use instead.
             'provider' => 'groq',
             'model' => 'deepseek-r1-distill-qwen-32b',
             'name' => 'DeepSeek-R1-Distill-Qwen-32B',

@@ -2,9 +2,10 @@
 
 namespace App\Console\Commands\Benchmark;
 
-use App\Console\Concerns\OrganizesMatchups;
+use App\Console\Concerns\RunsMatchups;
+use App\Models\Contracts\RankedMatch;
 use App\Models\SvgMatch;
-use App\Services\EloRatingService;
+use App\Services\Matchup;
 use App\Services\Svg\SvgBenchmarkService;
 use App\Services\Svg\SvgGame;
 use App\Services\Svg\SvgPlayer;
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Cursor;
+use Symfony\Component\Console\Helper\TableSeparator;
 
 #[AsCommand(
     name: 'benchmark:svg',
@@ -21,7 +24,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 )]
 class BenchmarkSvgCommand extends Command
 {
-    use OrganizesMatchups;
+    use RunsMatchups;
 
     /**
      * The name and signature of the console command.
@@ -46,50 +49,19 @@ class BenchmarkSvgCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(
-        SvgBenchmarkService $benchmarkService,
-        EloRatingService $eloService,
-    ): int {
-        $matchCount = (int) $this->option('matches');
-        $matchCount = $matchCount > 0 ? $matchCount : PHP_INT_MAX;
-
-        $this->info('Starting SVG benchmark tests');
-
-        $this->completedMatches = 0;
-
-        while ($this->completedMatches < $matchCount) {
-            $matchup = $this->matchup('svg');
-
-            if (! $matchup) {
-                $this->error('No matchup found. Exiting.');
-
-                return Command::FAILURE;
-            }
-
+    public function handle(): int
+    {
+        $this->runBenchmark('svg', function (Matchup $matchup): RankedMatch {
             $game = new SvgGame($matchup->player1, $matchup->player2);
 
-            $this->reportGameStarted($game, $matchup->matchesPlayed);
+            app(SvgBenchmarkService::class)->runGame(
+                game: $game,
+                onPromptGenerated: fn ($game) => $this->reportPromptGenerated($game),
+                onSvgSubmitted: fn ($game, $player) => $this->reportSvgSubmission($game, $player),
+            );
 
-            try {
-                $benchmarkService->runGame(
-                    game: $game,
-                    onPromptGenerated: fn ($game) => $this->reportPromptGenerated($game),
-                    onSvgSubmitted: fn ($game, $player) => $this->reportSvgSubmission($game, $player),
-                );
-
-                $this->reportGameEnded($game);
-
-                $this->showMatch($this->createMatch($game));
-
-                $eloService->updateSvgEloRatings();
-
-                $this->completedMatches++;
-            } catch (\Exception $e) {
-                $this->reportError($e);
-            }
-        }
-
-        $this->info('All matches completed');
+            return $this->createMatch($game);
+        });
 
         return Command::SUCCESS;
     }
@@ -127,24 +99,14 @@ class BenchmarkSvgCommand extends Command
     }
 
     /**
-     * Report when a game starts.
-     */
-    protected function reportGameStarted(SvgGame $game, int $matchesPlayed): void
-    {
-        $this->info(sprintf(
-            'SVG match started: %s vs %s. Matches played together: %d',
-            $game->getPlayer1()->name,
-            $game->getPlayer2()->name,
-            $matchesPlayed,
-        ));
-    }
-
-    /**
      * Report when a prompt is generated.
      */
     protected function reportPromptGenerated(SvgGame $game): void
     {
-        $this->info(sprintf('Prompt: %s', $game->getPrompt()));
+        $this->newLine();
+        $this->info("Prompt generated");
+        $this->line('📄 '.$game->getPrompt());
+        $this->newLine();
     }
 
     /**
@@ -152,46 +114,19 @@ class BenchmarkSvgCommand extends Command
      */
     protected function reportSvgSubmission(SvgGame $game, SvgPlayer $player): void
     {
-        $this->info(sprintf(
-            '%s submitted their SVG drawing',
-            $game->getPlayer($player)->name
-        ));
+        $emoji = $player === SvgPlayer::Player1 ? '🔴' : '🔵';
+        $count = strlen($game->getPlayerSvg($player) ?? '');
+
+        $this->line("$emoji SVG submitted by {$game->getPlayer($player)->name} ($count characters)");
     }
 
     /**
-     * Report when judging is complete.
+     * Get extra information about the match.
      */
-    protected function reportGameEnded(SvgGame $game): void
+    protected function getExtraInfo(SvgMatch $match): array
     {
-        $this->info(sprintf(
-            'Judging complete: Winner: %s',
-            $game->getWinnerModel()->name
-        ));
-        $this->info(sprintf('Reasoning: %s', $game->getJudgeReasoning()));
-    }
-
-    /**
-     * Report an error while running the match
-     */
-    protected function reportError(Exception $exception): void
-    {
-        report($exception);
-
-        $this->error('Error occurred while running the match:');
-        $this->error($exception->getMessage());
-        $this->error('Please check the logs for more details.');
-
-        Log::error('RPS benchmark error', [
-            'exception' => $exception->getMessage(),
-        ]);
-    }
-
-    /**
-     * Show the match URL
-     */
-    protected function showMatch(SvgMatch $match): void
-    {
-        $this->info('Match URL:');
-        $this->line(route('svg.matches.show', $match));
+        return [
+            '📄 Judge Reasoning' => $match->judge_reasoning,
+        ];
     }
 }

@@ -29,6 +29,7 @@ class AiClientService
     {
         return collect($this->models())
             ->filter(fn ($model) => $model['games'] === '*' || in_array($game, $model['games']))
+            ->reject(fn ($model) => ($model['enabled'] ?? true) === false)
             ->keys()
             ->toArray();
     }

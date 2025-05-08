@@ -30,4 +30,9 @@ interface RankedMatch
         float $player1EloAfter,
         float $player2EloAfter
     ): void;
+
+    /**
+     * Gets the URL of the show page for the match.
+     */
+    public function getUrl(): string;
 }

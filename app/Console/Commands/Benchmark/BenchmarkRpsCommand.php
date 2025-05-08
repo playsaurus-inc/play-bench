@@ -2,15 +2,14 @@
 
 namespace App\Console\Commands\Benchmark;
 
-use App\Console\Concerns\OrganizesMatchups;
+use App\Console\Concerns\RunsMatchups;
 use App\Models\RpsMatch;
-use App\Services\EloRatingService;
+use App\Services\Matchup;
 use App\Services\Rps\RpsBenchmarkService;
 use App\Services\Rps\RpsGame;
 use App\Services\Rps\RpsRound;
-use Exception;
+use App\Services\Rps\RpsRoundResult;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(
@@ -19,7 +18,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 )]
 class BenchmarkRpsCommand extends Command
 {
-    use OrganizesMatchups;
+    use RunsMatchups;
 
     /**
      * The name and signature of the console command.
@@ -43,51 +42,18 @@ class BenchmarkRpsCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(
-        RpsBenchmarkService $benchmarkService,
-        EloRatingService $eloService,
-    ): int {
-        $matchCount = (int) $this->option('matches');
-        $matchCount = $matchCount > 0 ? $matchCount : PHP_INT_MAX;
-
-        $this->info('Starting Rock Paper Scissors benchmarks');
-
-        $this->completedMatches = 0;
-
-        while ($this->completedMatches < $matchCount) {
-            $matchup = $this->matchup('rps');
-
-            if (! $matchup) {
-                $this->error('No matchup found. Exiting.');
-
-                return Command::FAILURE;
-            }
-
+    public function handle()
+    {
+        $this->runBenchmark('rps', function (Matchup $matchup): RpsMatch {
             $game = new RpsGame($matchup->player1, $matchup->player2);
 
-            $this->reportGameStarted($game, $matchup->matchesPlayed);
+            app(RpsBenchmarkService::class)->runGame(
+                game: $game,
+                onRoundComplete: fn (RpsRound $round) => $this->reportRound($game, $round),
+            );
 
-            try {
-                $benchmarkService->runGame(
-                    game: $game,
-                    onRoundComplete: fn (RpsRound $round) => $this->reportRound($game, $round),
-                );
-            } catch (\Exception $e) {
-                $this->reportError($e);
-
-                continue;
-            }
-
-            $this->reportGameEnded($game);
-
-            $this->showMatch($this->createMatch($game));
-
-            $eloService->updateRpsEloRatings();
-
-            $this->completedMatches++;
-        }
-
-        $this->info('All matches completed');
+            return $this->createMatch($game);
+        });
 
         return Command::SUCCESS;
     }
@@ -97,57 +63,34 @@ class BenchmarkRpsCommand extends Command
      */
     protected function reportRound(RpsGame $game, RpsRound $round): void
     {
-        $this->info(sprintf(
-            'Round %d: %s vs %s (%s)',
-            $game->getRoundCount(),
-            $round->player1Move->name(),
-            $round->player2Move->name(),
-            $round->result->name(),
-        ));
+        $winner = match ($round->result) {
+            RpsRoundResult::Player1Win => '🔴 '.$game->getPlayer1()->name.' Wins',
+            RpsRoundResult::Player2Win => '🔵 '.$game->getPlayer2()->name.' Wins',
+            RpsRoundResult::Tie => '⚪️ Tie',
+        };
+
+        $move1 = $round->player1Move->emoji() . ' ' . $round->player1Move->name();
+        $move2 = $round->player2Move->emoji() . ' ' . $round->player2Move->name();
+
+        $score1 = $game->getPlayer1Score();
+        $score2 = $game->getPlayer2Score();
+
+        $roundNumber = $game->getRoundCount();
+
+        $this->newLine();
+        $this->line("Round $roundNumber: $move1 vs $move2 ($winner)");
+        $this->line("Score: 🔴 $score1 - 🔵 $score2");
     }
 
     /**
-     * Report an error while running the match
+     * Get extra information about the match.
      */
-    protected function reportError(Exception $exception): void
+    protected function getExtraInfo(RpsMatch $match): array
     {
-        report($exception);
-
-        $this->error('Error occurred while running the match:');
-        $this->error($exception->getMessage());
-        $this->error('Please check the logs for more details.');
-
-        Log::error('RPS benchmark error', [
-            'exception' => $exception->getMessage(),
-        ]);
-    }
-
-    /**
-     * Report the start of a game.
-     */
-    protected function reportGameStarted(RpsGame $game, int $matchesPlayed): void
-    {
-        $this->info(sprintf(
-            'Game started between %s and %s. Matches played together: %d',
-            $game->getPlayer1()->name,
-            $game->getPlayer2()->name,
-            $matchesPlayed,
-        ));
-    }
-
-    /**
-     * Report the end of a game.
-     */
-    protected function reportGameEnded(RpsGame $game): void
-    {
-        $this->info('Match completed');
-        $this->table(
-            ['Player', 'Score'],
-            [
-                [$game->getPlayer1()->name, $game->getPlayer1Score()],
-                [$game->getPlayer2()->name, $game->getPlayer2Score()],
-            ],
-        );
+        return [
+            '🔴 Player 1 score' => $match->player1_score,
+            '🔵 Player 2 score' => $match->player2_score,
+        ];
     }
 
     /**
@@ -164,14 +107,5 @@ class BenchmarkRpsCommand extends Command
             'move_history' => $game->getRoundHistory(),
             'is_forced_completion' => ! $game->isOver(),
         ]);
-    }
-
-    /**
-     * Show the match URL.
-     */
-    protected function showMatch(RpsMatch $match): void
-    {
-        $this->info('Match URL:');
-        $this->line(route('rps.matches.show', $match));
     }
 }

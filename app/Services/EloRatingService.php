@@ -97,7 +97,7 @@ class EloRatingService
      * @param  string  $gameType  The game type ('rps', 'svg', or 'chess')
      * @return int Number of matches processed
      */
-    protected function updateEloRatings(string $gameType): int
+    public function updateEloRatings(string $gameType): int
     {
         $count = 0;
 
