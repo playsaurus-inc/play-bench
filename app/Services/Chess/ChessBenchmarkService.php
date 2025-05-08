@@ -7,8 +7,6 @@ use App\Services\AiClient\AiClientService;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 
-use function PHPUnit\Framework\callback;
-
 class ChessBenchmarkService
 {
     /**
@@ -28,7 +26,7 @@ class ChessBenchmarkService
      */
     public function getAvailableModels(): Collection
     {
-        return AiModel::whereIn('slug', $this->aiClient->getAvailableModels())->get();
+        return AiModel::whereIn('slug', $this->aiClient->getAvailableModels('chess'))->get();
     }
 
     /**

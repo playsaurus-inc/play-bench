@@ -21,13 +21,16 @@ class AiClientService
     protected int $retryDelay = 1000;
 
     /**
-     * Get all available models
+     * Get all available models for the specified game.
      *
      * @return array List of available model names
      */
-    public function getAvailableModels(): array
+    public function getAvailableModels(string $game): array
     {
-        return array_keys($this->models());
+        return collect($this->models())
+            ->filter(fn ($model) => $model['games'] === '*' || in_array($game, $model['games']))
+            ->keys()
+            ->toArray();
     }
 
     /**
