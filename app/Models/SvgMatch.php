@@ -290,6 +290,14 @@ class SvgMatch extends Model implements RankedMatch
     }
 
     /**
+     * Gets the URL of the show page for the match.
+     */
+    public function getUrl(): string
+    {
+        return route('svg.matches.show', $this);
+    }
+
+    /**
      * Gets the SVG features for the player 1.
      */
     public function getPlayer1SvgFeatures(): ?array

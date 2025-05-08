@@ -23,6 +23,18 @@ enum RpsMove: string
     }
 
     /**
+     * Get the move emoji.
+     */
+    public function emoji(): string
+    {
+        return match ($this) {
+            self::Rock => '🪨',
+            self::Paper => '📄',
+            self::Scissors => '✂️',
+        };
+    }
+
+    /**
      * Gets a random move.
      */
     public static function random(): RpsMove
