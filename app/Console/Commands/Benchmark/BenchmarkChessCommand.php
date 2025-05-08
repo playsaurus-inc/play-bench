@@ -2,13 +2,13 @@
 
 namespace App\Console\Commands\Benchmark;
 
+use App\Console\Concerns\OrganizesMatchups;
 use App\Models\ChessMatch;
 use App\Services\Chess\ChessBenchmarkService;
 use App\Services\Chess\ChessGame;
 use App\Services\Chess\ChessMove;
 use App\Services\Chess\ChessPlayer;
 use App\Services\EloRatingService;
-use App\Services\PlayerSelectionService;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -20,12 +20,14 @@ use Symfony\Component\Console\Attribute\AsCommand;
 )]
 class BenchmarkChessCommand extends Command
 {
+    use OrganizesMatchups;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'benchmark:chess {--matches=10 : Number of chess matches to run}';
+    protected $signature = 'benchmark:chess {--matches=1 : Number of chess matches to run}';
 
     /**
      * The console command description.
@@ -44,27 +46,23 @@ class BenchmarkChessCommand extends Command
      */
     public function handle(
         ChessBenchmarkService $benchmarkService,
-        PlayerSelectionService $playerSelectionService,
         EloRatingService $eloService,
     ): int {
         $matchCount = (int) $this->option('matches');
         $matchCount = $matchCount > 0 ? $matchCount : PHP_INT_MAX;
-
-        // Get all available AI models
-        $aiModels = $benchmarkService->getAvailableModels();
-
-        if ($aiModels->isEmpty()) {
-            $this->error('No AI models found in the database. Please add some AI models first.');
-
-            return Command::FAILURE;
-        }
 
         $this->info('Starting Chess benchmark tests');
 
         $this->completedMatches = 0;
 
         while ($this->completedMatches < $matchCount) {
-            $matchup = $playerSelectionService->first('chess', $aiModels);
+            $matchup = $this->matchup('chess');
+
+            if (! $matchup) {
+                $this->error('No matchup found. Exiting.');
+
+                return Command::FAILURE;
+            }
 
             $game = new ChessGame($matchup->player1, $matchup->player2);
 
@@ -84,7 +82,7 @@ class BenchmarkChessCommand extends Command
 
             $this->reportGameEnded($game);
 
-            $this->createMatch($game);
+            $this->showMatch($this->createMatch($game));
 
             $eloService->updateChessEloRatings();
 
@@ -188,5 +186,14 @@ class BenchmarkChessCommand extends Command
             'started_at' => $game->getStartedAt(),
             'ended_at' => $game->getEndedAt(),
         ]);
+    }
+
+    /**
+     * Show the match URL.
+     */
+    protected function showMatch(ChessMatch $match): void
+    {
+        // TO BE ADDED LATER: Show the match URL
+        // $this->info('Match URL: '.route('chess.matches.show', $match->id));
     }
 }

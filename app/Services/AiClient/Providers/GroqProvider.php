@@ -3,27 +3,36 @@
 namespace App\Services\AiClient\Providers;
 
 use App\Services\AiClient\Concerns\AiProviderInterface;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class GroqProvider implements AiProviderInterface
 {
     /**
+     * Create a new HTTP client instance
+     */
+    protected function client(): PendingRequest
+    {
+        return Http::withToken(config('services.groq.key'))
+            ->timeout(60)
+            ->baseUrl('https://api.groq.com/openai/v1');
+    }
+
+    /**
      * Call the Groq API
      */
     public function handle(array $config, string $systemPrompt, string $userPrompt): string
     {
-        $response = Http::withToken(config('services.groq.key'))
-            ->baseUrl('https://api.groq.com/openai/v1')
-            ->post('chat/completions', [
-                'model' => $config['model'],
-                'messages' => [
-                    ['role' => 'system', 'content' => $systemPrompt],
-                    ['role' => 'user', 'content' => $userPrompt],
-                ],
-                'temperature' => 0.7,
-                'max_tokens' => 4096,
-            ]);
+        $response = $this->client()->post('chat/completions', [
+            'model' => $config['model'],
+            'messages' => [
+                ['role' => 'system', 'content' => $systemPrompt],
+                ['role' => 'user', 'content' => $userPrompt],
+            ],
+            'temperature' => 0.7,
+            'max_tokens' => 4096,
+        ]);
 
         if (! $response->successful()) {
             Log::error('Groq API error', [

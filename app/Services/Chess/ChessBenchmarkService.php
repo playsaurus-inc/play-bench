@@ -2,10 +2,8 @@
 
 namespace App\Services\Chess;
 
-use App\Models\AiModel;
 use App\Services\AiClient\AiClientService;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
 
 class ChessBenchmarkService
 {
@@ -20,14 +18,6 @@ class ChessBenchmarkService
     public function __construct(
         protected AiClientService $aiClient
     ) {}
-
-    /**
-     * Get all available AI models for the chess benchmark
-     */
-    public function getAvailableModels(): Collection
-    {
-        return AiModel::whereIn('slug', $this->aiClient->getAvailableModels('chess'))->get();
-    }
 
     /**
      * Run a chess game

@@ -3,19 +3,27 @@
 namespace App\Services\AiClient\Providers;
 
 use App\Services\AiClient\Concerns\AiProviderInterface;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class RedpillProvider implements AiProviderInterface
 {
     /**
+     * Create a new HTTP client instance
+     */
+    protected function client(): PendingRequest
+    {
+        return Http::withToken(config('services.redpill.key'))
+            ->timeout(60)
+            ->baseUrl('https://api.red-pill.ai/v1');
+    }
+
+    /**
      * Call the RedPill API (which provides access to various models)
      */
     public function handle(array $config, string $systemPrompt, string $userPrompt): string
     {
-        $client = Http::withToken(config('services.redpill.key'))
-            ->baseUrl('https://api.red-pill.ai/v1');
-
         $payload = [
             'model' => $config['model'],
             'messages' => [
@@ -25,7 +33,7 @@ class RedpillProvider implements AiProviderInterface
             'temperature' => 0.7,
         ];
 
-        $response = $client->post('chat/completions', $payload);
+        $response = $this->client()->post('chat/completions', $payload);
 
         if (! $response->successful()) {
             Log::error('RedPill API error', [

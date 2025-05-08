@@ -44,6 +44,8 @@ class SvgBenchmarkService
 
     /**
      * Get all available AI models for the SVG benchmark
+     *
+     * @return Collection<AiModel>
      */
     public function getAvailableModels(): Collection
     {
@@ -106,7 +108,9 @@ class SvgBenchmarkService
             'top_p' => 1.0,
         ]);
 
-        return Str::limit($idea, 100, end: '...', preserveWords: true);
+        return Str::of($idea)
+            ->remove('\"')
+            ->limit(limit: 100, end: '...', preserveWords: true);
     }
 
     /**
@@ -142,7 +146,7 @@ Return ONLY valid SVG code in your response.";
 
         $prompt = $this->buildSvgPrompt($game->getPrompt());
 
-        $response = $this->aiClient->getResponse($model->name, self::SVG_SYSTEM_PROMPT, $prompt);
+        $response = $this->aiClient->getResponse($model->slug, self::SVG_SYSTEM_PROMPT, $prompt);
 
         // Look for SVG content
         if (preg_match('/<svg.*<\/svg>/s', $response, $matches)) {
@@ -166,9 +170,9 @@ Return ONLY valid SVG code in your response.";
     protected function judgeSvgs(string $imagePrompt, string $png1Bytes, string $png2Bytes): array
     {
         $response = $this->aiClient->getResponseWithImages(
-            'gpt-4o',
-            self::JUDGE_SYSTEM_PROMPT,
-            Str::replaceArray('[IDEA_TEXT]', [$imagePrompt], self::JUDGE_USER_PROMPT),
+            model: config('playbench.svg_jury'),
+            systemPrompt: self::JUDGE_SYSTEM_PROMPT,
+            userPrompt: Str::replaceArray('[IDEA_TEXT]', [$imagePrompt], self::JUDGE_USER_PROMPT),
             images: [
                 $this->toDataUrl('image/png', $png1Bytes),
                 $this->toDataUrl('image/png', $png2Bytes),

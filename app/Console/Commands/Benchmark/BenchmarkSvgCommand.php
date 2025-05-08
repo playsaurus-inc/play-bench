@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands\Benchmark;
 
+use App\Console\Concerns\OrganizesMatchups;
 use App\Models\SvgMatch;
 use App\Services\EloRatingService;
-use App\Services\PlayerSelectionService;
 use App\Services\Svg\SvgBenchmarkService;
 use App\Services\Svg\SvgGame;
 use App\Services\Svg\SvgPlayer;
@@ -21,12 +21,15 @@ use Symfony\Component\Console\Attribute\AsCommand;
 )]
 class BenchmarkSvgCommand extends Command
 {
+    use OrganizesMatchups;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'benchmark:svg {--matches=10 : Number of SVG matches to run}';
+    protected $signature = 'benchmark:svg
+        {--matches=1 : Number of SVG matches to run}';
 
     /**
      * The console command description.
@@ -45,27 +48,23 @@ class BenchmarkSvgCommand extends Command
      */
     public function handle(
         SvgBenchmarkService $benchmarkService,
-        PlayerSelectionService $playerSelectionService,
         EloRatingService $eloService,
     ): int {
         $matchCount = (int) $this->option('matches');
         $matchCount = $matchCount > 0 ? $matchCount : PHP_INT_MAX;
-
-        // Get all available AI models
-        $aiModels = $benchmarkService->getAvailableModels();
-
-        if ($aiModels->isEmpty()) {
-            $this->error('No AI models found in the database. Please add some AI models first.');
-
-            return Command::FAILURE;
-        }
 
         $this->info('Starting SVG benchmark tests');
 
         $this->completedMatches = 0;
 
         while ($this->completedMatches < $matchCount) {
-            $matchup = $playerSelectionService->first('svg', $aiModels);
+            $matchup = $this->matchup('svg');
+
+            if (! $matchup) {
+                $this->error('No matchup found. Exiting.');
+
+                return Command::FAILURE;
+            }
 
             $game = new SvgGame($matchup->player1, $matchup->player2);
 
@@ -80,7 +79,7 @@ class BenchmarkSvgCommand extends Command
 
                 $this->reportGameEnded($game);
 
-                $this->createMatch($game);
+                $this->showMatch($this->createMatch($game));
 
                 $eloService->updateSvgEloRatings();
 
@@ -185,5 +184,14 @@ class BenchmarkSvgCommand extends Command
         Log::error('RPS benchmark error', [
             'exception' => $exception->getMessage(),
         ]);
+    }
+
+    /**
+     * Show the match URL
+     */
+    protected function showMatch(SvgMatch $match): void
+    {
+        $this->info('Match URL:');
+        $this->line(route('svg.matches.show', $match));
     }
 }

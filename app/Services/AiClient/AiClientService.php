@@ -60,9 +60,9 @@ class AiClientService
     /**
      * Make an API request with images to get a response from an AI model
      */
-    public function getResponseWithImages(string $modelName, string $systemPrompt, string $userPrompt, array $images, array $config = []): string
+    public function getResponseWithImages(string $model, string $systemPrompt, string $userPrompt, array $images, array $config = []): string
     {
-        $config = $this->getProviderConfig($modelName, $config);
+        $config = $this->getProviderConfig($model, $config);
 
         $provider = $this->getProvider($config['provider']);
 
@@ -76,15 +76,15 @@ class AiClientService
     /**
      * Get the configuration for a specific model.
      */
-    protected function getProviderConfig(string $modelName, array $extraConfig = []): array
+    protected function getProviderConfig(string $model, array $extraConfig = []): array
     {
-        foreach ($this->models() as $modelSlug => $modelConfig) {
-            if ($modelSlug == $modelName) {
+        foreach ($this->models() as $slug => $modelConfig) {
+            if ($slug == $model) {
                 return array_merge($modelConfig, $extraConfig);
             }
         }
 
-        throw new \Exception("No API configuration found for model: {$modelName}");
+        throw new \Exception("No API configuration found for model: {$model}");
     }
 
     /**

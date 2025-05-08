@@ -3,19 +3,27 @@
 namespace App\Services\AiClient\Providers;
 
 use App\Services\AiClient\Concerns\AiProviderInterface;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class OpenAiProvider implements AiProviderInterface
 {
     /**
+     * Create a new HTTP client instance
+     */
+    protected function client(): PendingRequest
+    {
+        return Http::withToken(config('services.openai.key'))
+            ->timeout(60)
+            ->baseUrl('https://api.openai.com/v1');
+    }
+
+    /**
      * Call the OpenAI API
      */
     public function handle(array $config, string $systemPrompt, string $userPrompt): string
     {
-        $client = Http::withToken(config('services.openai.key'))
-            ->baseUrl('https://api.openai.com/v1');
-
         $payload = [
             'model' => $config['model'],
             'messages' => [
@@ -39,7 +47,7 @@ class OpenAiProvider implements AiProviderInterface
             ];
         }
 
-        $response = $client->post('chat/completions', $payload);
+        $response = $this->client()->post('chat/completions', $payload);
 
         if (! $response->successful()) {
             Log::error('OpenAI API error', [
@@ -60,9 +68,6 @@ class OpenAiProvider implements AiProviderInterface
      */
     public function handleWithImages(array $config, string $systemPrompt, string $userPrompt, array $images): string
     {
-        $client = Http::withToken(config('services.openai.key'))
-            ->baseUrl('https://api.openai.com/v1');
-
         // Build message content as an array of text and image_url objects
         $messageContent = [
             ['type' => 'text', 'text' => $userPrompt],
@@ -96,7 +101,7 @@ class OpenAiProvider implements AiProviderInterface
             'temperature' => 0.7,
         ];
 
-        $response = $client->post('chat/completions', $payload);
+        $response = $this->client()->post('chat/completions', $payload);
 
         if (! $response->successful()) {
             Log::error('OpenAI API error with images', [
