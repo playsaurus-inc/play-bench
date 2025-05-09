@@ -35,6 +35,11 @@ class SvgBenchmarkService
     protected const JUDGE_USER_PROMPT = "Judge these two images based on the idea: [IDEA_TEXT]. Image 1 is Player 1's submission and Image 2 is Player 2's submission. Evaluate them based on creativity, adherence to the prompt, technical quality, and visual appeal. Respond with a JSON object with 'winner' (either 'player1' or 'player2') and 'reason' explaining your choice in 2-3 sentences.";
 
     /**
+     * The number of times to retry a failed image generation.
+     */
+    protected int $retryCount = 3;
+
+    /**
      * Create a new service instance.
      */
     public function __construct(
@@ -55,18 +60,19 @@ class SvgBenchmarkService
     /**
      * Run an SVG game
      *
-     * @param  callable|null  $onPromptGenerated  Callback after prompt is generated
-     * @param  callable|null  $onSvgSubmitted  Callback after each SVG is submitted
-     * @param  callable|null  $onJudgingComplete  Callback after judging is complete
+     * @param  callable(SvgGame)|null  $onPromptGenerated  Callback after prompt is generated
+     * @param  callable(SvgGame, SvgPlayer)|null  $onSvgSubmitted  Callback after each SVG is submitted
+     * @param  callable(SvgGame, SvgPlayer, SvgImageException)|null  $onInvalidSvg  Callback after invalid SVG
      */
     public function runGame(
         SvgGame $game,
         ?callable $onPromptGenerated = null,
         ?callable $onSvgSubmitted = null,
+        ?callable $onInvalidSvg = null,
     ): void {
         $onPromptGenerated ??= fn () => null;
         $onSvgSubmitted ??= fn () => null;
-        $onJudgingComplete ??= fn () => null;
+        $onInvalidSvg ??= fn () => null;
 
         // Generate creative prompt
         $prompt = $this->generateImageIdea();
@@ -75,17 +81,10 @@ class SvgBenchmarkService
         $onPromptGenerated($game);
 
         // Get SVG from Player 1
-        $svg1 = $this->getPlayerSvg($game, SvgPlayer::Player1);
-        $game->setSvg(SvgPlayer::Player1, $svg1);
-        $png1Bytes = $this->svgService->svgToPng($svg1, width: 300, height: 300);
-
+        $png1Bytes = $this->attemptToGenerateSvg($game, SvgPlayer::Player1, $onInvalidSvg);
         $onSvgSubmitted($game, SvgPlayer::Player1);
 
-        // Get SVG from Player 2
-        $svg2 = $this->getPlayerSvg($game, SvgPlayer::Player2);
-        $game->setSvg(SvgPlayer::Player2, $svg2);
-        $png2Bytes = $this->svgService->svgToPng($svg2, width: 300, height: 300);
-
+        $png2Bytes = $this->attemptToGenerateSvg($game, SvgPlayer::Player2, $onInvalidSvg);
         $onSvgSubmitted($game, SvgPlayer::Player2);
 
         // Judge the SVGs
@@ -93,6 +92,31 @@ class SvgBenchmarkService
 
         $winner = $judgmentResult['winner'] === 'player1' ? SvgPlayer::Player1 : SvgPlayer::Player2;
         $game->setJudgment($winner, $judgmentResult['reason']);
+    }
+
+    /**
+     * Generates the SVG drawing for the given player
+     *
+     * @param  callable(SvgGame, SvgPlayer, SvgImageException)|null  $onInvalidSvg  Callback after invalid SVG
+     */
+    protected function attemptToGenerateSvg(SvgGame $game, SvgPlayer $player, callable $onInvalidSvg): string
+    {
+        return retry(
+            times: $this->retryCount,
+            callback: function (int $attempts) use ($game, $player) {
+                $svg1 = $this->getPlayerSvg($game, $player, $attempts);
+                $game->setSvg($player, $svg1);
+                return $this->svgService->svgToPng($svg1, width: 300, height: 300);
+            },
+            when: function ($e) use ($game, $player, $onInvalidSvg) {
+                if ($e instanceof SvgImageException) {
+                    $onInvalidSvg($game, $player, $e);
+                    return true; // Retry on invalid SVG
+                }
+
+                return false; // Do not retry on other exceptions
+            },
+        );
     }
 
     /**
@@ -118,27 +142,39 @@ class SvgBenchmarkService
     /**
      * Build SVG creation prompt
      */
-    protected function buildSvgPrompt(string $imageIdea): string
+    protected function buildSvgPrompt(string $imageIdea, int $failedAttempts): string
     {
-        return "Create an imaginative SVG representation of: \"{$imageIdea}\".
+        $prompt = implode("\n", [
+            "Create an imaginative SVG representation of: \"{$imageIdea}\"",
+            '',
+            'Use viewBox=\"0 0 300 300\" for your canvas.',
+            '',
+            'Be creative and detailed in your approach. Consider using:',
+            '- Vibrant colors and gradients',
+            '- Interesting shapes and compositions',
+            '- Visual metaphors and artistic expression',
+            '- A distinctive style that captures the essence of the prompt',
+            '',
+            'Push the boundaries of SVG capabilities while maintaining technical excellence.',
+            '',
+            'Return ONLY valid SVG code in your response.'
+        ]);
 
-Use viewBox=\"0 0 300 300\" for your canvas.
+        if ($failedAttempts > 1) {
+            // This is a lie, we don't disqualify players for invalid SVGs. We just ignore the match.
+            // But we want to encourage them to do better, and using a treat is an effective way to do that.
+            $prompt .= "\nWARNING: This is your failed attempt #$failedAttempts out of {$this->retryCount}.\n";
+            $prompt .= "\nIf you don't provide a valid SVG that could be parsed with standard norms, you will be disqualified and lose the game.\n";
+            $prompt .= "\nYour number one priority should be to formulate a valid SVG.\n";
+        }
 
-Be creative and detailed in your approach. Consider using:
-- Vibrant colors and gradients
-- Interesting shapes and compositions
-- Visual metaphors and artistic expression
-- A distinctive style that captures the essence of the prompt
-
-Push the boundaries of SVG capabilities while maintaining technical excellence.
-
-Return ONLY valid SVG code in your response.";
+        return $prompt;
     }
 
     /**
      * Get SVG from a player
      */
-    protected function getPlayerSvg(SvgGame $game, SvgPlayer $player): string
+    protected function getPlayerSvg(SvgGame $game, SvgPlayer $player, int $attempts): string
     {
         $model = $game->getPlayer($player);
 
@@ -146,7 +182,7 @@ Return ONLY valid SVG code in your response.";
             return $this->defaultSvg();
         }
 
-        $prompt = $this->buildSvgPrompt($game->getPrompt());
+        $prompt = $this->buildSvgPrompt($game->getPrompt(), $attempts);
 
         $response = $this->aiClient->getResponse($model->slug, self::SVG_SYSTEM_PROMPT, $prompt);
 
