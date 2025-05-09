@@ -348,11 +348,11 @@
                                             <!-- Comparison indicator -->
                                             <div class="w-12 flex items-center justify-center">
                                                 @if(isset($feature['delta']) && is_numeric($feature['delta']))
-                                                    @if($feature['delta'] > 0)
+                                                    @if($feature['delta'] < 0)
                                                         <span class="size-6 rounded-full bg-red-100 flex items-center justify-center" title="Player 1 has higher value">
                                                             <x-phosphor-less-than-bold class="size-4 text-red-700" />
                                                         </span>
-                                                    @elseif($feature['delta'] < 0)
+                                                    @elseif($feature['delta'] > 0)
                                                         <span class="size-6 rounded-full bg-blue-100 flex items-center justify-center" title="Player 2 has higher value">
                                                             <x-phosphor-greater-than-bold class="size-4 text-blue-700" />
                                                         </span>
