@@ -49,6 +49,7 @@ class DeleteModel extends Command
 
         if (! $model) {
             $this->error("Model with slug '{$modelSlug}' not found.");
+
             return Command::FAILURE;
         }
 
