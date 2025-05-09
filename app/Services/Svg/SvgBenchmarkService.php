@@ -106,11 +106,13 @@ class SvgBenchmarkService
             callback: function (int $attempts) use ($game, $player) {
                 $svg1 = $this->getPlayerSvg($game, $player, $attempts);
                 $game->setSvg($player, $svg1);
+
                 return $this->svgService->svgToPng($svg1, width: 300, height: 300);
             },
             when: function ($e) use ($game, $player, $onInvalidSvg) {
                 if ($e instanceof SvgImageException) {
                     $onInvalidSvg($game, $player, $e);
+
                     return true; // Retry on invalid SVG
                 }
 
@@ -157,7 +159,7 @@ class SvgBenchmarkService
             '',
             'Push the boundaries of SVG capabilities while maintaining technical excellence.',
             '',
-            'Return ONLY valid SVG code in your response.'
+            'Return ONLY valid SVG code in your response.',
         ]);
 
         if ($failedAttempts > 1) {
