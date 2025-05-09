@@ -24,6 +24,18 @@ class EloRatingService
     protected const DEFAULT_ELO = 1000;
 
     /**
+     * Update all ELO ratings for all matches.
+     */
+    public function updateAll(): void
+    {
+        $this->updateRpsEloRatings();
+        $this->updateSvgEloRatings();
+        $this->updateChessEloRatings();
+
+        $this->updateOverallEloRatings();
+    }
+
+    /**
      * Update ELO ratings for all RPS matches.
      */
     public function updateRpsEloRatings(): void

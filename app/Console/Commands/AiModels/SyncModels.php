@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\AiModels;
 
 use App\Models\AiModel;
 use App\Services\AiClient\AiClientService;
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
 
-class SyncAiModelsCommand extends Command
+class SyncModels extends Command
 {
     use ConfirmableTrait;
 
@@ -16,7 +16,7 @@ class SyncAiModelsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'app:sync-ai-models
+    protected $signature = 'ai-models:sync
         {--force : Force the operation to run when in production}';
 
     /**
