@@ -108,6 +108,7 @@ trait RunsMatchups
             }
 
             app(EloRatingService::class)->updateEloRatings($gameType);
+            app(EloRatingService::class)->updateOverallEloRatings();
 
             $this->reportResult($rankedMatch);
 

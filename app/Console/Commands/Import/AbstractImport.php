@@ -72,6 +72,9 @@ abstract class AbstractImport extends Command
      */
     protected function aiModel(string $name): AiModel
     {
-        return AiModel::firstOrCreate(['slug' => Str::slug($name)]);
+        return AiModel::query()->firstOrCreate(
+            ['slug' => Str::slug($name)],
+            ['name' => $name],
+        );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Import;
 
+use App\Console\Commands\CalculateElo;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
 
@@ -43,20 +44,20 @@ class ImportAll extends Command
         }
 
         $this->components->task('Importing Chess Matches', function () {
-            return $this->callSilently('import:chess', ['--fresh' => $this->option('fresh')]) === 0;
+            return $this->call('import:chess', ['--fresh' => $this->option('fresh')]) === 0;
         });
 
         $this->components->task('Importing Rock-Paper-Scissors Matches', function () {
-            return $this->callSilently('import:rps', ['--fresh' => $this->option('fresh')]) === 0;
+            return $this->call('import:rps', ['--fresh' => $this->option('fresh')]) === 0;
         });
 
         $this->components->task('Importing SVG Matches', function () {
-            return $this->callSilently('import:svg', ['--fresh' => $this->option('fresh')]) === 0;
+            return $this->call('import:svg', ['--fresh' => $this->option('fresh')]) === 0;
         });
 
         if (! $this->option('skip-elo')) {
             $this->components->task('Calculating ELO Ratings', function () {
-                return $this->callSilently('calculate:elo') === 0;
+                return $this->call(CalculateElo::class) === 0;
             });
         }
 
