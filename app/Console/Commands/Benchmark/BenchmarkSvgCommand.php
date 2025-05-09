@@ -55,6 +55,7 @@ class BenchmarkSvgCommand extends Command
                 game: $game,
                 onPromptGenerated: fn ($game) => $this->reportPromptGenerated($game),
                 onSvgSubmitted: fn ($game, $player) => $this->reportSvgSubmission($game, $player),
+                onInvalidSvg: fn ($game, $player, $e) => $this->reportInvalidSvg($game, $player, $e),
             );
 
             return $this->createMatch($game);
@@ -115,6 +116,17 @@ class BenchmarkSvgCommand extends Command
         $count = strlen($game->getPlayerSvg($player) ?? '');
 
         $this->line("$emoji SVG submitted by {$game->getPlayer($player)->name} ($count characters)");
+    }
+
+    /**
+     * Report when an invalid SVG is submitted.
+     */
+    protected function reportInvalidSvg(SvgGame $game, SvgPlayer $player, Exception $e): void
+    {
+        $emoji = $player === SvgPlayer::Player1 ? '🔴' : '🔵';
+        $this->newLine();
+        $this->error("$emoji Invalid SVG submitted by {$game->getPlayer($player)->name}");
+        $this->error('⚠️ '.$e->getMessage());
     }
 
     /**

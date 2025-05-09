@@ -2,6 +2,7 @@
 
 namespace App\Services\Svg;
 
+use Illuminate\Process\Exceptions\ProcessFailedException;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
@@ -68,6 +69,8 @@ class SvgImageService
 
     /**
      * Convert SVG to PNG binary data.
+     *
+     * @throws SvgImageException
      */
     protected function convertSvgToPng(string $svgString, int $width, int $height): string
     {
@@ -90,6 +93,12 @@ class SvgImageService
             ])->throw();
 
             return file_get_contents($outputFile);
+        } catch (ProcessFailedException $e) {
+            throw new SvgImageException(
+                message: 'SVG to PNG conversion failed: '.$e->result->errorOutput(),
+                code: $e->getCode(),
+                previous: $e
+            );
         } finally {
             if (file_exists($inputFile)) {
                 unlink($inputFile);
