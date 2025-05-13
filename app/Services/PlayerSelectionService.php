@@ -117,4 +117,27 @@ class PlayerSelectionService
             random: true,
         );
     }
+
+    /**
+     * Creates a matchup object between two random players.
+     */
+    public function random(string $gameType, ?iterable $aiModels = null): Matchup
+    {
+        $aiModels = collect($aiModels ?? AiModel::all())
+            ->reject(fn (AiModel $model) => $model->slug === 'random');
+
+        if ($aiModels->count() < 2) {
+            return null; // Not enough models to form a pair
+        }
+
+        $player1 = $aiModels->random();
+        $player2 = $aiModels->where('id', '!=', $player1->id)->random();
+
+        return new Matchup(
+            player1: $player1,
+            player2: $player2,
+            matchesPlayed: 0,
+            random: true,
+        );
+    }
 }
