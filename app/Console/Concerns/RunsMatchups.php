@@ -35,7 +35,7 @@ trait RunsMatchups
         }
 
         if ($this->option('no-interaction')) {
-            return app(PlayerSelectionService::class)->first($game, $aiModels);
+            return app(PlayerSelectionService::class)->random($game, $aiModels);
         }
 
         $aiModels = collect($aiModels);
