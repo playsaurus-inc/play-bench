@@ -165,6 +165,44 @@ return [
             'max_tokens' => 8192,
             'games' => '*',
         ],
+        'claude-opus-4-20250514-nothink' => [
+            'provider' => 'anthropic',
+            'model' => 'claude-opus-4-20250514',
+            'name' => 'Claude Opus 4 (2025-05-14)',
+            'max_tokens' => 32000,
+            'games' => '*',
+        ],
+        'claude-opus-4-20250514-thinking' => [
+            'provider' => 'anthropic',
+            'model' => 'claude-opus-4-20250514',
+            'name' => 'Claude Opus 4 Thinking (2025-05-14)',
+            'temperature' => 1.0, // Must be 1.0 for thinking
+            'max_tokens' => 32000,
+            'thinking' => [
+                'type' => 'enabled',
+                'budget_tokens' => 20000,
+            ],
+            'games' => '*',
+        ],
+        'claude-sonnet-4-20250514-nothink' => [
+            'provider' => 'anthropic',
+            'model' => 'claude-sonnet-4-20250514',
+            'name' => 'Claude Sonnet 4 (2025-05-14)',
+            'max_tokens' => 32000,
+            'games' => '*',
+        ],
+        'claude-sonnet-4-20250514-thinking' => [
+            'provider' => 'anthropic',
+            'model' => 'claude-sonnet-4-20250514',
+            'name' => 'Claude Sonnet 4 Thinking (2025-05-14)',
+            'temperature' => 1.0, // Must be 1.0 for thinking
+            'max_tokens' => 32000,
+            'thinking' => [
+                'type' => 'enabled',
+                'budget_tokens' => 20000,
+            ],
+            'games' => '*',
+        ],
 
         // Groq models
         'llama3-70b-8192' => [ // Developer=Meta
