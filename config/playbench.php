@@ -30,6 +30,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Matchup configuration
+    |--------------------------------------------------------------------------
+    |
+    | The algorithm used to determine the participants in a matchup.
+    | Values can be: `random`, `less_matches`
+    |
+    */
+
+    'matchup_algorithm' => env('PLAYBENCH_MATCHUP_ALGORITHM', 'random'),
+
+    /*
+    |--------------------------------------------------------------------------
     | AI Models
     |--------------------------------------------------------------------------
     |
