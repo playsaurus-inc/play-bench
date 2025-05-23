@@ -12,6 +12,24 @@ use InvalidArgumentException;
 class PlayerSelectionService
 {
     /**
+     * Get a matchup between two players.
+     *
+     * @param  string  $gameType  The type of game (e.g., 'rps', 'chess', 'svg').
+     * @param  iterable<AiModel>|null  $aiModels  The AI models to consider for selection. By default, all models (excluding 'random' slug) are used.
+     * @return Matchup|null The matchup object, or null if not enough players are available.
+     */
+    public function first(string $gameType, ?iterable $aiModels = null): Matchup
+    {
+        $algorithm = config('playbench.matchup_algorithm', 'random');
+
+        return match ($algorithm) {
+            'random' => $this->getRandom($gameType, $aiModels),
+            'less_matches' => $this->getLessMatches($gameType, $aiModels)->first(),
+            default => throw new InvalidArgumentException("Invalid matchup algorithm: {$algorithm}"),
+        };
+    }
+
+    /**
      * Returns a collection of all unique player pairs, sorted by the number of matches
      * played against each other in ascending order.
      *
@@ -19,7 +37,7 @@ class PlayerSelectionService
      * @param  iterable<AiModel>|null  $aiModels  The AI models to consider for selection. By default, all models (excluding 'random' slug) are used.
      * @return Collection<int, Matchup> A collection of Matchup objects representing the player pairs.
      */
-    public function get(string $gameType, ?iterable $aiModels = null): Collection
+    protected function getLessMatches(string $gameType, ?iterable $aiModels = null): Collection
     {
         $aiModels = collect($aiModels ?? AiModel::all())
             ->reject(fn (AiModel $model) => $model->slug === 'random');
@@ -46,18 +64,6 @@ class PlayerSelectionService
             ))
             ->sortBy('matchesPlayed')
             ->values(); // Re-index the collection
-    }
-
-    /**
-     * Returns the player pair with the least number of matches played.
-     *
-     * @param  string  $gameType  The type of game (e.g., 'rps', 'chess', 'svg').
-     * @param  iterable<AiModel>|null  $aiModels  The AI models to consider for selection. By default, all models (excluding 'random' slug) are used.
-     * @return Matchup|null The selected player pair with the least number of matches played, or null if no pairs are found.
-     */
-    public function first(string $gameType, ?iterable $aiModels = null): ?Matchup
-    {
-        return $this->get($gameType, $aiModels)->first();
     }
 
     /**
@@ -121,7 +127,7 @@ class PlayerSelectionService
     /**
      * Creates a matchup object between two random players.
      */
-    public function random(string $gameType, ?iterable $aiModels = null): Matchup
+    protected function getRandom(string $gameType, ?iterable $aiModels = null): Matchup
     {
         $aiModels = collect($aiModels ?? AiModel::all())
             ->reject(fn (AiModel $model) => $model->slug === 'random');
@@ -133,11 +139,6 @@ class PlayerSelectionService
         $player1 = $aiModels->random();
         $player2 = $aiModels->where('id', '!=', $player1->id)->random();
 
-        return new Matchup(
-            player1: $player1,
-            player2: $player2,
-            matchesPlayed: 0,
-            random: true,
-        );
+        return $this->matchup($gameType, $player1, $player2);
     }
 }
