@@ -62,6 +62,7 @@ class PlayerSelectionService
                 matchesPlayed: $countByPairs->get($this->getKey($p1->id, $p2->id), 0),
                 random: true,
             ))
+            ->shuffle()
             ->sortBy('matchesPlayed')
             ->values(); // Re-index the collection
     }

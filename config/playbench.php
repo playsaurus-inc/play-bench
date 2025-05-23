@@ -40,6 +40,15 @@ return [
 
     'matchup_algorithm' => env('PLAYBENCH_MATCHUP_ALGORITHM', 'random'),
 
+    'auto_run' => [
+        'matches' => env('AUTO_RUN_MATCHES', 10),
+        'notify_to' => explode(',', env('AUTO_RUN_NOTIFY_TO', '')),
+
+        'svg' => env('AUTO_RUN_SVG', false),
+        'rps' => env('AUTO_RUN_RPS', false),
+        'chess' => env('AUTO_RUN_CHESS', false),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | AI Models
