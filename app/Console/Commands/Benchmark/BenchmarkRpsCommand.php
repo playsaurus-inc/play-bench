@@ -7,8 +7,10 @@ use App\Models\RpsMatch;
 use App\Services\Matchup;
 use App\Services\Rps\RpsBenchmarkService;
 use App\Services\Rps\RpsGame;
+use App\Services\Rps\RpsPlayer;
 use App\Services\Rps\RpsRound;
 use App\Services\Rps\RpsRoundResult;
+use Exception;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
 
@@ -50,6 +52,7 @@ class BenchmarkRpsCommand extends Command
             app(RpsBenchmarkService::class)->runGame(
                 game: $game,
                 onRoundComplete: fn (RpsRound $round) => $this->reportRound($game, $round),
+                onIllegalMove: fn (RpsGame $game, RpsPlayer $player, Exception $e) => $this->reportIllegalMove($game, $player, $e),
             );
 
             return $this->createMatch($game);
@@ -80,6 +83,19 @@ class BenchmarkRpsCommand extends Command
         $this->newLine();
         $this->line("Round $roundNumber: $move1 vs $move2 ($winner)");
         $this->line("Score: 🔴 $score1 - 🔵 $score2");
+    }
+
+    /**
+     * Report an illegal move.
+     */
+    protected function reportIllegalMove(RpsGame $game, RpsPlayer $player, Exception $e): void
+    {
+        $this->warn(sprintf(
+            'Illegal move: %s (%s) attempted %s',
+            $game->getPlayer($player)->name,
+            $player->name(),
+            $e->getMessage()
+        ));
     }
 
     /**

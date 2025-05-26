@@ -4,10 +4,16 @@ namespace App\Services\Rps;
 
 use App\Models\AiModel;
 use App\Services\AiClient\AiClientService;
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
 
 class RpsBenchmarkService
 {
+    /**
+     * The number of times to retry a failed move.
+     */
+    protected int $retryCount = 3;
+
     /**
      * Create a new service instance.
      */
@@ -29,14 +35,19 @@ class RpsBenchmarkService
      * Run a single RPS match between two AI models
      *
      * @param null|callable<RpsRound> onRoundComplete Callback to be called after each round
+     * @param null|callable<RpsGame, RpsPlayer, Exception> onIllegalMove Callback to be called when an illegal move is made
      */
-    public function runGame(RpsGame $game, ?callable $onRoundComplete = null): void
-    {
+    public function runGame(
+        RpsGame $game,
+        ?callable $onRoundComplete = null,
+        ?callable $onIllegalMove = null,
+    ): void {
         $onRoundComplete = $onRoundComplete ?? fn () => null;
+        $onIllegalMove = $onIllegalMove ?? fn () => null;
 
         while (! $game->isOver()) {
-            $player1Move = $this->getMove($game, RpsPlayer::Player1);
-            $player2Move = $this->getMove($game, RpsPlayer::Player2);
+            $player1Move = $this->getMove($game, RpsPlayer::Player1, $onIllegalMove);
+            $player2Move = $this->getMove($game, RpsPlayer::Player2, $onIllegalMove);
 
             $round = $game->addRound(new RpsRound($player1Move, $player2Move));
 
@@ -46,8 +57,10 @@ class RpsBenchmarkService
 
     /**
      * Request a move from the AI model
+     *
+     * @param  callable<RpsGame, RpsPlayer, Exception>  $onIllegalMove  Callback to be called when an illegal move is made
      */
-    protected function getMove(RpsGame $game, RpsPlayer $player): RpsMove
+    protected function getMove(RpsGame $game, RpsPlayer $player, callable $onIllegalMove): RpsMove
     {
         $aiModel = $game->getPlayer($player);
 
@@ -55,13 +68,20 @@ class RpsBenchmarkService
             return RpsMove::random();
         }
 
-        $response = $this->aiClient->getResponse(
-            model: $aiModel->slug,
-            systemPrompt: $this->buildSystemPrompt($player),
-            userPrompt: $this->buildUserPrompt($game, $player),
-        );
+        return retry(
+            times: $this->retryCount,
+            callback: function (int $attempts) use ($game, $player, $aiModel) {
+                $response = $this->aiClient->getResponse(
+                    model: $aiModel->slug,
+                    systemPrompt: $this->buildSystemPrompt($player),
+                    userPrompt: $this->buildUserPrompt($game, $player, $attempts),
+                );
 
-        return $this->extractMoveFromResponse($response);
+                return $this->extractMoveFromResponse($response);
+            },
+            sleepMilliseconds: 1000,
+            when: fn (Exception $e) => $onIllegalMove($game, $player, $e) !== false,
+        );
     }
 
     /**
@@ -91,7 +111,7 @@ class RpsBenchmarkService
     /**
      * Build the player prompt with current game state
      */
-    public function buildUserPrompt(RpsGame $game, RpsPlayer $player): string
+    public function buildUserPrompt(RpsGame $game, RpsPlayer $player, int $failedAttempts): string
     {
         $prompt = "Game: Rock-Paper-Scissors\n";
         $prompt .= "You are: {$player->name()}\n";
@@ -106,6 +126,12 @@ class RpsBenchmarkService
 
         $prompt .= "Legal moves: rock, paper, scissors\n";
         $prompt .= 'Please provide your move in JSON format (e.g., {"move":"rock"}).';
+
+        if ($failedAttempts > 1) {
+            $prompt .= "\nWARNING: This is your failed attempt #$failedAttempts out of {$this->retryCount}.\n";
+            $prompt .= "\nIf you don't provide a valid move, you will be disqualified and lose the game.\n";
+            $prompt .= "\nYour number one priority should be to make a valid move.\n";
+        }
 
         return $prompt;
     }
