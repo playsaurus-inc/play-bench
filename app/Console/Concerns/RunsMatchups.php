@@ -8,6 +8,7 @@ use App\Services\AiClient\AiClientService;
 use App\Services\EloRatingService;
 use App\Services\Matchup;
 use App\Services\PlayerSelectionService;
+use Carbon\CarbonInterface;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Number;
@@ -143,13 +144,16 @@ trait RunsMatchups
         $elo1 = $matchup->player1->{$game.'_elo'};
         $elo2 = $matchup->player2->{$game.'_elo'};
 
+        $eloDifference = abs($elo1 - $elo2);
+        $eloPlayer = $elo1 > $elo2 ? '🔴 Player 1' : '🔵 Player 2';
+
         $this->newLine();
         $this->info('Game started');
         $this->line("- 🎮 Game: $game");
         $this->line("- 🔴 Player 1: {$matchup->player1->name}. ELO: ".Number::format($elo1, 0));
         $this->line("- 🔵 Player 2: {$matchup->player2->name}. ELO: ".Number::format($elo2, 0));
         $this->line('- 📊 Games played: '.Number::format($matchup->matchesPlayed, 0));
-        $this->line('- 📈 ELO difference: '.Number::format($elo1 - $elo2, 0));
+        $this->line('- 📈 ELO difference: +'.Number::format($eloDifference, 0).' for '.$eloPlayer);
     }
 
     /**
@@ -169,7 +173,7 @@ trait RunsMatchups
             '🔴 Player 1' => $match->getPlayer1()->name,
             '🔵 Player 2' => $match->getPlayer2()->name,
             '🏆 Winner' => $outcome,
-            '⏱️ Time taken' => $match->ended_at->diffInSeconds($match->started_at),
+            '⏱️ Time taken' => $match->started_at->diffForHumans($match->ended_at, CarbonInterface::DIFF_ABSOLUTE),
             '🔗 Match URL' => "<href=$url>$url</>",
         ], $this->getExtraInfo($match));
 
