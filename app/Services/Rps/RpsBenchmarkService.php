@@ -41,8 +41,7 @@ class RpsBenchmarkService
         RpsGame $game,
         ?callable $onRoundComplete = null,
         ?callable $onIllegalMove = null,
-    ): void
-    {
+    ): void {
         $onRoundComplete = $onRoundComplete ?? fn () => null;
         $onIllegalMove = $onIllegalMove ?? fn () => null;
 
@@ -59,7 +58,7 @@ class RpsBenchmarkService
     /**
      * Request a move from the AI model
      *
-     * @param callable<RpsGame, RpsPlayer, Exception> $onIllegalMove Callback to be called when an illegal move is made
+     * @param  callable<RpsGame, RpsPlayer, Exception>  $onIllegalMove  Callback to be called when an illegal move is made
      */
     protected function getMove(RpsGame $game, RpsPlayer $player, callable $onIllegalMove): RpsMove
     {
