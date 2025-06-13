@@ -5700,7 +5700,7 @@
         },
         {
             "name": "symfony/postmark-mailer",
-            "version": "v7.2.6",
+            "version": "v7.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/postmark-mailer.git",
@@ -5750,7 +5750,7 @@
             "description": "Symfony Postmark Mailer Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/postmark-mailer/tree/v7.2.6"
+                "source": "https://github.com/symfony/postmark-mailer/tree/v7.3.0"
             },
             "funding": [
                 {
