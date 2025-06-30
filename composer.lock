@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4c38ad2620cffaa9c13da2f45872cad2",
+    "content-hash": "8b336e5069c1b3da993898bd4e445f71",
     "packages": [
         {
             "name": "blade-ui-kit/blade-icons",
@@ -2859,16 +2859,16 @@
         },
         {
             "name": "p-chess/chess",
-            "version": "0.6.0",
+            "version": "0.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/p-chess/chess.git",
-                "reference": "795b413a0ddec3f500a3d3001ef43bf964147d69"
+                "reference": "03be66eab66f2f6dc68e3e2caa262d02f67d28d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/p-chess/chess/zipball/795b413a0ddec3f500a3d3001ef43bf964147d69",
-                "reference": "795b413a0ddec3f500a3d3001ef43bf964147d69",
+                "url": "https://api.github.com/repos/p-chess/chess/zipball/03be66eab66f2f6dc68e3e2caa262d02f67d28d8",
+                "reference": "03be66eab66f2f6dc68e3e2caa262d02f67d28d8",
                 "shasum": ""
             },
             "require": {
@@ -2919,9 +2919,9 @@
             "description": "A PHP chess library that is used for chess move generation/validation, piece placement/movement, and check/checkmate/stalemate detection",
             "support": {
                 "issues": "https://github.com/p-chess/chess/issues",
-                "source": "https://github.com/p-chess/chess/tree/0.6.0"
+                "source": "https://github.com/p-chess/chess/tree/0.7.0"
             },
-            "time": "2025-01-04T09:34:07+00:00"
+            "time": "2025-06-28T09:20:26+00:00"
         },
         {
             "name": "phpoption/phpoption",
