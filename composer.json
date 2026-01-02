@@ -18,7 +18,7 @@
         "owenvoke/blade-fontawesome": "^2.9",
         "p-chess/chess": "^0.7.0",
         "sentry/sentry-laravel": "^4.13",
-        "symfony/http-client": "^7.2",
+        "symfony/http-client": "^8.0",
         "symfony/postmark-mailer": "^8.0"
     },
     "require-dev": {
