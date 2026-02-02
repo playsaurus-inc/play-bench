@@ -22,3 +22,15 @@ yarn-error.log
 /.vscode
 /.zed
 /.cursor
+
+# Laravel Boost
+/.gemini
+/.claude
+/.github/skills
+/.codex
+/.mcp.json
+/boost.json
+/AGENTS.md
+/GEMINI.md
+/CLAUDE.md
+/.github/copilot-instructions.md
