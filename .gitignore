@@ -29,6 +29,7 @@ yarn-error.log
 /.github/skills
 /.codex
 /.mcp.json
+/.agents
 /boost.json
 /AGENTS.md
 /GEMINI.md
