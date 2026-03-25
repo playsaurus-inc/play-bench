@@ -3,33 +3,37 @@
 namespace App\Models;
 
 use App\Models\Contracts\RankedMatch;
+use Database\Factories\ChessMatchFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ChessMatch extends Model implements RankedMatch
 {
-    /** @use HasFactory<\Database\Factories\ChessMatchFactory> */
+    /** @use HasFactory<ChessMatchFactory> */
     use HasFactory;
 
     /**
-     * The attributes that should be cast.
+     * Get the attributes that should be cast.
      *
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        'started_at' => 'datetime',
-        'ended_at' => 'datetime',
-        'is_forced_completion' => 'boolean',
-        'illegal_moves_white' => 'integer',
-        'illegal_moves_black' => 'integer',
-        'ply_count' => 'integer',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'started_at' => 'datetime',
+            'ended_at' => 'datetime',
+            'is_forced_completion' => 'boolean',
+            'illegal_moves_white' => 'integer',
+            'illegal_moves_black' => 'integer',
+            'ply_count' => 'integer',
+        ];
+    }
 
     /**
      * Perform any actions required before the model boots.
      */
-    protected static function booting()
+    protected static function booting(): void
     {
         static::saving(function (self $model) {
             if (! $model->winner_id) {

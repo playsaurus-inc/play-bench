@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Database\Factories\AiModelFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,15 +11,13 @@ use Illuminate\Support\Str;
 
 class AiModel extends Model
 {
-    /** @use HasFactory<\Database\Factories\AiModelFactory> */
+    /** @use HasFactory<AiModelFactory> */
     use HasFactory;
 
     /**
      * Perform any actions required before the model boots.
-     *
-     * @return void
      */
-    protected static function booting()
+    protected static function booting(): void
     {
         static::saving(function (self $model) {
             if (! $model->slug) {
@@ -170,7 +170,7 @@ class AiModel extends Model
     /**
      * Get all RPS matches this AI model participated in
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function allRpsMatches()
     {
@@ -180,7 +180,7 @@ class AiModel extends Model
     /**
      * Get all SVG matches this AI model participated in
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function allSvgMatches()
     {
@@ -190,7 +190,7 @@ class AiModel extends Model
     /**
      * Get all chess matches this AI model participated in
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function allChessMatches()
     {
