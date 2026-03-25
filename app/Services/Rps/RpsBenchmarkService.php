@@ -97,7 +97,7 @@ class RpsBenchmarkService
             return RpsMove::parse($matches[1]);
         }
 
-        throw new \Exception('Could not parse RPS move from response: '.$response);
+        throw new Exception('Could not parse RPS move from response: '.$response);
     }
 
     /**

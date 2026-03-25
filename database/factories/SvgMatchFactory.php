@@ -3,11 +3,12 @@
 namespace Database\Factories;
 
 use App\Models\AiModel;
+use App\Models\SvgMatch;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\SvgMatch>
+ * @extends Factory<SvgMatch>
  */
 class SvgMatchFactory extends Factory
 {

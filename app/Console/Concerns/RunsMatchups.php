@@ -10,13 +10,14 @@ use App\Services\Matchup;
 use App\Services\PlayerSelectionService;
 use Carbon\CarbonInterface;
 use Exception;
+use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Number;
 
 use function Laravel\Prompts\select;
 
 /**
- * @mixin \Illuminate\Console\Command
+ * @mixin Command
  */
 trait RunsMatchups
 {

@@ -3,10 +3,11 @@
 namespace Database\Factories;
 
 use App\Models\AiModel;
+use App\Models\ChessMatch;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ChessMatch>
+ * @extends Factory<ChessMatch>
  */
 class ChessMatchFactory extends Factory
 {
