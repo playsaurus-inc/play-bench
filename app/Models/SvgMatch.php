@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Contracts\RankedMatch;
 use App\Services\Svg\SvgAnalysisService;
+use Database\Factories\SvgMatchFactory;
 use Illuminate\Contracts\Filesystem\Cloud;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,32 +15,33 @@ use Illuminate\Support\Facades\Storage;
 
 class SvgMatch extends Model implements RankedMatch
 {
-    /** @use HasFactory<\Database\Factories\SvgMatchFactory> */
+    /** @use HasFactory<SvgMatchFactory> */
     use HasFactory;
 
     /**
-     * The attributes that should be cast.
+     * Get the attributes that should be cast.
      *
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        'started_at' => 'datetime',
-        'ended_at' => 'datetime',
-        'is_forced_completion' => 'boolean',
-        'player1_elo_before' => 'float',
-        'player2_elo_before' => 'float',
-        'player1_elo_after' => 'float',
-        'player2_elo_after' => 'float',
-        'player1_features' => 'array',
-        'player2_features' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'started_at' => 'datetime',
+            'ended_at' => 'datetime',
+            'is_forced_completion' => 'boolean',
+            'player1_elo_before' => 'float',
+            'player2_elo_before' => 'float',
+            'player1_elo_after' => 'float',
+            'player2_elo_after' => 'float',
+            'player1_features' => 'array',
+            'player2_features' => 'array',
+        ];
+    }
 
     /**
      * Perform any actions required before the model boots.
-     *
-     * @return void
      */
-    protected static function booting()
+    protected static function booting(): void
     {
         static::saving(function (self $model) {
             if (! isset($model->loser_id)) {

@@ -4,6 +4,7 @@ namespace App\Console\Commands\Import;
 
 use App\Models\AiModel;
 use Illuminate\Console\Command;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -62,7 +63,7 @@ abstract class AbstractImport extends Command
     /**
      * Get a query builder for the source database.
      */
-    protected function getSourceQuery(string $table): \Illuminate\Database\Query\Builder
+    protected function getSourceQuery(string $table): Builder
     {
         return DB::connection('benchmark_source')->table($table);
     }

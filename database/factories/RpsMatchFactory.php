@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\AiModel;
+use App\Models\RpsMatch;
 use App\Services\Rps\RpsMove;
 use App\Services\Rps\RpsRound;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -10,7 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\RpsMatch>
+ * @extends Factory<RpsMatch>
  */
 class RpsMatchFactory extends Factory
 {

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Contracts\RankedMatch;
 use App\Services\Rps\RpsMatchAnalysisService;
 use App\Support\Statistics;
+use Database\Factories\RpsMatchFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -16,34 +17,35 @@ use Illuminate\Support\Str;
 
 class RpsMatch extends Model implements RankedMatch
 {
-    /** @use HasFactory<\Database\Factories\RpsMatchFactory> */
+    /** @use HasFactory<RpsMatchFactory> */
     use HasFactory;
 
     /**
-     * The attributes that should be cast.
+     * Get the attributes that should be cast.
      *
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        'started_at' => 'datetime',
-        'ended_at' => 'datetime',
-        'is_forced_completion' => 'boolean',
-        'move_history' => 'string',
-        'rounds_played' => 'integer',
-        'player1_score' => 'integer',
-        'player2_score' => 'integer',
-        'player1_win_streak' => 'integer',
-        'player2_win_streak' => 'integer',
-        'player1_move_distribution' => 'array',
-        'player2_move_distribution' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'started_at' => 'datetime',
+            'ended_at' => 'datetime',
+            'is_forced_completion' => 'boolean',
+            'move_history' => 'string',
+            'rounds_played' => 'integer',
+            'player1_score' => 'integer',
+            'player2_score' => 'integer',
+            'player1_win_streak' => 'integer',
+            'player2_win_streak' => 'integer',
+            'player1_move_distribution' => 'array',
+            'player2_move_distribution' => 'array',
+        ];
+    }
 
     /**
      * Perform any actions required before the model boots.
-     *
-     * @return void
      */
-    protected static function booting()
+    protected static function booting(): void
     {
         static::saving(function (self $model) {
             if (! isset($model->player1_score)) {

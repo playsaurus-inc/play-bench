@@ -8,6 +8,7 @@ use App\Models\Contracts\RankedMatch;
 use App\Models\RpsMatch;
 use App\Models\SvgMatch;
 use App\Support\Statistics;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class EloRatingService
@@ -180,9 +181,9 @@ class EloRatingService
      * Get all matches of a specific type sorted by creation date.
      *
      * @param  string  $gameType  The game type ('rps', 'svg', or 'chess')
-     * @return \Illuminate\Database\Eloquent\Collection<RankedMatch> Collection of matches
+     * @return Collection<RankedMatch> Collection of matches
      */
-    protected function getMatchesByType(string $gameType): \Illuminate\Database\Eloquent\Collection
+    protected function getMatchesByType(string $gameType): Collection
     {
         return match ($gameType) {
             'rps' => RpsMatch::with(['player1', 'player2'])->orderBy('created_at')->get(),

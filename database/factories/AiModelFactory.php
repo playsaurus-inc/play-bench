@@ -6,7 +6,7 @@ use App\Models\AiModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AiModel>
+ * @extends Factory<AiModel>
  */
 class AiModelFactory extends Factory
 {

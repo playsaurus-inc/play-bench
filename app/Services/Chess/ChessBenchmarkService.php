@@ -101,13 +101,13 @@ class ChessBenchmarkService
         $response = $this->aiClient->getResponse($aiModel->slug, $systemPrompt, $playerPrompt);
 
         if (empty($response)) {
-            throw new \Exception('Empty response from AI model: '.$aiModel->name);
+            throw new Exception('Empty response from AI model: '.$aiModel->name);
         }
 
         $data = json_decode($response, true);
         $moveId = $data['move_id']
             ?? $data['move']
-            ?? throw new \Exception('Invalid response format: '.$response);
+            ?? throw new Exception('Invalid response format: '.$response);
 
         return $game->findValidMoveById((int) $moveId);
     }
