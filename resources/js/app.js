@@ -1,5 +1,4 @@
 import Alpine from 'alpinejs'
-import './bootstrap';
 import { animatedCounter } from './animated-counter';
 import Chart from 'chart.js/auto';
 import hljs from 'highlight.js/lib/core';
