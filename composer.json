@@ -17,7 +17,7 @@
         "laravel/tinker": "^3.0",
         "owenvoke/blade-fontawesome": "^3.0",
         "p-chess/chess": "^1.1.0",
-        "sentry/sentry-laravel": "^4.13",
+        "sentry/sentry-laravel": "^4.23",
         "symfony/http-client": "^8.0",
         "symfony/postmark-mailer": "^8.0"
     },
