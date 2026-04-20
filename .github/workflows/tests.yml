@@ -74,3 +74,23 @@ jobs:
 
     - name: Check code style
       run: ./vendor/bin/pint --test
+
+  frontend-tests:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Install Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: '22.x'
+        cache: 'npm'
+
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Build assets
+      run: npm run build
