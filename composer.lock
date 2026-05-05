@@ -5939,16 +5939,16 @@
         },
         {
             "name": "symfony/postmark-mailer",
-            "version": "v8.0.4",
+            "version": "v8.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/postmark-mailer.git",
-                "reference": "361d35c13bc3accad178e0bcaceb0d7d7f4f74eb"
+                "reference": "506fc3ab9b235b1ecdd56d6c8249ef574a0e90f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/postmark-mailer/zipball/361d35c13bc3accad178e0bcaceb0d7d7f4f74eb",
-                "reference": "361d35c13bc3accad178e0bcaceb0d7d7f4f74eb",
+                "url": "https://api.github.com/repos/symfony/postmark-mailer/zipball/506fc3ab9b235b1ecdd56d6c8249ef574a0e90f8",
+                "reference": "506fc3ab9b235b1ecdd56d6c8249ef574a0e90f8",
                 "shasum": ""
             },
             "require": {
@@ -5986,7 +5986,7 @@
             "description": "Symfony Postmark Mailer Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/postmark-mailer/tree/v8.0.4"
+                "source": "https://github.com/symfony/postmark-mailer/tree/v8.0.9"
             },
             "funding": [
                 {
@@ -6006,7 +6006,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-08T08:40:07+00:00"
+            "time": "2026-04-29T15:02:55+00:00"
         },
         {
             "name": "symfony/process",
