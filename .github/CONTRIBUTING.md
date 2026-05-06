@@ -6,7 +6,7 @@ This document will guide you through the process of contributing to the project,
 
 ## 🚀 Getting Started
 
-You need to have PHP 8.4, Composer and Node.js installed on your machine to run the website locally.
+You need to have PHP 8.5, Composer and Node.js installed on your machine to run the website locally.
 
 You can install PHP and Composer using [php.new](https://php.new), or alternatively for a more robust solution, you can use [Laravel Herd](https://herd.laravel.com/).
 
