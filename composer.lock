@@ -2892,16 +2892,16 @@
         },
         {
             "name": "p-chess/chess",
-            "version": "v1.1.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/p-chess/chess.git",
-                "reference": "256f6dcfb9b637ff1dce9b5b5e83a4397ac6375e"
+                "reference": "941fedbab3545530e89d50ccb6f94350d25dcc8b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/p-chess/chess/zipball/256f6dcfb9b637ff1dce9b5b5e83a4397ac6375e",
-                "reference": "256f6dcfb9b637ff1dce9b5b5e83a4397ac6375e",
+                "url": "https://api.github.com/repos/p-chess/chess/zipball/941fedbab3545530e89d50ccb6f94350d25dcc8b",
+                "reference": "941fedbab3545530e89d50ccb6f94350d25dcc8b",
                 "shasum": ""
             },
             "require": {
@@ -2909,11 +2909,11 @@
                 "php": "^8.1"
             },
             "require-dev": {
-                "ergebnis/phpunit-slow-test-detector": "^2.20",
-                "friendsofphp/php-cs-fixer": "^3.92",
+                "ergebnis/phpunit-slow-test-detector": "^2.23",
+                "friendsofphp/php-cs-fixer": "^3.95",
                 "imagine/imagine": "^1.5",
                 "phpbench/phpbench": "^1.4",
-                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan": "^2.1",
                 "phpstan/phpstan-strict-rules": "^2.0",
                 "phpunit/phpunit": "^10.5 || ^11.5 || ^12.5"
             },
@@ -2923,7 +2923,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0-dev"
+                    "dev-master": "1.x-dev"
                 }
             },
             "autoload": {
@@ -2952,9 +2952,9 @@
             "description": "A PHP chess library that is used for chess move generation/validation, piece placement/movement, and check/checkmate/stalemate detection",
             "support": {
                 "issues": "https://github.com/p-chess/chess/issues",
-                "source": "https://github.com/p-chess/chess/tree/v1.1.0"
+                "source": "https://github.com/p-chess/chess/tree/v1.1.1"
             },
-            "time": "2026-01-22T13:05:44+00:00"
+            "time": "2026-06-30T07:17:18+00:00"
         },
         {
             "name": "phpoption/phpoption",
