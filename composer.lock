@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "blade-ui-kit/blade-icons",
-            "version": "1.10.0",
+            "version": "1.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/driesvints/blade-icons.git",
-                "reference": "74189a80bbaa4966aebaee54fec3a3c2ef0a5f3a"
+                "reference": "6e072d021ea6249986c330b93293c33d0c4f0e34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/driesvints/blade-icons/zipball/74189a80bbaa4966aebaee54fec3a3c2ef0a5f3a",
-                "reference": "74189a80bbaa4966aebaee54fec3a3c2ef0a5f3a",
+                "url": "https://api.github.com/repos/driesvints/blade-icons/zipball/6e072d021ea6249986c330b93293c33d0c4f0e34",
+                "reference": "6e072d021ea6249986c330b93293c33d0c4f0e34",
                 "shasum": ""
             },
             "require": {
@@ -85,7 +85,7 @@
                     "type": "paypal"
                 }
             ],
-            "time": "2026-04-23T19:03:45+00:00"
+            "time": "2026-06-30T09:44:12+00:00"
         },
         {
             "name": "brick/math",
@@ -2832,16 +2832,16 @@
         },
         {
             "name": "owenvoke/blade-fontawesome",
-            "version": "v3.2.2",
+            "version": "v3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/owenvoke/blade-fontawesome.git",
-                "reference": "5a199630dd70c5133d58c158a974e12bcd8b3a71"
+                "reference": "b155b249742a49931c60a05cf43d33bc3f7c098e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/owenvoke/blade-fontawesome/zipball/5a199630dd70c5133d58c158a974e12bcd8b3a71",
-                "reference": "5a199630dd70c5133d58c158a974e12bcd8b3a71",
+                "url": "https://api.github.com/repos/owenvoke/blade-fontawesome/zipball/b155b249742a49931c60a05cf43d33bc3f7c098e",
+                "reference": "b155b249742a49931c60a05cf43d33bc3f7c098e",
                 "shasum": ""
             },
             "require": {
@@ -2876,7 +2876,7 @@
             "description": "A package to easily make use of Font Awesome in your Laravel Blade views",
             "support": {
                 "issues": "https://github.com/owenvoke/blade-fontawesome/issues",
-                "source": "https://github.com/owenvoke/blade-fontawesome/tree/v3.2.2"
+                "source": "https://github.com/owenvoke/blade-fontawesome/tree/v3.3.0"
             },
             "funding": [
                 {
@@ -2888,7 +2888,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-20T08:37:22+00:00"
+            "time": "2026-06-26T07:46:10+00:00"
         },
         {
             "name": "p-chess/chess",
