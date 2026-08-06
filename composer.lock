@@ -2834,16 +2834,16 @@
         },
         {
             "name": "owenvoke/blade-fontawesome",
-            "version": "v3.3.0",
+            "version": "v3.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/owenvoke/blade-fontawesome.git",
-                "reference": "b155b249742a49931c60a05cf43d33bc3f7c098e"
+                "reference": "e1f679a1da22e75bdad9fe19865c3b0bff83c5e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/owenvoke/blade-fontawesome/zipball/b155b249742a49931c60a05cf43d33bc3f7c098e",
-                "reference": "b155b249742a49931c60a05cf43d33bc3f7c098e",
+                "url": "https://api.github.com/repos/owenvoke/blade-fontawesome/zipball/e1f679a1da22e75bdad9fe19865c3b0bff83c5e3",
+                "reference": "e1f679a1da22e75bdad9fe19865c3b0bff83c5e3",
                 "shasum": ""
             },
             "require": {
@@ -2878,7 +2878,7 @@
             "description": "A package to easily make use of Font Awesome in your Laravel Blade views",
             "support": {
                 "issues": "https://github.com/owenvoke/blade-fontawesome/issues",
-                "source": "https://github.com/owenvoke/blade-fontawesome/tree/v3.3.0"
+                "source": "https://github.com/owenvoke/blade-fontawesome/tree/v3.3.1"
             },
             "funding": [
                 {
@@ -2890,7 +2890,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-06-26T07:46:10+00:00"
+            "time": "2026-07-16T08:22:20+00:00"
         },
         {
             "name": "p-chess/chess",
