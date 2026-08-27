@@ -1,6 +1,9 @@
+*.log
+.DS_Store
 /.phpunit.cache
 /node_modules
 /public/build
+/public/fonts-manifest.dev.json
 /public/hot
 /public/storage
 /storage/*.key
@@ -11,10 +14,10 @@
 .env.production
 .phpactor.json
 .phpunit.result.cache
+_ide_helper.php
 Homestead.json
 Homestead.yaml
-npm-debug.log
-yarn-error.log
+Thumbs.db
 /auth.json
 /.fleet
 /.idea
@@ -24,14 +27,19 @@ yarn-error.log
 /.cursor
 
 # Laravel Boost
+/.agents
 /.gemini
 /.claude
 /.github/skills
+/.github/copilot-instructions.md
 /.codex
 /.mcp.json
-/.agents
 /boost.json
+/opencode.json
+/.opencode
 /AGENTS.md
 /GEMINI.md
 /CLAUDE.md
-/.github/copilot-instructions.md
+
+# Local files
+*.local.*
