@@ -21,6 +21,6 @@
         "highlight.js": "^11.12.0"
     },
     "optionalDependencies": {
-        "@laravel/multiplex": "^0.4.1"
+        "@laravel/multiplex": "^0.4.4"
     }
 }
