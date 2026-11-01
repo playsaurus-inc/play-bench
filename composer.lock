@@ -2901,16 +2901,16 @@
         },
         {
             "name": "p-chess/chess",
-            "version": "v1.1.1",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/p-chess/chess.git",
-                "reference": "941fedbab3545530e89d50ccb6f94350d25dcc8b"
+                "reference": "a19d9436d800d0568ec428e884b34aa4fe2a7571"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/p-chess/chess/zipball/941fedbab3545530e89d50ccb6f94350d25dcc8b",
-                "reference": "941fedbab3545530e89d50ccb6f94350d25dcc8b",
+                "url": "https://api.github.com/repos/p-chess/chess/zipball/a19d9436d800d0568ec428e884b34aa4fe2a7571",
+                "reference": "a19d9436d800d0568ec428e884b34aa4fe2a7571",
                 "shasum": ""
             },
             "require": {
@@ -2961,9 +2961,9 @@
             "description": "A PHP chess library that is used for chess move generation/validation, piece placement/movement, and check/checkmate/stalemate detection",
             "support": {
                 "issues": "https://github.com/p-chess/chess/issues",
-                "source": "https://github.com/p-chess/chess/tree/v1.1.1"
+                "source": "https://github.com/p-chess/chess/tree/v1.2.0"
             },
-            "time": "2026-06-30T07:17:18+00:00"
+            "time": "2026-09-01T12:26:48+00:00"
         },
         {
             "name": "phpoption/phpoption",
