@@ -1,5 +1,7 @@
 # PlayBench - AI Benchmark platform
 
+![PlayBench](./art/screenshot.png)
+
 This repository contains the source code for the PlayBench.ai web page, a web platform that provides benchmark results for different AI models, testing them in different games. It is available on [https://playbench.ai](https://playbench.ai).
 
 The website is built in PHP using the Laravel framework. The project was developed with 💖 by [Playsaurus](https://playsaurus.com).
